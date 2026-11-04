@@ -6,6 +6,10 @@ Run:  python -m scripts.ask_agent "What causes a dopamine crash and how do I pre
 import sys
 
 from app.agent.graph import corrective_rag_agent
+from app.agent.state import AgentState
+from app.observability import configure_tracing, trace_config
+
+configure_tracing()
 
 if len(sys.argv) < 2:
     query = "What causes a dopamine crash and how do I prevent it?"
@@ -15,7 +19,7 @@ else:
 print(f"User Query: {query!r}\n")
 print("Executing LangGraph Corrective RAG workflow...\n")
 
-initial_state = {
+initial_state: AgentState = {
     "question": query,
     "documents": [],
     "relevant_documents": [],
@@ -26,7 +30,7 @@ initial_state = {
 final_answer = ""
 
 # Stream node execution events so we can watch the state machine in real-time
-for event in corrective_rag_agent.stream(initial_state):
+for event in corrective_rag_agent.stream(initial_state, config=trace_config("cli")):
     for node_name, node_output in event.items():
         print(f"--> [Node: {node_name}]")
         if node_name == "retrieve":

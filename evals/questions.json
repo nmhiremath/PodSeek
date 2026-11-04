@@ -1,0 +1,30 @@
+[
+  {
+    "id": "dopamine-crash",
+    "question": "What causes a dopamine crash and how do you prevent it?",
+    "episode_id": "QmOF0crdyRU",
+    "keywords": ["dopamine", "crash", "baseline"],
+    "expect_citations": true
+  },
+  {
+    "id": "morning-sunlight",
+    "question": "How does morning sunlight affect cortisol and dopamine?",
+    "episode_id": "QmOF0crdyRU",
+    "keywords": ["sunlight", "cortisol", "dopamine"],
+    "expect_citations": true
+  },
+  {
+    "id": "cold-exposure",
+    "question": "What is the relationship between cold exposure and dopamine?",
+    "episode_id": "QmOF0crdyRU",
+    "keywords": ["cold", "dopamine"],
+    "expect_citations": true
+  },
+  {
+    "id": "off-topic-gap",
+    "question": "Who won the 1998 FIFA World Cup final?",
+    "episode_id": "QmOF0crdyRU",
+    "keywords": [],
+    "expect_citations": false
+  }
+]

@@ -11,7 +11,7 @@ def test_health_endpoint():
     """Verify health probe returns status 200."""
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok", "app": "AskPodcast"}
+    assert response.json() == {"status": "ok", "app": "PodSeek"}
 
 
 def test_ask_validation_rejects_empty_payload():

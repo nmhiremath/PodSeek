@@ -12,14 +12,16 @@ from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
 
 from app.agent.graph import corrective_rag_agent
+from app.agent.state import AgentState
 from app.factory import get_chat_model
 from app.ingestion import (
     captions_to_segments,
     chunk_segments,
     extract_video_id,
     fetch_raw_captions,
-    fetch_video_title,
 )
+from app.ingestion.youtube import fetch_video_metadata, is_huberman_channel
+from app.observability import trace_config
 from app.schemas import (
     AskRequest,
     AskResponse,
@@ -71,7 +73,7 @@ def _analyze_episode(full_text: str, title: str) -> EpisodeAnalysis:
     chain = prompt | structured_analyzer
     # Cap transcript at ~40,000 words to ensure rapid execution within token bounds
     trimmed = " ".join(full_text.split()[:40000])
-    result = chain.invoke({"title": title, "transcript": trimmed})
+    result = chain.invoke({"title": title, "transcript": trimmed}, config=trace_config("/ingest"))
 
     if isinstance(result, EpisodeAnalysis):
         return result
@@ -107,13 +109,49 @@ def _build_citations(documents: list) -> list[Citation]:
     return citations
 
 
+def _initial_state(question: str) -> AgentState:
+    return {
+        "question": question,
+        "documents": [],
+        "relevant_documents": [],
+        "rewrite_count": 0,
+        "generation": "",
+    }
+
+
+def _node_event(node_name: str, node_output: dict) -> dict:
+    """Shape one graph update the way POST /ask/stream emits it."""
+    event_data = {
+        "node": node_name,
+        "rewrites": node_output.get("rewrite_count", 0),
+    }
+    if node_name == "retrieve":
+        event_data["chunks_retrieved"] = len(node_output.get("documents", []))
+    elif node_name == "grade_documents":
+        relevant = node_output.get("relevant_documents", [])
+        event_data["relevant_chunks"] = len(relevant)
+        event_data["citations"] = [citation.model_dump() for citation in _build_citations(relevant)]
+    elif node_name == "rewrite_query":
+        event_data["rewritten_query"] = node_output.get("question", "")
+    elif node_name == "generate":
+        event_data["generation"] = node_output.get("generation", "")
+    return event_data
+
+
+def iter_agent_events(question: str):
+    """Yield the same node payloads as POST /ask/stream, without the SSE framing."""
+    for event in corrective_rag_agent.stream(_initial_state(question), config=trace_config("/ask/stream")):
+        for node_name, node_output in event.items():
+            yield _node_event(node_name, node_output)
+
+
 # ==============================================================================
 # Endpoints
 # ==============================================================================
 @router.get("/health")
 def health_check() -> dict[str, str]:
     """Health check probe for container readiness."""
-    return {"status": "ok", "app": "AskPodcast"}
+    return {"status": "ok", "app": "PodSeek"}
 
 
 @router.get("/episodes", response_model=list[EpisodeSummary])
@@ -165,7 +203,14 @@ def ingest_episode(request: IngestRequest) -> IngestResponse:
             title = str(payload.get("title", f"Episode {video_id}"))
             captions = list(payload.get("captions", []))
         else:
-            title = fetch_video_title(video_id)
+            title, author_name = fetch_video_metadata(video_id)
+            if not is_huberman_channel(author_name):
+                raise HTTPException(
+                    status_code=400,
+                    detail=(
+                        f"Only Huberman Lab episodes can be ingested (detected channel: {author_name or 'Unknown'})."
+                    ),
+                )
             captions = fetch_raw_captions(video_id)
             payload = {
                 "show": request.show,
@@ -229,22 +274,14 @@ def ingest_episode(request: IngestRequest) -> IngestResponse:
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to ingest episode: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to ingest episode: {e}")
 
 
 @router.post("/ask", response_model=AskResponse)
 def ask_question(request: AskRequest) -> AskResponse:
     """Submit a question and receive a complete answer with clickable timestamp citations."""
     try:
-        initial_state = {
-            "question": request.question,
-            "documents": [],
-            "relevant_documents": [],
-            "rewrite_count": 0,
-            "generation": "",
-        }
-
-        final_state = corrective_rag_agent.invoke(initial_state)
+        final_state = corrective_rag_agent.invoke(_initial_state(request.question), config=trace_config("/ask"))
         relevant_docs = final_state.get("relevant_documents", [])
         citations = _build_citations(relevant_docs)
 
@@ -256,7 +293,7 @@ def ask_question(request: AskRequest) -> AskResponse:
             relevant_chunks_used=len(relevant_docs),
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Agent execution failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Agent execution failed: {e}")
 
 
 @router.post("/ask/stream")
@@ -264,31 +301,7 @@ async def stream_question(request: AskRequest) -> StreamingResponse:
     """Stream LangGraph node events and final answer in real-time via Server-Sent Events."""
 
     async def event_generator() -> AsyncGenerator[str]:
-        initial_state = {
-            "question": request.question,
-            "documents": [],
-            "relevant_documents": [],
-            "rewrite_count": 0,
-            "generation": "",
-        }
-
-        for event in corrective_rag_agent.stream(initial_state):
-            for node_name, node_output in event.items():
-                event_data = {
-                    "node": node_name,
-                    "rewrites": node_output.get("rewrite_count", 0),
-                }
-                if node_name == "retrieve":
-                    event_data["chunks_retrieved"] = len(node_output.get("documents", []))
-                elif node_name == "grade_documents":
-                    rel = node_output.get("relevant_documents", [])
-                    event_data["relevant_chunks"] = len(rel)
-                    event_data["citations"] = [c.model_dump() for c in _build_citations(rel)]
-                elif node_name == "rewrite_query":
-                    event_data["rewritten_query"] = node_output.get("question", "")
-                elif node_name == "generate":
-                    event_data["generation"] = node_output.get("generation", "")
-
-                yield f"data: {json.dumps(event_data)}\n\n"
+        for event_data in iter_agent_events(request.question):
+            yield f"data: {json.dumps(event_data)}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")

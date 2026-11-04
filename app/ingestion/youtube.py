@@ -44,18 +44,32 @@ def extract_video_id(url_or_id: str) -> str:
     return clean
 
 
-def fetch_video_title(video_id: str) -> str:
-    """Fetch video title using YouTube's public oEmbed endpoint (no API key needed)."""
+def is_huberman_channel(author_name: str) -> bool:
+    """Pure check: return True only when the YouTube channel belongs to Huberman Lab."""
+    return "huberman" in author_name.strip().casefold()
+
+
+def fetch_video_metadata(video_id: str) -> tuple[str, str]:
+    """Fetch (title, author_name) using YouTube's public oEmbed endpoint (no API key needed)."""
     import httpx
 
     url = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
     try:
         resp = httpx.get(url, timeout=5.0)
         if resp.status_code == 200:
-            return resp.json().get("title", f"Episode {video_id}")
+            data = resp.json()
+            title = str(data.get("title") or f"Episode {video_id}")
+            author = str(data.get("author_name") or "")
+            return title, author
     except Exception:
         pass
-    return f"Episode {video_id}"
+    return f"Episode {video_id}", ""
+
+
+def fetch_video_title(video_id: str) -> str:
+    """Fetch video title using YouTube's public oEmbed endpoint (no API key needed)."""
+    title, _ = fetch_video_metadata(video_id)
+    return title
 
 
 def fetch_raw_captions(video_id: str) -> list[dict]:

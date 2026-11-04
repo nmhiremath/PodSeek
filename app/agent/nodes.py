@@ -122,7 +122,7 @@ def rewrite_query(state: AgentState) -> dict:
 def generate(state: AgentState) -> dict:
     """Synthesize final answer grounded strictly in verified chunks with citations."""
     question = state["question"]
-    docs = state.get("relevant_documents") or state.get("documents", [])
+    docs = state["relevant_documents"] if "relevant_documents" in state else state.get("documents", [])
 
     # If even after retries we have zero relevant chunks
     if not docs:

@@ -1,0 +1,757 @@
+"""Pure HTML/SVG UI components and formatters for PodSeek.
+
+This module intentionally does not import Gradio so every view builder and
+formatter can be unit-tested in isolation.
+"""
+
+import html
+import re
+from pathlib import Path
+
+STYLES_DIR = Path(__file__).resolve().parent / "styles"
+
+_YT_BADGE_SVG = (
+    '<span class="gai-yt-circle">'
+    '<svg width="8" height="8" viewBox="0 0 10 10" fill="#FFFFFF">'
+    '<polygon points="3,2 8,5 3,8"/>'
+    "</svg></span>"
+)
+
+
+def load_theme_css(stylesheet: str = "theme.css") -> str:
+    """Load a pluggable CSS stylesheet from ui/styles/."""
+    css_path = STYLES_DIR / stylesheet
+    if css_path.exists():
+        return css_path.read_text(encoding="utf-8")
+    return ""
+
+
+def format_citations(citations: list[dict]) -> str:
+    """Format citations as Markdown links."""
+    if not citations:
+        return "_No citations._"
+    lines = []
+    for citation in citations:
+        timestamp = citation.get("timestamp", "")
+        title = citation.get("episode_title", "Episode")
+        speaker = citation.get("speaker", "")
+        url = citation.get("url") or ""
+        label = f"{timestamp} {title}"
+        if speaker:
+            label = f"{label} — {speaker}"
+        if url:
+            lines.append(f"- [{label}]({url})")
+        else:
+            lines.append(f"- {label}")
+    return "\n".join(lines)
+
+
+def format_event(event: dict) -> str:
+    """Format one node event into a concise step line."""
+    node = event.get("node", "node")
+    if node == "retrieve":
+        return f"retrieve: {event.get('chunks_retrieved', 0)} chunks"
+    if node == "grade_documents":
+        return f"grade: {event.get('relevant_chunks', 0)} relevant"
+    if node == "rewrite_query":
+        return f"rewrite ({event.get('rewrites', 0)}): {event.get('rewritten_query', '')}"
+    if node == "generate":
+        return "generate: answer ready"
+    return str(node)
+
+
+def _short_title(title: str, max_len: int = 30) -> str:
+    """Shorten long Huberman Lab episode titles for compact inline pills."""
+    cleaned = re.sub(r"\s*\|\s*Huberman Lab.*$", "", title, flags=re.IGNORECASE).strip()
+    cleaned = re.sub(r"^Dr\.\s+Andrew\s+Huberman:\s*", "", cleaned, flags=re.IGNORECASE).strip()
+    if len(cleaned) <= max_len:
+        return cleaned
+    return cleaned[: max_len - 1].rstrip() + "…"
+
+
+def _short_timestamp(ts: str) -> str:
+    """Convert 00:20:45 -> 20:45 while keeping 01:04:12 intact."""
+    if ts.startswith("00:") and len(ts) == 8:
+        return ts[3:]
+    return ts
+
+
+def render_inline_pill_html(citation: dict) -> str:
+    """Render a Google AI Overview style inline stadium pill for a citation."""
+    raw_title = str(citation.get("episode_title") or "Episode")
+    short_ep = html.escape(_short_title(raw_title))
+    full_title = html.escape(raw_title)
+    raw_ts = str(citation.get("timestamp") or "00:00:00")
+    short_ts = html.escape(_short_timestamp(raw_ts))
+    url = html.escape(str(citation.get("url") or "#"))
+    return (
+        f'<a href="{url}" target="_blank" rel="noopener noreferrer" '
+        f'class="gai-pill" title="{full_title} ({html.escape(raw_ts)})">'
+        f"{_YT_BADGE_SVG}"
+        f"<span>{short_ep} · {short_ts}</span>"
+        f"</a>"
+    )
+
+
+def _format_inline_markdown(escaped_line: str, pill_lookup: dict[str, str]) -> str:
+    """Apply inline Markdown formatting and replace inline timestamp tokens with pills."""
+    # 1. Strip backticks around timestamp citations so they never get wrapped in dark <code> boxes
+    text = re.sub(
+        r"`(\s*[\[\(][^`\n]*?\d{1,2}:\d{2}(?::\d{2})?[^`\n]*?[\]\)]\s*)`",
+        r"\1",
+        escaped_line,
+    )
+
+    # 2. Replace bracketed/parenthesized timestamp references BEFORE bold/italic/code
+    def _replace_ts(match: re.Match[str]) -> str:
+        ts_val = match.group("ts")
+        norm_ts = ts_val if len(ts_val.split(":")) == 3 else f"00:{ts_val.zfill(5)}"
+        pill = pill_lookup.get(norm_ts) or pill_lookup.get(ts_val)
+        if pill:
+            return pill
+        return match.group(0)
+
+    text = re.sub(
+        r"[\[\(]+[^\]\)]*?(?P<ts>\d{1,2}:\d{2}(?::\d{2})?)[^\]\)]*?[\]\)]+",
+        _replace_ts,
+        text,
+    )
+
+    # 3. Clean up any outer parentheses, brackets, or commas around single or multiple pills
+    for _ in range(3):
+        text = re.sub(r"(</a>)\s*[,;&]+\s*(?:and\s+)?(<a\s+href=)", r"\1 \2", text)
+        text = re.sub(r"[\[\(]+\s*((?:<a\s+href=[^>]+class=\"gai-pill\"[^>]*>.*?</a>\s*)+)[\]\)]+", r"\1", text)
+        text = re.sub(r"(</a>)\s*[\]\)]+(?=[.;,:]|\s|$)", r"\1", text)
+        text = re.sub(r"[\[\(]+\s*(<a\s+href=[^>]+class=\"gai-pill\")", r"\1", text)
+
+    # 4. Convert **bold**, *italic*, `code` on remaining text
+    text = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"(?<!\*)\*([^*\n<>]+?)\*(?!\*)", r"<em>\1</em>", text)
+    text = re.sub(r"`([^`\n<>]+?)`", r"<code>\1</code>", text)
+    return text
+
+
+def render_markdown_with_pills(answer: str, citations: list[dict]) -> str:
+    """Render Markdown answer text into HTML with Google AI Overview inline citation pills."""
+    pill_lookup: dict[str, str] = {}
+    ordered_pills: list[tuple[str, str]] = []
+    for cit in citations:
+        ts = str(cit.get("timestamp") or "")
+        pill_html = render_inline_pill_html(cit)
+        if ts and ts not in pill_lookup:
+            pill_lookup[ts] = pill_html
+            short_ts = _short_timestamp(ts)
+            pill_lookup[short_ts] = pill_html
+            ordered_pills.append((ts, pill_html))
+
+    escaped = html.escape(answer.strip())
+    lines = escaped.splitlines()
+    blocks: list[str] = []
+    in_list = False
+
+    for raw_line in lines:
+        stripped = raw_line.strip()
+        if not stripped:
+            if in_list:
+                blocks.append("</ul>")
+                in_list = False
+            continue
+
+        heading_match = re.match(r"^(#{1,3})\s+(.*)$", stripped)
+        if heading_match:
+            if in_list:
+                blocks.append("</ul>")
+                in_list = False
+            content = _format_inline_markdown(heading_match.group(2), pill_lookup)
+            blocks.append(f'<p style="font-weight:700;margin-top:6px;">{content}</p>')
+            continue
+
+        bullet_match = re.match(r"^(?:[-*•]|\d+\.)\s+(.*)$", stripped)
+        if bullet_match:
+            if not in_list:
+                blocks.append("<ul>")
+                in_list = True
+            content = _format_inline_markdown(bullet_match.group(1), pill_lookup)
+            blocks.append(f"<li>{content}</li>")
+            continue
+
+        if in_list:
+            blocks.append("</ul>")
+            in_list = False
+        content = _format_inline_markdown(stripped, pill_lookup)
+        blocks.append(f"<p>{content}</p>")
+
+    if in_list:
+        blocks.append("</ul>")
+
+    rendered = "".join(blocks) or f"<p>{escaped}</p>"
+
+    # Only append fallback pills at the end if the LLM did not cite any timestamps inline
+    any_inline_placed = any(pill in rendered for _ts, pill in ordered_pills)
+    if not any_inline_placed and ordered_pills:
+        pills_str = " " + " ".join(pill for _ts, pill in ordered_pills)
+        if rendered.endswith("</p>"):
+            rendered = rendered[:-4] + pills_str + "</p>"
+        elif rendered.endswith("</li></ul>"):
+            rendered = rendered[:-10] + pills_str + "</li></ul>"
+        else:
+            rendered = f"{rendered}<p>{pills_str.strip()}</p>"
+
+    return f'<div class="ap-md">{rendered}</div>'
+
+
+def render_ingest_status_html(state: str, title: str = "", detail: str = "") -> str:
+    """Render wrapped, non-clipping ingest progress, error, or success cards."""
+    safe_title = html.escape(title)
+    safe_detail = html.escape(detail)
+
+    if state == "loading":
+        spinner_svg = (
+            '<svg class="ap-spin" width="13" height="13" viewBox="0 0 24 24" fill="none" '
+            'stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round">'
+            '<path d="M12 2a10 10 0 0 1 10 10" />'
+            "</svg>"
+        )
+        return (
+            '<div class="ap-status-card ap-subtle">'
+            '<div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">'
+            '<span style="display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--accent);">'
+            f"{spinner_svg}<span>{safe_title or 'Absorbing episode...'}</span></span>"
+            f'<span class="ap-muted" style="font-family:monospace;font-size:11px;">{safe_detail or "Verifying & chunking"}</span>'
+            "</div>"
+            '<div class="ap-shimmer-track"><div class="ap-shimmer-fill"></div></div>'
+            "</div>"
+        )
+    if state == "error":
+        return (
+            '<div class="ap-status-card" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.28);">'
+            f'<div style="font-weight:600;color:#EF4444;">⚠️ {safe_title or "Could not absorb episode"}</div>'
+            f'<div class="ap-muted" style="margin-top:2px;">{safe_detail}</div>'
+            "</div>"
+        )
+    if state == "success":
+        return (
+            '<div class="ap-status-card" style="background:rgba(22,163,74,0.08);border:1px solid rgba(22,163,74,0.28);">'
+            f'<div style="font-weight:600;color:var(--done-stroke);">✓ {safe_title}</div>'
+            f'<div class="ap-muted" style="margin-top:2px;">{safe_detail}</div>'
+            "</div>"
+        )
+    return ""
+
+
+def render_ingest_workflow_graph_html(
+    active_step: str = "verify",
+    chunks_indexed: int = 0,
+    error: bool = False,
+    abort_reason: str = "Non-Huberman",
+) -> str:
+    """Render the 4-stage Episode Ingestion Workflow Graph with 'Huberman Lab?' decision diamond and Abort branch."""
+    steps_order = ["verify", "captions", "chunk", "embed", "done"]
+    is_aborted = error or active_step == "abort"
+    idx = steps_order.index(active_step) if active_step in steps_order else 0
+
+    def _node_cls(step_idx: int) -> str:
+        if is_aborted:
+            return "is-completed" if step_idx == 0 else "opacity-60"
+        if step_idx < idx or active_step == "done":
+            return "is-completed"
+        if step_idx == idx:
+            return "is-running"
+        return "opacity-60"
+
+    def _node_status(step_idx: int) -> str:
+        if is_aborted:
+            return "✓ Checked" if step_idx == 0 else "Skipped"
+        if step_idx < idx or active_step == "done":
+            return "✓ Done"
+        if step_idx == idx:
+            return "⟳ Running"
+        return "Queued"
+
+    c_ver_dec = (
+        "conn-completed"
+        if (is_aborted or idx > 0 or active_step == "done")
+        else ("conn-running" if active_step == "verify" else "conn-idle")
+    )
+    c_dec_cap = (
+        "conn-idle"
+        if is_aborted
+        else (
+            "conn-running"
+            if active_step == "captions"
+            else ("conn-completed" if (idx > 1 or active_step == "done") else "conn-idle")
+        )
+    )
+    c_dec_abt = "conn-aborted" if is_aborted else "conn-idle"
+    c_cap_chk = (
+        "conn-idle"
+        if is_aborted
+        else (
+            "conn-running"
+            if active_step == "chunk"
+            else ("conn-completed" if (idx > 2 or active_step == "done") else "conn-idle")
+        )
+    )
+    c_chk_emb = (
+        "conn-idle"
+        if is_aborted
+        else (
+            "conn-running" if active_step == "embed" else ("conn-completed" if active_step == "done" else "conn-idle")
+        )
+    )
+
+    diamond_stroke = (
+        "#EF4444"
+        if is_aborted
+        else ("var(--done-stroke)" if (idx >= 1 or active_step == "done") else "var(--border-strong)")
+    )
+    abt_cls = "is-aborted" if is_aborted else "opacity-60"
+    abt_status = "✕ Blocked" if is_aborted else "Idle"
+    short_reason = (
+        html.escape(abort_reason[:18] + ("…" if len(abort_reason) > 18 else "")) if is_aborted else "Channel guard"
+    )
+
+    badge_text = "✕ Aborted" if is_aborted else ("✓ Indexed" if active_step == "done" else "✦ Absorbing")
+    embed_sub = f"{chunks_indexed} chunks indexed" if chunks_indexed else "ChromaDB + Gemini"
+
+    return f"""
+    <div class="wf-dot-grid">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:12px;font-weight:700;">Workflow · Episode Ingestion</span>
+        <span class="ap-subtle" style="font-size:12px;font-family:monospace;padding:2px 8px;">{badge_text}</span>
+      </div>
+      <div style="position:relative;width:330px;height:300px;margin:0 auto;">
+        <svg width="330" height="300" viewBox="0 0 330 300" style="position:absolute;inset:0;pointer-events:none;">
+          <!-- 1. Verify -> Decision Diamond (Top at 94,64) -->
+          <path d="M 94 48 L 94 64" class="{c_ver_dec}" />
+          <polygon points="91,60 94,65 97,60" fill="var(--border-strong)" />
+
+          <!-- 2. Decision Diamond: Huberman Lab? -->
+          <polygon points="94,64 154,88 94,112 34,88"
+                   fill="var(--bg-card)" stroke="{diamond_stroke}" stroke-width="1.75" />
+          <text x="94" y="91" text-anchor="middle" fill="var(--text-main)"
+                font-size="9.5" font-weight="600" font-family="monospace">Huberman Lab?</text>
+
+          <!-- 3. Yes Branch: Diamond Bottom (94,112) -> Fetch Captions Top (94,136) -->
+          <path d="M 94 112 L 94 136" class="{c_dec_cap}" />
+          <polygon points="91,132 94,137 97,132" fill="var(--border-strong)" />
+          <rect x="78" y="116" width="32" height="14" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="94" y="126" text-anchor="middle" fill="var(--done-stroke)" font-size="9.5" font-weight="600" font-family="monospace">Yes</text>
+
+          <!-- 4. No Branch: Diamond Right (154,88) -> Abort Left (192,88) -->
+          <path d="M 154 88 L 192 88" class="{c_dec_abt}" />
+          <polygon points="188,85 193,88 188,91" fill="var(--border-strong)" />
+          <rect x="160" y="80" width="24" height="14" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="172" y="90" text-anchor="middle" fill="#EF4444" font-size="9.5" font-weight="600" font-family="monospace">No</text>
+
+          <!-- 5. Fetch Captions -> Window Chunker -->
+          <path d="M 94 180 L 94 194" class="{c_cap_chk}" />
+          <polygon points="91,190 94,195 97,190" fill="var(--border-strong)" />
+
+          <!-- 6. Window Chunker -> Embed & Analyze -->
+          <path d="M 94 238 L 94 252" class="{c_chk_emb}" />
+          <polygon points="91,248 94,253 97,248" fill="var(--border-strong)" />
+        </svg>
+
+        <!-- Step 1: Verify Channel -->
+        <div class="wf-node {_node_cls(0)}" style="left:10px;top:4px;width:168px;height:44px;padding:6px 9px;">
+          <svg class="node-trace-svg" viewBox="0 0 170 46">
+            <rect class="trace-base" x="1.5" y="1.5" width="167" height="43" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="167" height="43" rx="10" pathLength="100" />
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
+            <span style="font-weight:600;">🛡️ 1. Verify</span>
+            <span style="font-family:monospace;">{_node_status(0)}</span>
+          </div>
+          <div class="ap-muted" style="font-size:11px;font-family:monospace;margin-top:1px;white-space:nowrap;">oEmbed channel check</div>
+        </div>
+
+        <!-- Abort Terminator Node (Right of Huberman Lab? Diamond) -->
+        <div class="wf-node {abt_cls}" style="left:192px;top:64px;width:134px;height:48px;border-radius:16px;padding:7px 9px;">
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
+            <span style="font-weight:600;">🛑 Abort</span>
+            <span style="font-family:monospace;color:{"#EF4444" if is_aborted else "inherit"};">{abt_status}</span>
+          </div>
+          <div class="ap-muted" style="font-size:10.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{short_reason}</div>
+        </div>
+
+        <!-- Step 2: Fetch Captions -->
+        <div class="wf-node {_node_cls(1)}" style="left:10px;top:136px;width:168px;height:44px;padding:6px 9px;">
+          <svg class="node-trace-svg" viewBox="0 0 170 46">
+            <rect class="trace-base" x="1.5" y="1.5" width="167" height="43" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="167" height="43" rx="10" pathLength="100" />
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
+            <span style="font-weight:600;">📝 2. Captions</span>
+            <span style="font-family:monospace;">{_node_status(1)}</span>
+          </div>
+          <div class="ap-muted" style="font-size:11px;font-family:monospace;margin-top:1px;white-space:nowrap;">YouTube transcript</div>
+        </div>
+
+        <!-- Step 3: Window Chunker -->
+        <div class="wf-node {_node_cls(2)}" style="left:10px;top:194px;width:168px;height:44px;padding:6px 9px;">
+          <svg class="node-trace-svg" viewBox="0 0 170 46">
+            <rect class="trace-base" x="1.5" y="1.5" width="167" height="43" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="167" height="43" rx="10" pathLength="100" />
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
+            <span style="font-weight:600;">✂️ 3. Chunker</span>
+            <span style="font-family:monospace;">{_node_status(2)}</span>
+          </div>
+          <div class="ap-muted" style="font-size:11px;font-family:monospace;margin-top:1px;white-space:nowrap;">400w sliding window</div>
+        </div>
+
+        <!-- Step 4: Embed & Analyze -->
+        <div class="wf-node {_node_cls(3)}" style="left:10px;top:252px;width:168px;height:44px;padding:6px 9px;">
+          <svg class="node-trace-svg" viewBox="0 0 170 46">
+            <rect class="trace-base" x="1.5" y="1.5" width="167" height="43" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="167" height="43" rx="10" pathLength="100" />
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
+            <span style="font-weight:600;">🧬 4. Embed</span>
+            <span style="font-family:monospace;">{_node_status(3)}</span>
+          </div>
+          <div class="ap-muted" style="font-size:11px;font-family:monospace;margin-top:1px;white-space:nowrap;">{embed_sub}</div>
+        </div>
+      </div>
+    </div>
+    """
+
+
+def render_header_brand_html() -> str:
+    """Render the top-left PodSeek brand header."""
+    return (
+        '<div style="display:flex;align-items:center;gap:10px;">'
+        '<div style="width:28px;height:28px;border-radius:7px;background:var(--accent);color:#fff;'
+        'display:flex;align-items:center;justify-content:center;font-family:monospace;font-weight:700;font-size:12px;">PS</div>'
+        '<div><div style="font-size:14px;font-weight:700;line-height:1.2;">PodSeek</div>'
+        '<div class="ap-muted" style="font-size:12px;">Huberman Lab Knowledge Engine</div></div>'
+        "</div>"
+    )
+
+
+def render_episodes_html(items: list[dict]) -> str:
+    """Render the scrollable list of indexed episodes using episode titles (no raw video IDs)."""
+    if not items:
+        return (
+            '<div class="ap-muted" style="font-size:12px;font-family:monospace;padding:8px 0;">'
+            "No indexed episodes in data/raw/ yet."
+            "</div>"
+        )
+    cards: list[str] = []
+    for ep in items:
+        ep_id = html.escape(str(ep.get("episode_id", "")))
+        raw_title = str(ep.get("episode_title") or "Huberman Lab Episode")
+        title = html.escape(raw_title)
+        url = html.escape(str(ep.get("url") or f"https://youtu.be/{ep_id}"))
+        thumb = f"https://i.ytimg.com/vi/{ep_id}/hqdefault.jpg"
+        cards.append(
+            f'<a href="{url}" target="_blank" rel="noopener noreferrer" class="ap-subtle" '
+            f'style="display:flex;align-items:center;gap:10px;padding:9px 10px;text-decoration:none;">'
+            f'<img src="{thumb}" alt="" '
+            f'style="width:48px;height:32px;object-fit:cover;border-radius:6px;flex-shrink:0;background:#18181B;" />'
+            f'<div style="min-width:0;flex:1;">'
+            f'<div style="font-size:12px;font-weight:600;line-height:1.35;color:var(--text-main);'
+            f'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">'
+            f"{title}</div>"
+            f'<div class="ap-muted" style="font-size:11px;margin-top:2px;">Huberman Lab</div>'
+            f"</div></a>"
+        )
+    return (
+        '<div class="modern-scroll" style="max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:2px;">'
+        + "".join(cards)
+        + "</div>"
+    )
+
+
+def render_chat_session_html(history: list[dict]) -> str:
+    """Render the ephemeral session chat thread with rendered Markdown and Google AI Overview inline pills."""
+    if not history:
+        return (
+            '<div class="modern-scroll" style="height:360px;display:flex;align-items:center;justify-content:center;">'
+            '<div class="ap-muted" style="font-size:12.5px;text-align:center;">'
+            "Ask a question below or click a preset question to distill insights from Huberman Lab transcripts."
+            "</div></div>"
+        )
+    turns: list[str] = []
+    for item in history:
+        q = html.escape(str(item.get("question", "")))
+        raw_answer = str(item.get("answer", ""))
+        cits = list(item.get("citations") or [])
+        rendered_answer = render_markdown_with_pills(raw_answer, cits)
+        turns.append(
+            f'<div style="display:flex;justify-content:flex-end;margin-bottom:10px;">'
+            f'<div style="max-width:85%;background:var(--accent);color:#fff;padding:8px 13px;'
+            f'border-radius:12px 12px 3px 12px;font-size:12.5px;font-weight:500;">'
+            f"{q}</div></div>"
+            f'<div class="ap-subtle" style="padding:13px 15px;margin-bottom:14px;font-size:12.5px;line-height:1.6;">'
+            f"{rendered_answer}</div>"
+        )
+    return (
+        '<div id="ap-chat-scroll" class="modern-scroll" style="height:375px;overflow-y:auto;padding-right:4px;">'
+        + "".join(turns)
+        + "</div>"
+    )
+
+
+def render_workflow_graph_html(
+    active_node: str = "idle",
+    chunks: int = 0,
+    relevant: int = 0,
+    rewrites: int = 0,
+    done: bool = False,
+    aborted: bool = False,
+) -> str:
+    """Render the coordinate-locked Cyclic Workflow Graph with 4-sided perimeter trace and circuit-breaker abort."""
+    display_rewrites = rewrites
+    is_aborted = aborted or active_node == "abort" or (done and relevant == 0 and rewrites >= 2)
+
+    ret_cls = (
+        "is-running"
+        if active_node == "retrieve"
+        else (
+            "is-completed"
+            if done or is_aborted or active_node in {"grade_documents", "rewrite_query", "generate"}
+            else ""
+        )
+    )
+    grd_cls = (
+        "is-running"
+        if active_node == "grade_documents"
+        else ("is-completed" if done or is_aborted or active_node in {"rewrite_query", "generate"} else "")
+    )
+    rew_cls = "is-retrying" if active_node == "rewrite_query" else ("is-completed" if rewrites > 0 else "opacity-60")
+    gen_cls = (
+        "opacity-60"
+        if is_aborted
+        else ("is-running" if active_node == "generate" else ("is-completed" if done else ""))
+    )
+    abt_cls = "is-aborted" if is_aborted else "opacity-60"
+
+    ret_status = "⟳ Running" if active_node == "retrieve" else ("✓ Done" if ret_cls == "is-completed" else "Idle")
+    grd_status = (
+        "⟳ Running" if active_node == "grade_documents" else ("✓ Done" if grd_cls == "is-completed" else "Queued")
+    )
+    rew_status = "⟳ Running" if active_node == "rewrite_query" else ("✓ Done" if rewrites > 0 else "Idle")
+    rew_sub = f"Retry {display_rewrites} / 2"
+    gen_status = (
+        "Skipped" if is_aborted else ("⟳ Running" if active_node == "generate" else ("✓ Done" if done else "Queued"))
+    )
+    abt_status = "✕ Max" if is_aborted else "Idle"
+    abt_sub = "Max retries (2/2)" if is_aborted else "Circuit breaker"
+
+    c_ret_grd = (
+        "conn-running"
+        if active_node == "grade_documents"
+        else ("conn-completed" if grd_cls == "is-completed" else "conn-idle")
+    )
+    c_grd_dec = (
+        "conn-completed"
+        if (done or is_aborted)
+        else (
+            "conn-running"
+            if active_node in {"rewrite_query", "generate"}
+            else ("conn-completed" if grd_cls == "is-completed" else "conn-idle")
+        )
+    )
+    c_dec_gen = (
+        "conn-idle"
+        if is_aborted
+        else ("conn-running" if active_node == "generate" else ("conn-completed" if done else "conn-idle"))
+    )
+    c_dec1_dec2 = (
+        "conn-aborted"
+        if is_aborted
+        else (
+            "conn-retrying" if active_node == "rewrite_query" else ("conn-completed" if rewrites > 0 else "conn-idle")
+        )
+    )
+    c_dec2_rew = (
+        "conn-retrying" if active_node == "rewrite_query" else ("conn-completed" if rewrites > 0 else "conn-idle")
+    )
+    c_dec2_abt = "conn-aborted" if is_aborted else "conn-idle"
+    c_rew_ret = (
+        "conn-retrying"
+        if (active_node == "retrieve" and rewrites > 0)
+        else ("conn-completed" if rewrites > 0 else "conn-idle")
+    )
+    diamond1_stroke = (
+        "#EF4444"
+        if is_aborted
+        else (
+            "var(--retry-stroke)"
+            if active_node == "rewrite_query"
+            else ("var(--done-stroke)" if (done or active_node == "generate") else "var(--border-strong)")
+        )
+    )
+    diamond2_stroke = (
+        "#EF4444"
+        if is_aborted
+        else (
+            "var(--retry-stroke)"
+            if active_node == "rewrite_query"
+            else ("var(--done-stroke)" if rewrites > 0 else "var(--border-strong)")
+        )
+    )
+
+    return f"""
+    <div class="wf-dot-grid">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:12px;font-weight:700;">Workflow · Corrective RAG</span>
+        <span class="ap-subtle" style="font-size:12px;font-family:monospace;padding:2px 8px;">Rewrites: {display_rewrites} / 2</span>
+      </div>
+      <div style="position:relative;width:330px;height:300px;margin:0 auto;">
+        <svg width="330" height="300" viewBox="0 0 330 300" style="position:absolute;inset:0;pointer-events:none;">
+          <!-- 1. Retrieve -> Grade -->
+          <path d="M 94 58 L 94 78" class="{c_ret_grd}" />
+          <polygon points="91,74 94,79 97,74" fill="var(--border-strong)" />
+
+          <!-- 2. Grade -> Decision Diamond 1 (Top Vertex at 94,150) -->
+          <path d="M 94 128 L 94 150" class="{c_grd_dec}" />
+          <polygon points="91,146 94,151 97,146" fill="var(--border-strong)" />
+
+          <!-- 3. Decision Diamond 1: ≥1 relevant? -->
+          <polygon points="94,150 150,177 94,204 38,177"
+                   fill="var(--bg-card)" stroke="{diamond1_stroke}" stroke-width="1.75" />
+          <text x="94" y="180" text-anchor="middle" fill="var(--text-main)"
+                font-size="10" font-weight="600" font-family="monospace">≥1 relevant?</text>
+
+          <!-- 4. Yes Branch: Diamond 1 Bottom (94,204) -> Generate Top (94,240) -->
+          <path d="M 94 204 L 94 240" class="{c_dec_gen}" />
+          <polygon points="91,236 94,241 97,236" fill="var(--border-strong)" />
+          <rect x="76" y="213" width="36" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="94" y="224" text-anchor="middle" fill="var(--done-stroke)" font-size="10" font-weight="600" font-family="monospace">Yes</text>
+
+          <!-- 5. No Branch: Diamond 1 Right (150,177) -> Diamond 2 Left (203,177) -->
+          <path d="M 150 177 L 203 177" class="{c_dec1_dec2}" />
+          <polygon points="199,174 204,177 199,180" fill="var(--border-strong)" />
+          <rect x="161" y="169" width="28" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="175" y="180" text-anchor="middle" fill="var(--retry-stroke)" font-size="10" font-weight="600" font-family="monospace">No</text>
+
+          <!-- 6. Decision Diamond 2: Retries < 2? -->
+          <polygon points="259,150 315,177 259,204 203,177"
+                   fill="var(--bg-card)" stroke="{diamond2_stroke}" stroke-width="1.75" />
+          <text x="259" y="180" text-anchor="middle" fill="var(--text-main)"
+                font-size="10" font-weight="600" font-family="monospace">Retries &lt; 2?</text>
+
+          <!-- 7. Yes (Retry): Diamond 2 Top (259,150) -> Rewrite Bottom (259,120) -->
+          <path d="M 259 150 L 259 120" class="{c_dec2_rew}" />
+          <polygon points="256,124 259,119 262,124" fill="var(--border-strong)" />
+          <rect x="241" y="129" width="36" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="259" y="140" text-anchor="middle" fill="var(--retry-stroke)" font-size="10" font-weight="600" font-family="monospace">Yes</text>
+
+          <!-- 8. No (Abort): Diamond 2 Bottom (259,204) -> Abort Top (259,240) -->
+          <path d="M 259 204 L 259 240" class="{c_dec2_abt}" />
+          <polygon points="256,236 259,241 262,236" fill="var(--border-strong)" />
+          <rect x="245" y="213" width="28" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="259" y="224" text-anchor="middle" fill="#EF4444" font-size="10" font-weight="600" font-family="monospace">No</text>
+
+          <!-- 9. Loopback: Rewrite Top (259,70) -> Retrieve Right Side (178,33) -->
+          <path d="M 259 70 L 259 33 L 178 33" class="{c_rew_ret}" />
+          <polygon points="182,30 177,33 182,36" fill="var(--border-strong)" />
+        </svg>
+
+        <!-- Process Node 1: Retrieve -->
+        <div class="wf-node {ret_cls}" style="left:10px;top:8px;width:168px;height:50px;">
+          <svg class="node-trace-svg" viewBox="0 0 170 52">
+            <rect class="trace-base" x="1.5" y="1.5" width="167" height="49" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="167" height="49" rx="10" pathLength="100" />
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:12px;white-space:nowrap;">
+            <span style="font-weight:600;">🔍 Retrieve</span>
+            <span style="font-family:monospace;">{ret_status}</span>
+          </div>
+          <div class="ap-muted" style="font-size:11.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{chunks} chunks fetched</div>
+        </div>
+
+        <!-- Process Node 2: Grade -->
+        <div class="wf-node {grd_cls}" style="left:10px;top:78px;width:168px;height:50px;">
+          <svg class="node-trace-svg" viewBox="0 0 170 52">
+            <rect class="trace-base" x="1.5" y="1.5" width="167" height="49" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="167" height="49" rx="10" pathLength="100" />
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:12px;white-space:nowrap;">
+            <span style="font-weight:600;">⚖️ Grade</span>
+            <span style="font-family:monospace;">{grd_status}</span>
+          </div>
+          <div class="ap-muted" style="font-size:11.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{relevant} / {chunks} relevant</div>
+        </div>
+
+        <!-- Process Node 3: Rewrite (Branches UP from Retries < 2? Yes) -->
+        <div class="wf-node {rew_cls}" style="left:192px;top:70px;width:134px;height:50px;">
+          <svg class="node-trace-svg" viewBox="0 0 136 52">
+            <rect class="trace-base" x="1.5" y="1.5" width="133" height="49" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="133" height="49" rx="10" pathLength="100" />
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
+            <span style="font-weight:600;">✍️ Rewrite</span>
+            <span style="font-family:monospace;">{rew_status}</span>
+          </div>
+          <div class="ap-muted" style="font-size:11.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{rew_sub}</div>
+        </div>
+
+        <!-- Process Node 4: Generate (Branches DOWN from ≥1 relevant? Yes) -->
+        <div class="wf-node {gen_cls}" style="left:10px;top:240px;width:168px;height:50px;">
+          <svg class="node-trace-svg" viewBox="0 0 170 52">
+            <rect class="trace-base" x="1.5" y="1.5" width="167" height="49" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="167" height="49" rx="10" pathLength="100" />
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:12px;white-space:nowrap;">
+            <span style="font-weight:600;">✨ Generate</span>
+            <span style="font-family:monospace;">{gen_status}</span>
+          </div>
+          <div class="ap-muted" style="font-size:11.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">Cited synthesis</div>
+        </div>
+
+        <!-- Terminator Node 5: Abort (Branches DOWN from Retries < 2? No) -->
+        <div class="wf-node {abt_cls}" style="left:192px;top:240px;width:134px;height:50px;border-radius:16px;">
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
+            <span style="font-weight:600;">🛑 Abort</span>
+            <span style="font-family:monospace;color:{"#EF4444" if is_aborted else "inherit"};">{abt_status}</span>
+          </div>
+          <div class="ap-muted" style="font-size:11px;font-family:monospace;margin-top:2px;white-space:nowrap;">{abt_sub}</div>
+        </div>
+      </div>
+    </div>
+    """
+
+
+def render_sse_log_html(logs: list[tuple[str, str]], endpoint: str = "POST /ask/stream") -> str:
+    """Render the color-coded SSE Event Stream log panel."""
+    if not logs:
+        lines_html = '<div class="ap-muted">Waiting for query...</div>'
+    else:
+        lines_html = "".join(f'<div style="color:{color};">{html.escape(text)}</div>' for text, color in logs)
+    safe_ep = html.escape(endpoint)
+    return f"""
+    <div class="ap-card" style="font-family:monospace;font-size:12px;">
+      <div style="display:flex;justify-content:space-between;padding-bottom:6px;margin-bottom:6px;border-bottom:1px solid var(--border-hairline);">
+        <span style="font-family:sans-serif;font-weight:600;">SSE Event Stream</span>
+        <span class="ap-muted">{safe_ep}</span>
+      </div>
+      <div id="ap-sse-scroll" class="modern-scroll" style="height:110px;overflow-y:auto;padding-right:4px;display:flex;flex-direction:column;gap:4px;">
+        {lines_html}
+      </div>
+    </div>
+    """
+
+
+def render_stats_for_nerds_html() -> str:
+    """Render the Stats for Nerds observability & latency analytics view."""
+    return """
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+        <div class="ap-card"><div class="ap-muted" style="font-size:12px;">LangSmith Project</div><div style="font-size:16px;font-weight:700;font-family:monospace;margin-top:4px;">podseek</div></div>
+        <div class="ap-card"><div class="ap-muted" style="font-size:12px;">Tracing Status</div><div style="font-size:16px;font-weight:700;font-family:monospace;margin-top:4px;">Opt-In Active</div></div>
+        <div class="ap-card"><div class="ap-muted" style="font-size:12px;">Max CRAG Rewrites</div><div style="font-size:16px;font-weight:700;font-family:monospace;margin-top:4px;">2 (Circuit Breaker)</div></div>
+        <div class="ap-card"><div class="ap-muted" style="font-size:12px;">Eval Suite</div><div style="font-size:16px;font-weight:700;font-family:monospace;margin-top:4px;">scripts/evaluate.py</div></div>
+      </div>
+      <div class="ap-card">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px;">Stats for Nerds · Trace Explorer & Latency Analytics</div>
+        <div class="ap-muted" style="font-size:12px;line-height:1.6;">
+          Queries <code>langsmith.Client().list_runs(project_name="podseek")</code> to inspect P50/P95 node latencies
+          (<code>retrieve</code> vs <code>grade_documents</code> vs <code>rewrite_query</code> vs <code>generate</code>), token usage, and trace drill-downs.
+        </div>
+      </div>
+    </div>
+    """
