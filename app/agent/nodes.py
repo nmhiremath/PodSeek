@@ -1,5 +1,6 @@
 """Graph nodes for Corrective RAG: retrieve, grade, rewrite, and generate."""
 
+import re
 from typing import Literal
 
 from langchain_core.documents import Document
@@ -18,18 +19,49 @@ def _get_chat_llm(temperature: float = 0.0) -> BaseChatModel:
 
 
 # ==============================================================================
-# Node 1: Retrieve
+# Node 1: Retrieve (with Cosine Distance Scoring & Exact Substring Detection)
 # ==============================================================================
 def retrieve(state: AgentState) -> dict:
-    """Query ChromaDB for top chunks matching the current question."""
+    """Query ChromaDB for top chunks matching the current question with distance scores."""
     question = state["question"]
     vs = get_vectorstore()
-    results = vs.similarity_search(query=question, k=4)
-    return {"documents": results}
+
+    # Detect exact quote search (e.g. "Sauna use of 12 minutes...")
+    quote_match = re.search(r'["\']([^"\']{4,})["\']', question)
+    exact_phrase = quote_match.group(1).strip() if quote_match else ""
+
+    # similarity_search_with_score returns list[tuple[Document, float]] (cosine distance)
+    results = vs.similarity_search_with_score(query=question, k=4)
+    documents = [doc for doc, _ in results]
+    top_dist = float(results[0][1]) if results else 1.0
+
+    is_exact = False
+    if exact_phrase:
+        for i, doc in enumerate(documents):
+            if exact_phrase.lower() in doc.page_content.lower():
+                is_exact = True
+                if i != 0:
+                    matching_doc = documents.pop(i)
+                    documents.insert(0, matching_doc)
+                top_dist = min(top_dist, 0.08)
+                break
+
+    mode = state.get("mode", "balanced")
+    out: dict = {
+        "documents": documents,
+        "top_distance": round(top_dist, 4),
+        "is_exact_match": is_exact,
+    }
+
+    # Pre-populate relevant documents for Turbo or high-confidence Balanced modes
+    if mode == "turbo" or (mode == "balanced" and top_dist < 0.35) or is_exact:
+        out["relevant_documents"] = [documents[0]] if is_exact else list(documents)
+
+    return out
 
 
 # ==============================================================================
-# Node 2: Grade Documents (Binary Relevance Classifier)
+# Node 2: Grade Documents (Single-Call Batch Relevance Classifier)
 # ==============================================================================
 class GradeResult(BaseModel):
     """Pydantic schema enforcing a strict binary score from the LLM."""
@@ -39,49 +71,73 @@ class GradeResult(BaseModel):
     )
 
 
+class BatchGradeResult(BaseModel):
+    """Pydantic schema enforcing binary relevance scores for all retrieved chunks in a single LLM call."""
+
+    binary_scores: list[Literal["yes", "no"]] = Field(
+        description="List of 'yes' or 'no' relevance scores corresponding 1-to-1 with each numbered excerpt."
+    )
+
+
 def grade_documents(state: AgentState) -> dict:
-    """Evaluate each chunk to filter out irrelevant context."""
+    """Evaluate all retrieved chunks in a single batch LLM call to filter out irrelevant context."""
     question = state["question"]
     documents = state.get("documents", [])
+    if not documents:
+        return {"relevant_documents": []}
+
+    mode = state.get("mode", "balanced")
+    top_dist = float(state.get("top_distance") or 1.0)
+    is_exact = bool(state.get("is_exact_match"))
+
+    # Fast-path bypass for turbo mode, high-confidence balanced retrieval, or exact quote match
+    if mode == "turbo" or (mode == "balanced" and top_dist < 0.35) or is_exact:
+        return {"relevant_documents": [documents[0]] if is_exact else list(documents)}
 
     llm = _get_chat_llm(temperature=0.0)
-    # Guarantee structured output parsed into GradeResult
-    structured_grader = llm.with_structured_output(GradeResult)
+    structured_grader = llm.with_structured_output(BatchGradeResult)
 
     grader_prompt = ChatPromptTemplate.from_messages(
         [
             (
                 "system",
-                "You are a strict relevance grader assessing whether a podcast transcript excerpt "
-                "is relevant to the user question. Return 'yes' if the excerpt contains information "
-                "that helps answer the question, or 'no' if it is irrelevant.",
+                "You are a strict relevance grader assessing whether podcast transcript excerpts "
+                "are relevant to the user question. For each numbered excerpt (1 to {count}), return "
+                "'yes' in binary_scores if the excerpt contains information that helps answer the question, "
+                "or 'no' if it is irrelevant. Return exactly {count} scores in order.",
             ),
             (
                 "human",
-                "User Question:\n{question}\n\nTranscript Excerpt:\n{context}",
+                "User Question:\n{question}\n\nTranscript Excerpts:\n{context}",
             ),
         ]
     )
 
     grader_chain = grader_prompt | structured_grader
+    numbered_excerpts = "\n\n".join(f"[Excerpt {i + 1}]\n{doc.page_content}" for i, doc in enumerate(documents))
 
     relevant_docs: list[Document] = []
-    for doc in documents:
-        try:
-            res = grader_chain.invoke({"question": question, "context": doc.page_content})
-            score = ""
-            if isinstance(res, GradeResult):
-                score = res.binary_score
-            elif isinstance(res, dict):
-                score = res.get("binary_score", "")
-            elif hasattr(res, "binary_score"):
-                score = getattr(res, "binary_score", "")
+    try:
+        res = grader_chain.invoke({"question": question, "count": len(documents), "context": numbered_excerpts})
+        scores: list[str] = []
+        if isinstance(res, BatchGradeResult):
+            scores = list(res.binary_scores)
+        elif isinstance(res, dict):
+            raw = res.get("binary_scores")
+            if isinstance(raw, list):
+                scores = [str(s) for s in raw]
+            elif "binary_score" in res:
+                scores = [str(res["binary_score"])] * len(documents)
+        elif hasattr(res, "binary_scores"):
+            scores = [str(s) for s in getattr(res, "binary_scores", [])]
 
-            if score.lower() == "yes":
+        for i, doc in enumerate(documents):
+            verdict = scores[i].lower() if i < len(scores) else "no"
+            if verdict == "yes":
                 relevant_docs.append(doc)
-        except Exception:
-            # Defensive fallback: if API call hiccups, preserve chunk so recall is not lost
-            relevant_docs.append(doc)
+    except Exception:
+        # Defensive fallback: if API call hiccups, preserve chunks so recall is not lost
+        relevant_docs = list(documents)
 
     return {"relevant_documents": relevant_docs}
 
@@ -117,7 +173,7 @@ def rewrite_query(state: AgentState) -> dict:
 
 
 # ==============================================================================
-# Node 4: Generate (Final Answer with Citations)
+# Node 4: Generate (Final Answer with Citations & Pinpoint Quote Formatting)
 # ==============================================================================
 def generate(state: AgentState) -> dict:
     """Synthesize final answer grounded strictly in verified chunks with citations."""
@@ -127,7 +183,8 @@ def generate(state: AgentState) -> dict:
     # If even after retries we have zero relevant chunks
     if not docs:
         return {
-            "generation": "I could not find any relevant information in the podcast transcripts to answer your question."
+            "generation": "I could not find any relevant information in the podcast transcripts to answer your question.",
+            "relevant_documents": [],
         }
 
     # Format each chunk with its timestamp for easy citation
@@ -140,6 +197,21 @@ def generate(state: AgentState) -> dict:
         formatted_context_blocks.append(f'[{title} | {speaker} @ {ts}]:\n"{doc.page_content}"')
     context_str = "\n\n".join(formatted_context_blocks)
 
+    is_exact = bool(state.get("is_exact_match"))
+    mode = state.get("mode", "balanced")
+
+    # Extra guidance for exact quote lookups or Turbo mode
+    pinpoint_rule = (
+        "\n4. The user is asking for an exact quote, timestamp, or specific statement. Quote the relevant sentence verbatim and provide the exact timestamp citation immediately without unnecessary preamble."
+        if is_exact
+        else ""
+    )
+    turbo_refusal_rule = (
+        "\n5. If the excerpts do not contain direct evidence to answer the question, reply ONLY with: 'I could not find any relevant information in the podcast transcripts to answer your question.'"
+        if mode == "turbo"
+        else ""
+    )
+
     llm = _get_chat_llm(temperature=0.1)
 
     prompt = ChatPromptTemplate.from_messages(
@@ -151,7 +223,7 @@ def generate(state: AgentState) -> dict:
                 "RULES:\n"
                 "1. Ground all claims strictly in the excerpts.\n"
                 "2. Cite the exact timestamp and episode title for your points (e.g. `[00:57:54]`).\n"
-                "3. If the excerpts do not contain the answer, state that honestly.\n\n"
+                f"3. If the excerpts do not contain the answer, state that honestly.{pinpoint_rule}{turbo_refusal_rule}\n\n"
                 "Excerpts:\n{context}",
             ),
             ("human", "{question}"),
@@ -161,4 +233,11 @@ def generate(state: AgentState) -> dict:
     chain = prompt | llm
     reply = chain.invoke({"question": question, "context": context_str})
     answer = str(getattr(reply, "text", getattr(reply, "content", reply))).strip()
-    return {"generation": answer}
+
+    is_refusal = (
+        "could not find any relevant information" in answer.lower()
+        or "cannot find any relevant information" in answer.lower()
+        or "no relevant information" in answer.lower()
+        or "not mentioned in the" in answer.lower()
+    )
+    return {"generation": answer, "relevant_documents": [] if is_refusal else docs}

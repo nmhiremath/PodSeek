@@ -1,10 +1,12 @@
 """State definition for the Corrective RAG LangGraph agent."""
 
+from typing import Literal, Required
+
 from langchain_core.documents import Document
 from typing_extensions import TypedDict
 
 
-class AgentState(TypedDict):
+class AgentState(TypedDict, total=False):
     """The central state of our podcast RAG agent.
 
     Each node in LangGraph receives this state dictionary and
@@ -12,7 +14,7 @@ class AgentState(TypedDict):
     """
 
     # The active question (original or rewritten)
-    question: str
+    question: Required[str]
 
     # Raw chunks retrieved from ChromaDB
     documents: list[Document]
@@ -25,3 +27,15 @@ class AgentState(TypedDict):
 
     # Final answer generated with timestamp citations
     generation: str
+
+    # Performance / execution mode: 'turbo', 'balanced', or 'rigorous'
+    mode: Literal["turbo", "balanced", "rigorous"]
+
+    # Cosine distance of the top retrieved chunk from vector search
+    top_distance: float
+
+    # Whether an exact substring/quote match was detected
+    is_exact_match: bool
+
+    # Execution latency in milliseconds
+    latency_ms: float

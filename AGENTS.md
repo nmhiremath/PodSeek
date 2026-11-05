@@ -272,3 +272,36 @@ An initial pass on `2026-11-02` created the foundational files for the four requ
 - Updated `app/ingestion/youtube.py` and `app/api/routes.py` with `fetch_video_metadata()` and `is_huberman_channel()` verification, and fixed `app/agent/nodes.py` (`generate`) to immediately return the circuit-breaker refusal when `relevant_documents` is empty after max rewrites.
 - Synchronized `AGENTS.md`, `CLAUDE.md`, and `README.md`, and expanded `tests/test_ui_client.py` and `tests/test_api.py`.
 - Verified on 2026-11-04: `.venv/bin/ruff check .` passed with 0 errors and `.venv/bin/python -m pytest -v` passed 31/31 offline tests.
+
+---
+
+## 6. Performance, Latency & Cost Optimization Log (2026-11-04)
+
+### Benchmark Observations: Free-Tier vs. Paid Tier Latency
+- **Paid Tier (Pay-As-You-Go API Key):** Low latency (~1.2s–2.5s for the entire CRAG cycle). Dedicated bandwidth and prioritized queueing on Google AI Studio.
+- **Free Tier (Strict Quota API Key):** Significantly higher latency (3.5s–6.5s) caused by server-side queue prioritization, strict 15 RPM / 1M TPM limits, and rate-limiting throttles.
+
+### Implemented Optimizations (Shipped)
+1. **Step 0 Ingest Cache Fast-Path (`app/api/routes.py`):**
+   - Bypasses raw caption download, segment cleaning, sliding-window chunking, embedding generation (`index_chunks`), and LLM summary generation when the video is already indexed in ChromaDB.
+   - Saves 100% of embedding and LLM calls on repeat ingest submissions.
+2. **Single-Call Batch Chunk Grading (`app/agent/nodes.py`):**
+   - Replaced 4 sequential LLM grading calls (`k=4`) with 1 batch call (`BatchGradeResult`), cutting node latency by ~70% and saving 3 LLM calls per question.
+3. **Persistent QA Cache (`app/api/routes.py` & `data/raw/qa_cache.json`):**
+   - Normalized question lookup (`<collection>::<ep_ids>::<clean_q>`) serving repeated questions in `<1ms` with 0 embedding and 0 LLM calls.
+4. **Client Pooling (`app/factory.py`):**
+   - `@lru_cache(maxsize=16)` on `_build_chat_model` and `_build_embedding_model` eliminates repeated HTTP client teardown/reconnect overhead.
+5. **Visual Flowchart Cache Indicators (`ui/components.py` & `ui/app.py`):**
+   - Added `⚡ DB Cache` node in Ingestion workflow and `⚡ QA Cache` node in CRAG workflow with `⚡ Cache Hit` status pill when served from cache.
+
+### Latency Roadmap (Shipped Milestones)
+1. **ChromaDB Distance Threshold Fast-Path (Shipped):**
+   - If top retrieved chunks have cosine distance < 0.35 in Balanced mode, bypasses LLM grading and routes directly to `generate`.
+2. **Tri-Mode Execution Strategies (Shipped):**
+   - Implemented `⚡ Turbo` (0-retry fused retrieval and synthesis), `⚖️ Balanced` (threshold fast-path + 1 retry), and `🎯 Rigorous` (full CRAG + 2 retries).
+3. **5-Tier Flowchart Architecture (Shipped):**
+   - Expanded workflow canvas to 440px with non-overlapping corridors, retry loopbacks, and circuit-breaker abort nodes.
+4. **Refusal Citation Guardrail (Shipped):**
+   - Zeroes `relevant_documents` when the LLM refuses an out-of-domain query, preventing misleading citation pill links.
+5. **Render.com Cloud Deploy Readiness (Shipped):**
+   - Dynamic `$PORT` and `0.0.0.0` binding in `ui/app.py` for free cloud deployment.

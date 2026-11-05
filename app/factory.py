@@ -1,5 +1,6 @@
 import os
 import re
+from functools import lru_cache
 
 from langchain_core.embeddings import Embeddings
 from langchain_core.language_models.chat_models import BaseChatModel
@@ -22,13 +23,8 @@ def get_collection_name() -> str:
     return f"podcast_chunks_{clean_name}"
 
 
-def get_chat_model(temperature: float | None = None) -> BaseChatModel:
-    """Instantiate a chat model based on LLM_PROVIDER and CHAT_MODEL environment variables."""
-    provider = os.getenv("LLM_PROVIDER", DEFAULT_LLM_PROVIDER).lower()
-    model = os.getenv("CHAT_MODEL", DEFAULT_CHAT_MODEL)
-    if temperature is None:
-        temperature = float(os.getenv("TEMPERATURE", str(DEFAULT_TEMPERATURE)))
-
+@lru_cache(maxsize=16)
+def _build_chat_model(provider: str, model: str, temperature: float) -> BaseChatModel:
     if provider in ("google", "google_genai", "gemini"):
         from langchain_google_genai import ChatGoogleGenerativeAI
 
@@ -64,11 +60,17 @@ def get_chat_model(temperature: float | None = None) -> BaseChatModel:
         )
 
 
-def get_embedding_model() -> Embeddings:
-    """Instantiate an embedding model based on EMBEDDING_PROVIDER and EMBEDDING_MODEL env vars."""
-    provider = os.getenv("EMBEDDING_PROVIDER", os.getenv("LLM_PROVIDER", DEFAULT_EMBEDDING_PROVIDER)).lower()
-    model = os.getenv("EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL)
+def get_chat_model(temperature: float | None = None) -> BaseChatModel:
+    """Instantiate or reuse a cached chat model based on LLM_PROVIDER and CHAT_MODEL env vars."""
+    provider = os.getenv("LLM_PROVIDER", DEFAULT_LLM_PROVIDER).lower()
+    model = os.getenv("CHAT_MODEL", DEFAULT_CHAT_MODEL)
+    if temperature is None:
+        temperature = float(os.getenv("TEMPERATURE", str(DEFAULT_TEMPERATURE)))
+    return _build_chat_model(provider, model, float(temperature))
 
+
+@lru_cache(maxsize=8)
+def _build_embedding_model(provider: str, model: str) -> Embeddings:
     if provider in ("google", "google_genai", "gemini"):
         from langchain_google_genai import GoogleGenerativeAIEmbeddings
 
@@ -87,3 +89,10 @@ def get_embedding_model() -> Embeddings:
             f"Unsupported EMBEDDING_PROVIDER: '{provider}'. "
             "Supported embedding providers: google_genai, openai, ollama."
         )
+
+
+def get_embedding_model() -> Embeddings:
+    """Instantiate or reuse a cached embedding model based on EMBEDDING_PROVIDER and EMBEDDING_MODEL."""
+    provider = os.getenv("EMBEDDING_PROVIDER", os.getenv("LLM_PROVIDER", DEFAULT_EMBEDDING_PROVIDER)).lower()
+    model = os.getenv("EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL)
+    return _build_embedding_model(provider, model)

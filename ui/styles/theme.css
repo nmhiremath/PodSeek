@@ -11,7 +11,6 @@
 :root,
 html,
 body,
-body.dark,
 gradio-app,
 .gradio-container {
   --bg-canvas: #F8F9FA;
@@ -62,6 +61,11 @@ gradio-app,
   --button-secondary-text-color: var(--text-main) !important;
 }
 
+html.dark,
+body.dark,
+.dark,
+html.ap-dark,
+:root.ap-dark,
 body.ap-dark,
 .gradio-container.ap-dark,
 .ap-dark {
@@ -94,9 +98,14 @@ body.ap-dark,
   --sun-opacity: 0.45;
   --moon-color: #FBBF24;
   --moon-opacity: 1;
+
+  --body-background-fill: #111113 !important;
+  --background-fill-primary: #18181B !important;
+  --background-fill-secondary: #202024 !important;
 }
 
-/* --- Responsive Full-Bleed Shell (Eliminates Black Right-Side Margin) --- */
+
+/* --- Responsive Full-Bleed Shell (Zero White Bars on Ultra-Wide Monitors) --- */
 html,
 body,
 gradio-app {
@@ -663,6 +672,17 @@ a.gai-pill:hover {
   border: 1px solid var(--border-hairline) !important;
   border-radius: 12px !important;
   padding: 12px !important;
+  height: 505px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+}
+
+.ap-episodes-list {
+  flex: 1 1 auto !important;
+  max-height: calc(100vh - 370px) !important;
+  min-height: 180px !important;
+  overflow-y: auto !important;
 }
 
 @keyframes traceFullPerimeter {
@@ -770,6 +790,87 @@ a.gai-pill:hover {
   stroke: #EF4444;
   stroke-width: 1.85;
   fill: none;
+}
+
+/* --- Full-Width Equidistant 3-Slot Mode Slider (Exact Studio/Nerds Slider Aesthetics) --- */
+.ap-mode-bar {
+  display: block !important;
+  width: 100% !important;
+  margin: 6px 0 8px !important;
+}
+
+button#ap-mode-slider,
+.ap-mode-slider {
+  position: relative !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  height: 34px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 9999px !important;
+  background-color: var(--slider-track-bg) !important;
+  border: 1px solid var(--slider-track-border) !important;
+  box-shadow: var(--slider-track-shadow) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+/* Sliding Thumb matching #ap-view-slider .vs-thumb */
+button#ap-mode-slider .ms-thumb {
+  position: absolute !important;
+  top: 2px !important;
+  left: 2px !important;
+  width: calc((100% - 4px) / 3) !important;
+  height: 28px !important;
+  border-radius: 9999px !important;
+  background-color: var(--slider-thumb-bg) !important;
+  box-shadow: var(--slider-thumb-shadow) !important;
+  transform: translateX(100%) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              background-color 0.2s ease !important;
+}
+
+/* 3 Positions of the Thumb */
+button#ap-mode-slider.is-turbo .ms-thumb {
+  transform: translateX(0%) !important;
+}
+button#ap-mode-slider.is-balanced .ms-thumb {
+  transform: translateX(100%) !important;
+}
+button#ap-mode-slider.is-rigorous .ms-thumb {
+  transform: translateX(200%) !important;
+}
+
+/* Equidistant 1/3 Width Slots */
+button#ap-mode-slider .ms-slot {
+  flex: 1 1 0% !important;
+  width: 33.333% !important;
+  height: 100% !important;
+  z-index: 2 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  color: var(--text-muted) !important;
+  opacity: 0.72 !important;
+  transition: color 0.18s ease, opacity 0.18s ease, font-weight 0.18s ease !important;
+}
+
+/* Active Slot Typography matching .vs-studio / .vs-nerds */
+button#ap-mode-slider.is-turbo .slot-turbo,
+button#ap-mode-slider.is-balanced .slot-balanced,
+button#ap-mode-slider.is-rigorous .slot-rigorous {
+  color: var(--text-main) !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
 }
 
 @media (max-width: 1024px) {

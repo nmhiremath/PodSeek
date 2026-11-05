@@ -55,9 +55,9 @@ class AskPodcastClient(Protocol):
 
     def ingest(self, video_url_or_id: str, show: str, speaker: str) -> dict: ...
 
-    def ask(self, question: str) -> dict: ...
+    def ask(self, question: str, mode: str = "balanced") -> dict: ...
 
-    def ask_stream(self, question: str) -> Iterator[dict]: ...
+    def ask_stream(self, question: str, mode: str = "balanced") -> Iterator[dict]: ...
 
 
 PodSeekClient = AskPodcastClient
@@ -90,15 +90,17 @@ class RemoteClient:
             _raise_clean_api_error(response)
             return response.json()
 
-    def ask(self, question: str) -> dict:
+    def ask(self, question: str, mode: str = "balanced") -> dict:
         with httpx.Client(timeout=120.0) as client:
-            response = client.post(f"{self.base_url}/ask", json={"question": question})
+            response = client.post(f"{self.base_url}/ask", json={"question": question, "mode": mode})
             _raise_clean_api_error(response)
             return response.json()
 
-    def ask_stream(self, question: str) -> Iterator[dict]:
+    def ask_stream(self, question: str, mode: str = "balanced") -> Iterator[dict]:
         with httpx.Client(timeout=120.0) as client:
-            with client.stream("POST", f"{self.base_url}/ask/stream", json={"question": question}) as response:
+            with client.stream(
+                "POST", f"{self.base_url}/ask/stream", json={"question": question, "mode": mode}
+            ) as response:
                 _raise_clean_api_error(response)
                 for line in response.iter_lines():
                     event = parse_sse_chunk(line)
@@ -133,17 +135,22 @@ class InProcessClient:
         except HTTPException as exc:
             raise ValueError(str(exc.detail)) from exc
 
-    def ask(self, question: str) -> dict:
+    def ask(self, question: str, mode: str = "balanced") -> dict:
+        from typing import Literal
+
         from app.api.routes import ask_question
         from app.schemas import AskRequest
 
-        result = ask_question(AskRequest(question=question))
+        mode_val = cast(
+            Literal["turbo", "balanced", "rigorous"], mode if mode in {"turbo", "balanced", "rigorous"} else "balanced"
+        )
+        result = ask_question(AskRequest(question=question, mode=mode_val))
         return result.model_dump()
 
-    def ask_stream(self, question: str) -> Iterator[dict]:
+    def ask_stream(self, question: str, mode: str = "balanced") -> Iterator[dict]:
         from app.api.routes import iter_agent_events
 
-        yield from iter_agent_events(question)
+        yield from iter_agent_events(question, mode=mode)
 
 
 def make_client() -> RemoteClient | InProcessClient:

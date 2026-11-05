@@ -5,14 +5,21 @@ and stylesheets live in `ui/styles/theme.css`.
 """
 
 import os
+import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 from typing import Any
 
-import gradio as gr  # pyright: ignore[reportMissingImports]
+# Ensure repository root is on sys.path for `gradio ui/app.py` hot-reloading
+_REPO_ROOT = str(Path(__file__).resolve().parent.parent)
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
 
-from ui.client import AskPodcastClient, make_client
-from ui.components import (
+import gradio as gr  # noqa: E402 # pyright: ignore[reportMissingImports]
+
+from ui.client import AskPodcastClient, make_client  # noqa: E402
+from ui.components import (  # noqa: E402
     format_citations,
     format_event,
     load_theme_css,
@@ -21,6 +28,7 @@ from ui.components import (
     render_header_brand_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
+    render_mode_slider_html,
     render_sse_log_html,
     render_stats_for_nerds_html,
     render_workflow_graph_html,
@@ -51,7 +59,46 @@ DEMO_CITATIONS = [
 ]
 
 _INIT_UI_JS = """() => {
+    window.podSeekSelectMode = (modeVal) => {
+        const btn = document.getElementById('ap-mode-slider');
+        if (btn) {
+            btn.classList.remove('is-turbo', 'is-balanced', 'is-rigorous');
+            if (modeVal.includes('Turbo')) btn.classList.add('is-turbo');
+            else if (modeVal.includes('Rigorous')) btn.classList.add('is-rigorous');
+            else btn.classList.add('is-balanced');
+        }
+        const labels = document.querySelectorAll('#ap-mode-radio label');
+        for (const lbl of labels) {
+            if (lbl.textContent.includes(modeVal) ||
+                (modeVal.includes('Turbo') && lbl.textContent.includes('Turbo')) ||
+                (modeVal.includes('Balanced') && lbl.textContent.includes('Balanced')) ||
+                (modeVal.includes('Rigorous') && lbl.textContent.includes('Rigorous'))) {
+                lbl.click();
+                break;
+            }
+        }
+    };
     const setupPodSeekUI = () => {
+        const isDark = document.documentElement.classList.contains('ap-dark') ||
+                       document.body.classList.contains('ap-dark') ||
+                       document.body.classList.contains('dark');
+        if (isDark) {
+            document.documentElement.classList.add('ap-dark', 'dark');
+            document.body.classList.add('ap-dark', 'dark');
+            document.querySelector('.gradio-container')?.classList.add('ap-dark');
+        }
+        const bg = isDark ? '#111113' : '#F8F9FA';
+        document.documentElement.style.setProperty('background-color', bg, 'important');
+        document.body.style.setProperty('background-color', bg, 'important');
+        const gApp = document.querySelector('gradio-app');
+        if (gApp) gApp.style.setProperty('background-color', bg, 'important');
+
+        const epList = document.querySelector('.ap-episodes-list');
+        if (epList) {
+            epList.style.setProperty('min-height', '0px', 'important');
+            epList.style.setProperty('max-height', 'calc(100vh - 370px)', 'important');
+        }
+
         const ingestTa = document.querySelector('#ap-ingest-input textarea, #ap-ingest-input input');
         if (ingestTa && !ingestTa.dataset.psBound) {
             ingestTa.dataset.psBound = '1';
@@ -187,17 +234,26 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 payload = future.result()
                 title = str(payload.get("episode_title") or "Huberman Lab Episode")
                 chunks_n = int(payload.get("chunks_indexed", 0))
+                status_val = str(payload.get("status") or "success")
+                is_cached = status_val == "cached"
                 updated_eps = load_episodes_html()
-                ingest_logs.append((f"✓ [ingest] Indexed {chunks_n} chunks · {title}", "var(--done-stroke)"))
+                if is_cached:
+                    ingest_logs.append(
+                        (f"⚡ [cache] Already in library ({chunks_n} chunks) · 0 API calls", "var(--done-stroke)")
+                    )
+                    banner_title = f"⚡ Already in library ({chunks_n} chunks)"
+                else:
+                    ingest_logs.append((f"✓ [ingest] Indexed {chunks_n} chunks · {title}", "var(--done-stroke)"))
+                    banner_title = f"Absorbed {chunks_n} chunks"
 
                 yield (
-                    render_ingest_status_html("success", f"Absorbed {chunks_n} chunks", title),
+                    render_ingest_status_html("success", banner_title, title),
                     updated_eps,
-                    render_ingest_workflow_graph_html(active_step="done", chunks_indexed=chunks_n),
+                    render_ingest_workflow_graph_html(active_step="done", chunks_indexed=chunks_n, cached=is_cached),
                     render_sse_log_html(ingest_logs, endpoint="POST /ingest"),
                     "",
                 )
-                time.sleep(3.5)
+                time.sleep(3.2)
                 yield (
                     "",
                     updated_eps,
@@ -232,14 +288,28 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     "",
                 )
 
-    def on_ask(question: str, history: list[dict]):
+    def on_mode_change(mode_label: str):
+        mode_val = (
+            "turbo"
+            if "turbo" in (mode_label or "").lower()
+            else ("rigorous" if "rigorous" in (mode_label or "").lower() else "balanced")
+        )
+        logs = [(f"⚡ Switched execution mode to {mode_label}", "var(--accent)")]
+        return render_workflow_graph_html(mode=mode_val), render_sse_log_html(logs), render_mode_slider_html(mode_val)
+
+    def on_ask(question: str, history: list[dict], mode_label: str = "⚖️ Balanced"):
         cleaned = question.strip()
         current_history = list(history or [])
+        mode_val = (
+            "turbo"
+            if "turbo" in (mode_label or "").lower()
+            else ("rigorous" if "rigorous" in (mode_label or "").lower() else "balanced")
+        )
         if len(cleaned) < 3:
             yield (
                 render_chat_session_html(current_history),
                 current_history,
-                render_workflow_graph_html(),
+                render_workflow_graph_html(mode=mode_val),
                 render_sse_log_html([("Enter a question of at least 3 characters.", "var(--retry-stroke)")]),
                 question,
                 gr.update(visible=(len(current_history) == 0)),
@@ -251,8 +321,10 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
         relevant = 0
         rewrites = 0
         aborted = False
+        is_cached = False
         answer = ""
         citations: list[dict] = []
+        top_dist: float | None = None
 
         # Clear input immediately and hide sample questions once first question is asked
         yield (
@@ -260,20 +332,28 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 current_history + [{"question": cleaned, "answer": "Distilling transcripts...", "citations": []}]
             ),
             current_history,
-            render_workflow_graph_html(active_node="retrieve"),
+            render_workflow_graph_html(active_node="retrieve", mode=mode_val),
             render_sse_log_html(logs),
             "",
             gr.update(visible=False),
         )
 
         try:
-            for event in client.ask_stream(cleaned):
+            for event in client.ask_stream(cleaned, mode=mode_val):
                 node = str(event.get("node", ""))
                 rewrites = max(rewrites, int(event.get("rewrites") or 0))
+                if "top_distance" in event and event["top_distance"] is not None:
+                    top_dist = float(event["top_distance"])
+
                 if node == "retrieve":
                     chunks = int(event.get("chunks_retrieved", 0))
-                    logs.append((f"→ [retrieve] Fetched {chunks} chunks from ChromaDB", "var(--accent)"))
-                    next_active = "grade_documents"
+                    dist_info = f" (dist={top_dist:.2f})" if top_dist is not None else ""
+                    logs.append((f"→ [retrieve] Fetched {chunks} chunks from ChromaDB{dist_info}", "var(--accent)"))
+                    next_active = (
+                        "generate"
+                        if mode_val == "turbo" or (mode_val == "balanced" and top_dist is not None and top_dist < 0.35)
+                        else "grade_documents"
+                    )
                 elif node == "grade_documents":
                     relevant = int(event.get("relevant_chunks", 0))
                     if event.get("citations"):
@@ -297,10 +377,21 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     next_active = "retrieve"
                 elif node == "generate":
                     answer = str(event.get("generation", ""))
+                    if not citations and event.get("citations"):
+                        citations = list(event["citations"])
                     if aborted or (relevant == 0 and rewrites >= 2):
                         aborted = True
                         logs.append(("✕ [abort] Returned circuit-breaker refusal response", "#EF4444"))
                         next_active = "abort"
+                    elif event.get("cached"):
+                        is_cached = True
+                        logs.append(
+                            (
+                                f"⚡ [cache] Served cached answer with {len(citations)} citations (0 LLM calls)",
+                                "var(--done-stroke)",
+                            )
+                        )
+                        next_active = "done"
                     else:
                         logs.append(
                             (f"✓ [generate] Distilled answer with {len(citations)} citations", "var(--text-main)")
@@ -322,6 +413,9 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                         rewrites=rewrites,
                         done=(next_active in {"done", "abort"}),
                         aborted=aborted,
+                        cached=is_cached,
+                        mode=mode_val,
+                        top_distance=top_dist,
                     ),
                     render_sse_log_html(logs),
                     "",
@@ -335,7 +429,9 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 yield (
                     render_chat_session_html(updated),
                     updated,
-                    render_workflow_graph_html(active_node="done", chunks=4, relevant=1, rewrites=0, done=True),
+                    render_workflow_graph_html(
+                        active_node="done", chunks=4, relevant=1, rewrites=0, done=True, mode=mode_val
+                    ),
                     render_sse_log_html(logs),
                     "",
                     gr.update(visible=False),
@@ -345,7 +441,9 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             yield (
                 render_chat_session_html(current_history),
                 current_history,
-                render_workflow_graph_html(active_node="idle", chunks=chunks, relevant=relevant, rewrites=rewrites),
+                render_workflow_graph_html(
+                    active_node="idle", chunks=chunks, relevant=relevant, rewrites=rewrites, mode=mode_val
+                ),
                 render_sse_log_html(logs),
                 "",
                 gr.update(visible=(len(current_history) == 0)),
@@ -354,10 +452,12 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
 
         if not answer:
             try:
-                payload = client.ask(cleaned)
+                payload = client.ask(cleaned, mode=mode_val)
                 answer = str(payload.get("answer", ""))
                 citations = list(payload.get("citations") or [])
                 rewrites = int(payload.get("rewrites_attempted", rewrites))
+                if payload.get("top_distance") is not None:
+                    top_dist = float(payload["top_distance"])
             except Exception as exc:
                 if _demo_fallback_enabled():
                     answer = DEMO_ANSWER
@@ -376,6 +476,9 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 rewrites=rewrites,
                 done=True,
                 aborted=aborted,
+                cached=is_cached,
+                mode=mode_val,
+                top_distance=top_dist,
             ),
             render_sse_log_html(logs),
             "",
@@ -402,8 +505,19 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 '<span class="vs-slot vs-nerds">🤓 Stats for Nerds</span>'
                 "</button>"
                 '<button id="ap-theme-slider" type="button" title="Toggle Light / Dark theme" '
-                "onclick=\"document.body.classList.toggle('ap-dark');"
-                "document.querySelector('.gradio-container')?.classList.toggle('ap-dark');\">"
+                'onclick="(() => {'
+                "const isDark = !document.documentElement.classList.contains('ap-dark');"
+                "document.documentElement.classList.toggle('ap-dark', isDark);"
+                "document.documentElement.classList.toggle('dark', isDark);"
+                "document.body.classList.toggle('ap-dark', isDark);"
+                "document.body.classList.toggle('dark', isDark);"
+                "document.querySelector('.gradio-container')?.classList.toggle('ap-dark', isDark);"
+                "const bg = isDark ? '#111113' : '#F8F9FA';"
+                "document.documentElement.style.setProperty('background-color', bg, 'important');"
+                "document.body.style.setProperty('background-color', bg, 'important');"
+                "const gApp = document.querySelector('gradio-app');"
+                "if (gApp) gApp.style.setProperty('background-color', bg, 'important');"
+                '})()">'
                 '<span class="ts-thumb"></span>'
                 '<span class="ts-icon ts-sun">'
                 '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" '
@@ -468,6 +582,17 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     preset_2 = gr.Button(PRESET_QUESTIONS[1], size="sm", elem_classes=["ap-preset-pill"])
                     preset_3 = gr.Button(PRESET_QUESTIONS[2], size="sm", elem_classes=["ap-preset-pill"])
 
+                with gr.Row(elem_classes=["ap-mode-bar"]):
+                    mode_slider_html = gr.HTML(render_mode_slider_html("balanced"))
+                    mode_radio = gr.Radio(
+                        choices=["⚡ Turbo", "⚖️ Balanced", "🎯 Rigorous"],
+                        value="⚖️ Balanced",
+                        show_label=False,
+                        container=False,
+                        elem_id="ap-mode-radio",
+                        elem_classes=["ap-view-hidden"],
+                    )
+
                 with gr.Row(elem_classes=["ap-distill-capsule"]):
                     question_input = gr.Textbox(
                         label="",
@@ -489,7 +614,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
 
             # ENTITY 3 (Right 4 cols): Cyclic Workflow Graph + Color-Coded SSE Stream
             with gr.Column(scale=4):
-                graph_html = gr.HTML(render_workflow_graph_html())
+                graph_html = gr.HTML(render_workflow_graph_html(mode="balanced"))
                 sse_html = gr.HTML(render_sse_log_html([]))
 
         # PAGE 2: Stats for Nerds View
@@ -497,7 +622,17 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             with gr.Column(scale=12):
                 gr.HTML(render_stats_for_nerds_html())
 
-        demo.load(load_episodes_html, outputs=episodes_html, show_progress="hidden", js=_INIT_UI_JS)
+        def load_initial_view() -> tuple[str, str]:
+            return load_episodes_html(), render_workflow_graph_html(mode="balanced")
+
+        demo.load(load_initial_view, outputs=[episodes_html, graph_html], show_progress="hidden", js=_INIT_UI_JS)
+        mode_radio.change(
+            on_mode_change,
+            inputs=[mode_radio],
+            outputs=[graph_html, sse_html, mode_slider_html],
+            show_progress="hidden",
+        )
+
         ingest_outputs = [ingest_status, episodes_html, graph_html, sse_html, video_input]
         ingest_btn.click(
             on_ingest,
@@ -515,13 +650,13 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
         ask_outputs = [chat_html, chat_state, graph_html, sse_html, question_input, presets_row]
         ask_btn.click(
             on_ask,
-            inputs=[question_input, chat_state],
+            inputs=[question_input, chat_state, mode_radio],
             outputs=ask_outputs,
             show_progress="hidden",
         )
         question_input.submit(
             on_ask,
-            inputs=[question_input, chat_state],
+            inputs=[question_input, chat_state, mode_radio],
             outputs=ask_outputs,
             show_progress="hidden",
         )
@@ -529,19 +664,19 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
 
         preset_1.click(lambda: PRESET_QUESTIONS[0], outputs=question_input, show_progress="hidden").then(
             on_ask,
-            inputs=[question_input, chat_state],
+            inputs=[question_input, chat_state, mode_radio],
             outputs=ask_outputs,
             show_progress="hidden",
         )
         preset_2.click(lambda: PRESET_QUESTIONS[1], outputs=question_input, show_progress="hidden").then(
             on_ask,
-            inputs=[question_input, chat_state],
+            inputs=[question_input, chat_state, mode_radio],
             outputs=ask_outputs,
             show_progress="hidden",
         )
         preset_3.click(lambda: PRESET_QUESTIONS[2], outputs=question_input, show_progress="hidden").then(
             on_ask,
-            inputs=[question_input, chat_state],
+            inputs=[question_input, chat_state, mode_radio],
             outputs=ask_outputs,
             show_progress="hidden",
         )
@@ -550,4 +685,5 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
 
 
 if __name__ == "__main__":
-    build_demo().launch()
+    port = int(os.environ.get("PORT", "7860"))
+    build_demo().launch(server_name="0.0.0.0", server_port=port)
