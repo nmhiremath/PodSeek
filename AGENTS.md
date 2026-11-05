@@ -305,3 +305,7 @@ An initial pass on `2026-11-02` created the foundational files for the four requ
    - Zeroes `relevant_documents` when the LLM refuses an out-of-domain query, preventing misleading citation pill links.
 5. **Render.com Cloud Deploy Readiness (Shipped):**
    - Dynamic `$PORT` and `0.0.0.0` binding in `ui/app.py` for free cloud deployment.
+6. **Pre-Seeded Library & Datacenter IP Block Guardrail (Shipped):**
+   - Un-ignored `data/raw/huberman_lab/` to commit 10 pre-downloaded episodes and persistent `qa_cache.json` directly into Git so cloud hosts (Render/Hugging Face) run without hitting YouTube IP blocks. Added clean HTTP 429 response handling in `app/api/routes.py`.
+7. **Viewport-Responsive Layout & Episode Separation (Shipped):**
+   - Dynamically clamped chat empty state (`clamp(100px, calc(100vh - 580px), 240px)`), active chat thread, and SSE log height to guarantee all columns fit in `100vh` on laptop displays without window scroll. Added `margin-bottom: 8px` and rounded corners to indexed episode tiles. Removed stats slider from header.

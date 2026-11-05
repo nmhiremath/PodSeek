@@ -356,7 +356,31 @@ def ingest_episode(request: IngestRequest) -> IngestResponse:
                         f"Only Huberman Lab episodes can be ingested (detected channel: {author_name or 'Unknown'})."
                     ),
                 )
-            captions = fetch_raw_captions(video_id)
+            try:
+                captions = fetch_raw_captions(video_id)
+            except Exception as exc:
+                err_str = str(exc)
+                if any(
+                    marker in err_str
+                    for marker in (
+                        "blocking requests from your IP",
+                        "RequestBlocked",
+                        "IpBlocked",
+                        "Could not retrieve",
+                    )
+                ):
+                    raise HTTPException(
+                        status_code=429,
+                        detail=(
+                            "YouTube is blocking requests from cloud datacenter IPs. "
+                            "Please query from the pre-indexed episode library, "
+                            "or download transcripts locally using `python -m scripts.fetch_episode <id>`."
+                        ),
+                    ) from exc
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Could not retrieve transcript from YouTube: {err_str[:160]}",
+                ) from exc
             payload = {
                 "show": request.show,
                 "episode_id": video_id,

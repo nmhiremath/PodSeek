@@ -485,7 +485,7 @@ def render_episodes_html(items: list[dict]) -> str:
         thumb = f"https://i.ytimg.com/vi/{ep_id}/hqdefault.jpg"
         cards.append(
             f'<a href="{url}" target="_blank" rel="noopener noreferrer" class="ap-subtle" '
-            f'style="display:flex;align-items:center;gap:10px;padding:9px 10px;text-decoration:none;">'
+            f'style="display:flex;align-items:center;gap:10px;padding:9px 10px;text-decoration:none;margin-bottom:8px;border-radius:10px;">'
             f'<img src="{thumb}" alt="" '
             f'style="width:48px;height:32px;object-fit:cover;border-radius:6px;flex-shrink:0;background:#18181B;" />'
             f'<div style="min-width:0;flex:1;">'
@@ -495,15 +495,21 @@ def render_episodes_html(items: list[dict]) -> str:
             f'<div class="ap-muted" style="font-size:11px;margin-top:2px;">Huberman Lab</div>'
             f"</div></a>"
         )
-    return '<div class="ap-episodes-list modern-scroll">' + "".join(cards) + "</div>"
+    return (
+        '<div class="ap-episodes-list modern-scroll" '
+        'style="max-height:clamp(160px, calc(100vh - 360px), 480px);overflow-y:auto;padding-right:4px;">'
+        + "".join(cards)
+        + "</div>"
+    )
 
 
 def render_chat_session_html(history: list[dict]) -> str:
     """Render the ephemeral session chat thread with rendered Markdown and Google AI Overview inline pills."""
     if not history:
         return (
-            '<div class="modern-scroll" style="height:360px;display:flex;align-items:center;justify-content:center;">'
-            '<div class="ap-muted" style="font-size:12.5px;text-align:center;">'
+            '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll ap-chat-empty" '
+            'style="height:clamp(100px, calc(100vh - 580px), 240px);display:flex;align-items:center;justify-content:center;">'
+            '<div class="ap-muted" style="font-size:12.5px;text-align:center;padding:0 20px;">'
             "Ask a question below or click a preset question to distill insights from Huberman Lab transcripts."
             "</div></div>"
         )
@@ -522,7 +528,8 @@ def render_chat_session_html(history: list[dict]) -> str:
             f"{rendered_answer}</div>"
         )
     return (
-        '<div id="ap-chat-scroll" class="modern-scroll" style="height:375px;overflow-y:auto;padding-right:4px;">'
+        '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll" '
+        'style="height:clamp(160px, calc(100vh - 480px), 380px);overflow-y:auto;padding-right:4px;">'
         + "".join(turns)
         + "</div>"
     )
@@ -1318,7 +1325,7 @@ def render_sse_log_html(logs: list[tuple[str, str]], endpoint: str = "POST /ask/
         <span style="font-family:sans-serif;font-weight:600;">SSE Event Stream</span>
         <span class="ap-muted">{safe_ep}</span>
       </div>
-      <div id="ap-sse-scroll" class="modern-scroll" style="height:110px;overflow-y:auto;padding-right:4px;display:flex;flex-direction:column;gap:4px;">
+      <div id="ap-sse-scroll" class="modern-scroll" style="height:clamp(65px, calc(100vh - 630px), 95px);overflow-y:auto;padding-right:4px;display:flex;flex-direction:column;gap:4px;">
         {lines_html}
       </div>
     </div>

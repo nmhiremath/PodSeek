@@ -496,14 +496,6 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             gr.HTML(render_header_brand_html(), elem_classes=["ap-header-brand"])
             gr.HTML(
                 '<div class="ap-slider-wrap">'
-                '<button id="ap-view-slider" type="button" title="Toggle Studio / Stats for Nerds" '
-                "onclick=\"this.classList.toggle('is-nerds');"
-                "document.getElementById('ap-studio-view')?.classList.toggle('ap-view-hidden');"
-                "document.getElementById('ap-nerds-view')?.classList.toggle('ap-view-hidden');\">"
-                '<span class="vs-thumb"></span>'
-                '<span class="vs-slot vs-studio">💬 Studio</span>'
-                '<span class="vs-slot vs-nerds">🤓 Stats for Nerds</span>'
-                "</button>"
                 '<button id="ap-theme-slider" type="button" title="Toggle Light / Dark theme" '
                 'onclick="(() => {'
                 "const isDark = !document.documentElement.classList.contains('ap-dark');"

@@ -4,7 +4,6 @@ __pycache__/
 *.pyc
 .pytest_cache/
 chroma_db/
-data/raw/
 .DS_Store
 .vscode/*
 !.vscode/settings.json

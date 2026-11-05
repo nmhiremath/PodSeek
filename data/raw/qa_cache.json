@@ -1,0 +1,1164 @@
+{
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::what causes a dopamine crash and how do i prevent it": {
+    "answer": "Based on the provided excerpts, here is what causes a drop or crash in dopamine and how to prevent it:\n\n### What Causes a Dopamine Crash (Drop Below Baseline)\n* **Big Spikes in Dopamine:** Any large peak in dopamine caused by an activity or substance naturally results in a substantial drop below your baseline afterward (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[00:56:10]`, `[01:04:33]`). Acute substances like cocaine and amphetamine cause severe drops in baseline dopamine following their big spikes `[01:03:39]`.\n* **Frequent Dopamine Spikes:** Spiking dopamine through many different activities throughout the week progressively and subtly lowers your baseline. Once it drops past a certain threshold, what used to work stops working, and you can no longer derive pleasure from things `[01:03:39]`.\n* **Layering Dopamine Sources & Regular Stimulant Use:** \"Layering in\" multiple sources of dopamine drops your baseline `[01:19:31]`. Using stimulants\u2014such as energy drinks or pre-workout formulas containing dopamine precursors\u2014causes a substantial release of dopamine on its own, which over time depletes dopamine and reduces motivation `[01:19:31]`.\n\n---\n\n### How to Prevent It\n* **Understand the Peaks and Baseline Relationship:** Understanding how dopamine peaks and baselines influence one another allows you to manage dopamine schedules and make choices to maintain or even elevate your baseline level `[00:56:10]`, `[01:04:33]`.\n* **Avoid Layering Dopamine Sources:** Do not pile multiple sources of dopamine on top of each other `[01:19:31]`.\n* **Do Not Use Stimulants Every Time:** Avoid taking stimulants every time you study, work out, or do an activity that you wish to continue enjoying and staying motivated to do `[01:19:31]`.\n* **Caffeine as an Exception:** Caffeine is an exception to the stimulant warning because it upregulates D2 and D3 dopamine receptors, making the dopamine released by an activity more accessible and functional in your brain and body rather than simply depleting it `[01:19:31]`.",
+    "citations": [
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:04:33",
+        "start_seconds": 3873.41,
+        "url": "https://youtu.be/QmOF0crdyRU?t=3873"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:03:39",
+        "start_seconds": 3819.31,
+        "url": "https://youtu.be/QmOF0crdyRU?t=3819"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:56:10",
+        "start_seconds": 3370.04,
+        "url": "https://youtu.be/QmOF0crdyRU?t=3370"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:19:31",
+        "start_seconds": 4771.61,
+        "url": "https://youtu.be/QmOF0crdyRU?t=4771"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 4,
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "chunks_retrieved": 4
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 4,
+        "citations": [
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:04:33",
+            "start_seconds": 3873.41,
+            "url": "https://youtu.be/QmOF0crdyRU?t=3873"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:03:39",
+            "start_seconds": 3819.31,
+            "url": "https://youtu.be/QmOF0crdyRU?t=3819"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:56:10",
+            "start_seconds": 3370.04,
+            "url": "https://youtu.be/QmOF0crdyRU?t=3370"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:19:31",
+            "start_seconds": 4771.61,
+            "url": "https://youtu.be/QmOF0crdyRU?t=4771"
+          }
+        ]
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, here is what causes a drop or crash in dopamine and how to prevent it:\n\n### What Causes a Dopamine Crash (Drop Below Baseline)\n* **Big Spikes in Dopamine:** Any large peak in dopamine caused by an activity or substance naturally results in a substantial drop below your baseline afterward (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[00:56:10]`, `[01:04:33]`). Acute substances like cocaine and amphetamine cause severe drops in baseline dopamine following their big spikes `[01:03:39]`.\n* **Frequent Dopamine Spikes:** Spiking dopamine through many different activities throughout the week progressively and subtly lowers your baseline. Once it drops past a certain threshold, what used to work stops working, and you can no longer derive pleasure from things `[01:03:39]`.\n* **Layering Dopamine Sources & Regular Stimulant Use:** \"Layering in\" multiple sources of dopamine drops your baseline `[01:19:31]`. Using stimulants\u2014such as energy drinks or pre-workout formulas containing dopamine precursors\u2014causes a substantial release of dopamine on its own, which over time depletes dopamine and reduces motivation `[01:19:31]`.\n\n---\n\n### How to Prevent It\n* **Understand the Peaks and Baseline Relationship:** Understanding how dopamine peaks and baselines influence one another allows you to manage dopamine schedules and make choices to maintain or even elevate your baseline level `[00:56:10]`, `[01:04:33]`.\n* **Avoid Layering Dopamine Sources:** Do not pile multiple sources of dopamine on top of each other `[01:19:31]`.\n* **Do Not Use Stimulants Every Time:** Avoid taking stimulants every time you study, work out, or do an activity that you wish to continue enjoying and staying motivated to do `[01:19:31]`.\n* **Caffeine as an Exception:** Caffeine is an exception to the stimulant warning because it upregulates D2 and D3 dopamine receptors, making the dopamine released by an activity more accessible and functional in your brain and body rather than simply depleting it `[01:19:31]`."
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::how does deliberate cold exposure affect dopamine levels": {
+    "answer": "Based on the provided excerpts, deliberate cold exposure affects dopamine levels in the following ways:\n\n* **Substantial Increase:** Dopamine levels rise significantly, eventually reaching **250% above baseline** (or 2.5 times above baseline), an increase comparable to that of cocaine (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[00:02:52]`, `[01:32:34]`).\n* **Gradual Onset:** Unlike epinephrine and adrenaline, which spike immediately, dopamine levels begin to rise somewhat slowly, kicking in roughly 10 to 15 minutes after submersion in cold water (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[00:02:52]`, `[01:32:34]`).\n* **Sustained Duration (No Crash):** Rather than causing a sharp spike and crash, cold water exposure creates a sustained release of dopamine that persists after getting out of the water, taking up to three hours to return to baseline (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[00:02:52]`, `[01:32:34]`). \n* **State of Mind:** This sustained increase helps maintain or raise baseline dopamine levels and is associated with an alert yet calm state of mind, improved sense of well-being, and enhanced mental clarity (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[00:02:52]`, `[01:28:45]`, `[01:32:34]`).",
+    "citations": [
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:28:45",
+        "start_seconds": 5325.55,
+        "url": "https://youtu.be/QmOF0crdyRU?t=5325"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:02:52",
+        "start_seconds": 172.16,
+        "url": "https://youtu.be/QmOF0crdyRU?t=172"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:32:34",
+        "start_seconds": 5554.17,
+        "url": "https://youtu.be/QmOF0crdyRU?t=5554"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:29:43",
+        "start_seconds": 5383.24,
+        "url": "https://youtu.be/QmOF0crdyRU?t=5383"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 4,
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "chunks_retrieved": 4
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 4,
+        "citations": [
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:28:45",
+            "start_seconds": 5325.55,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5325"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:02:52",
+            "start_seconds": 172.16,
+            "url": "https://youtu.be/QmOF0crdyRU?t=172"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:32:34",
+            "start_seconds": 5554.17,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5554"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:29:43",
+            "start_seconds": 5383.24,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5383"
+          }
+        ]
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, deliberate cold exposure affects dopamine levels in the following ways:\n\n* **Substantial Increase:** Dopamine levels rise significantly, eventually reaching **250% above baseline** (or 2.5 times above baseline), an increase comparable to that of cocaine (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[00:02:52]`, `[01:32:34]`).\n* **Gradual Onset:** Unlike epinephrine and adrenaline, which spike immediately, dopamine levels begin to rise somewhat slowly, kicking in roughly 10 to 15 minutes after submersion in cold water (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[00:02:52]`, `[01:32:34]`).\n* **Sustained Duration (No Crash):** Rather than causing a sharp spike and crash, cold water exposure creates a sustained release of dopamine that persists after getting out of the water, taking up to three hours to return to baseline (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[00:02:52]`, `[01:32:34]`). \n* **State of Mind:** This sustained increase helps maintain or raise baseline dopamine levels and is associated with an alert yet calm state of mind, improved sense of well-being, and enhanced mental clarity (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[00:02:52]`, `[01:28:45]`, `[01:32:34]`)."
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::turbo::what causes a dopamine crash and how do i prevent it": {
+    "answer": "Based on the provided excerpts, here is what causes a dopamine drop/crash and how to prevent it:\n\n### What Causes a Dopamine Crash or Drop\n* **Big Spikes in Dopamine:** After any peak in dopamine, there is a substantial drop below your baseline level [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 00:56:10]. Substances that cause large increases, such as cocaine and amphetamines, lead to very severe drops in the baseline [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:03:39].\n* **Spiking Dopamine Too Frequently:** Spiking dopamine across too many activities throughout the week causes the baseline to progressively drop. This can happen in subtle, imperceptible ways until you reach a low threshold where you no longer feel pleasure from things that used to work [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:03:39].\n* **Layering Dopamine Sources and Stimulants:** Layering multiple sources of dopamine together drops your baseline [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31]. In particular, taking stimulants, pre-workouts, or energy drinks that contain dopamine precursors causes substantial dopamine release on their own and will deplete dopamine over time [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31].\n\n---\n\n### How to Prevent It\n* **Understand the Relationship Between Peaks and Baselines:** The key is to understand how peaks influence your baseline so you can make choices in the short and long term to maintain (or even raise) your baseline while still experiencing peaks of motivation and desire [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:04:33].\n* **Avoid Layering Dopamine Sources and Stimulants:** Do not use stimulants every time you work out, study, or engage in an activity you want to continue to enjoy and stay motivated for [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31].\n* **Caffeine as an Exception:** Caffeine is noted as an exception to the stimulant caution because it upregulates D2 and D3 receptors, making the dopamine released by an activity more accessible and functional [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31].",
+    "citations": [],
+    "rewrites": 0,
+    "relevant_chunks": 0,
+    "top_distance": 0.5076,
+    "mode": "turbo",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.5076,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "turbo"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, here is what causes a dopamine drop/crash and how to prevent it:\n\n### What Causes a Dopamine Crash or Drop\n* **Big Spikes in Dopamine:** After any peak in dopamine, there is a substantial drop below your baseline level [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 00:56:10]. Substances that cause large increases, such as cocaine and amphetamines, lead to very severe drops in the baseline [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:03:39].\n* **Spiking Dopamine Too Frequently:** Spiking dopamine across too many activities throughout the week causes the baseline to progressively drop. This can happen in subtle, imperceptible ways until you reach a low threshold where you no longer feel pleasure from things that used to work [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:03:39].\n* **Layering Dopamine Sources and Stimulants:** Layering multiple sources of dopamine together drops your baseline [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31]. In particular, taking stimulants, pre-workouts, or energy drinks that contain dopamine precursors causes substantial dopamine release on their own and will deplete dopamine over time [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31].\n\n---\n\n### How to Prevent It\n* **Understand the Relationship Between Peaks and Baselines:** The key is to understand how peaks influence your baseline so you can make choices in the short and long term to maintain (or even raise) your baseline while still experiencing peaks of motivation and desire [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:04:33].\n* **Avoid Layering Dopamine Sources and Stimulants:** Do not use stimulants every time you work out, study, or engage in an activity you want to continue to enjoy and stay motivated for [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31].\n* **Caffeine as an Exception:** Caffeine is noted as an exception to the stimulant caution because it upregulates D2 and D3 receptors, making the dopamine released by an activity more accessible and functional [Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31].",
+        "mode": "turbo"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::balanced::what causes a dopamine crash and how do i prevent it": {
+    "answer": "Based on the provided transcripts, here is what causes a dopamine crash (a drop below your dopamine baseline) and how to prevent it:\n\n### What Causes a Dopamine Crash\n* **A natural drop follows any peak:** Even in people without an addiction, any peak in dopamine is followed by a substantial drop below baseline (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [00:56:10]).\n* **Spiking dopamine frequently:** Spiking dopamine through many different activities throughout the week causes the baseline to progressively drop in subtle ways (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:03:39]). Large spikes from substances (like cocaine or amphetamines) cause very severe drops in the baseline (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:03:39], [01:04:33]).\n* **Layering dopamine sources:** Layering multiple sources of dopamine together (such as taking stimulants, energy drinks, or pre-workout supplements containing dopamine precursors every time you work out or study) causes substantial dopamine release that will deplete dopamine and drop your baseline over time (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:19:31]).\n\n---\n\n### How to Prevent It\n* **Understand the peak-to-baseline relationship:** Understanding how peaks and baselines influence one another allows you to make better choices in the short and long run to protect and maintain a healthy baseline (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:04:33]).\n* **Use dopamine schedules:** Utilizing \"dopamine schedules\" to balance peaks and baselines helps keep baseline dopamine at a healthy, appropriate level (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [00:56:10]).\n* **Avoid layering stimulants with activities:** Avoid using stimulants every time you work out, study, or engage in an activity you want to remain motivated for and continue enjoying (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:19:31]).\n* **Stick to caffeine instead of dopamine-precursor stimulants:** Caffeine is an exception because it upregulates D2 and D3 dopamine receptors, making the dopamine already released by the activity more functional and accessible, rather than depleting dopamine the way pre-workouts and energy drinks with dopamine precursors do (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:19:31]).",
+    "citations": [
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:04:33",
+        "start_seconds": 3873.41,
+        "url": "https://youtu.be/QmOF0crdyRU?t=3873"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:03:39",
+        "start_seconds": 3819.31,
+        "url": "https://youtu.be/QmOF0crdyRU?t=3819"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:56:10",
+        "start_seconds": 3370.04,
+        "url": "https://youtu.be/QmOF0crdyRU?t=3370"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:19:31",
+        "start_seconds": 4771.61,
+        "url": "https://youtu.be/QmOF0crdyRU?t=4771"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 4,
+    "top_distance": 0.5076,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.5076,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 4,
+        "citations": [
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:04:33",
+            "start_seconds": 3873.41,
+            "url": "https://youtu.be/QmOF0crdyRU?t=3873"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:03:39",
+            "start_seconds": 3819.31,
+            "url": "https://youtu.be/QmOF0crdyRU?t=3819"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:56:10",
+            "start_seconds": 3370.04,
+            "url": "https://youtu.be/QmOF0crdyRU?t=3370"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:19:31",
+            "start_seconds": 4771.61,
+            "url": "https://youtu.be/QmOF0crdyRU?t=4771"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided transcripts, here is what causes a dopamine crash (a drop below your dopamine baseline) and how to prevent it:\n\n### What Causes a Dopamine Crash\n* **A natural drop follows any peak:** Even in people without an addiction, any peak in dopamine is followed by a substantial drop below baseline (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [00:56:10]).\n* **Spiking dopamine frequently:** Spiking dopamine through many different activities throughout the week causes the baseline to progressively drop in subtle ways (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:03:39]). Large spikes from substances (like cocaine or amphetamines) cause very severe drops in the baseline (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:03:39], [01:04:33]).\n* **Layering dopamine sources:** Layering multiple sources of dopamine together (such as taking stimulants, energy drinks, or pre-workout supplements containing dopamine precursors every time you work out or study) causes substantial dopamine release that will deplete dopamine and drop your baseline over time (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:19:31]).\n\n---\n\n### How to Prevent It\n* **Understand the peak-to-baseline relationship:** Understanding how peaks and baselines influence one another allows you to make better choices in the short and long run to protect and maintain a healthy baseline (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:04:33]).\n* **Use dopamine schedules:** Utilizing \"dopamine schedules\" to balance peaks and baselines helps keep baseline dopamine at a healthy, appropriate level (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [00:56:10]).\n* **Avoid layering stimulants with activities:** Avoid using stimulants every time you work out, study, or engage in an activity you want to remain motivated for and continue enjoying (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:19:31]).\n* **Stick to caffeine instead of dopamine-precursor stimulants:** Caffeine is an exception because it upregulates D2 and D3 dopamine receptors, making the dopamine already released by the activity more functional and accessible, rather than depleting dopamine the way pre-workouts and energy drinks with dopamine precursors do (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* [01:19:31]).",
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::rigorous::what causes a dopamine crash and how do i prevent it": {
+    "answer": "Based on the provided excerpts, here is what causes a drop in dopamine and how to manage it:\n\n### What Causes a Dopamine Crash (Drop in Baseline)\n* **Peaks in Dopamine:** Any peak in dopamine is naturally followed by a substantial drop below baseline, which dictates whether or not you feel motivated to pursue other things ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 00:56:10]).\n* **Frequent Spikes:** Spiking your dopamine through multiple different activities throughout the week can cause your dopamine baseline to drop progressively and subtly ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:03:39]).\n* **High-Spike Substances/Addictions:** Engagement with acute substances (such as cocaine or amphetamines) or activities that cause very large spikes in dopamine leads to severe drops in baseline dopamine ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:03:39], [01:04:33]).\n* **Layering Dopamine Sources:** Combining or \"layering\" multiple sources of dopamine\u2014such as regularly taking stimulants, energy drinks, or pre-workouts containing dopamine precursors every time you study or work out\u2014causes a substantial release of dopamine that will deplete your dopamine over time and drop your baseline ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31]).\n\n---\n\n### How to Prevent It\n* **Avoid Layering Dopamine and Overusing Stimulants:** Avoid layering multiple dopamine sources together. Specifically, do not use stimulants every time you work out, study, or engage in an activity you want to continue enjoying and staying motivated for ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31]).\n  * *Note on Caffeine:* Caffeine is cited as an exception because it upregulates D2 and D3 dopamine receptors, making dopamine more functional, whereas energy drinks and pre-workouts containing dopamine precursors can deplete dopamine over time ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31]).\n* **Understand the Peak-to-Baseline Relationship:** Recognize how dopamine peaks and baselines influence one another. Managing this balance allows you to make short- and long-term choices that maintain or even raise your baseline while still enjoying elevated motivation and desire ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:04:33]).\n* **Use Dopamine Schedules:** Regulating dopamine involves working with dopamine schedules and managing how often and how intensely you trigger peaks relative to your baseline ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 00:56:10]). \n\n*(Note: The excerpt discussing specific steps to take after your baseline has already dropped from big peaks cuts off before detailing the full protocol [[01:04:33]].)*",
+    "citations": [
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:04:33",
+        "start_seconds": 3873.41,
+        "url": "https://youtu.be/QmOF0crdyRU?t=3873"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:03:39",
+        "start_seconds": 3819.31,
+        "url": "https://youtu.be/QmOF0crdyRU?t=3819"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:56:10",
+        "start_seconds": 3370.04,
+        "url": "https://youtu.be/QmOF0crdyRU?t=3370"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:19:31",
+        "start_seconds": 4771.61,
+        "url": "https://youtu.be/QmOF0crdyRU?t=4771"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 4,
+    "top_distance": 0.5076,
+    "mode": "rigorous",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.5076,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "rigorous"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 4,
+        "citations": [
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:04:33",
+            "start_seconds": 3873.41,
+            "url": "https://youtu.be/QmOF0crdyRU?t=3873"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:03:39",
+            "start_seconds": 3819.31,
+            "url": "https://youtu.be/QmOF0crdyRU?t=3819"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:56:10",
+            "start_seconds": 3370.04,
+            "url": "https://youtu.be/QmOF0crdyRU?t=3370"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:19:31",
+            "start_seconds": 4771.61,
+            "url": "https://youtu.be/QmOF0crdyRU?t=4771"
+          }
+        ],
+        "mode": "rigorous"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, here is what causes a drop in dopamine and how to manage it:\n\n### What Causes a Dopamine Crash (Drop in Baseline)\n* **Peaks in Dopamine:** Any peak in dopamine is naturally followed by a substantial drop below baseline, which dictates whether or not you feel motivated to pursue other things ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 00:56:10]).\n* **Frequent Spikes:** Spiking your dopamine through multiple different activities throughout the week can cause your dopamine baseline to drop progressively and subtly ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:03:39]).\n* **High-Spike Substances/Addictions:** Engagement with acute substances (such as cocaine or amphetamines) or activities that cause very large spikes in dopamine leads to severe drops in baseline dopamine ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:03:39], [01:04:33]).\n* **Layering Dopamine Sources:** Combining or \"layering\" multiple sources of dopamine\u2014such as regularly taking stimulants, energy drinks, or pre-workouts containing dopamine precursors every time you study or work out\u2014causes a substantial release of dopamine that will deplete your dopamine over time and drop your baseline ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31]).\n\n---\n\n### How to Prevent It\n* **Avoid Layering Dopamine and Overusing Stimulants:** Avoid layering multiple dopamine sources together. Specifically, do not use stimulants every time you work out, study, or engage in an activity you want to continue enjoying and staying motivated for ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31]).\n  * *Note on Caffeine:* Caffeine is cited as an exception because it upregulates D2 and D3 dopamine receptors, making dopamine more functional, whereas energy drinks and pre-workouts containing dopamine precursors can deplete dopamine over time ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:19:31]).\n* **Understand the Peak-to-Baseline Relationship:** Recognize how dopamine peaks and baselines influence one another. Managing this balance allows you to make short- and long-term choices that maintain or even raise your baseline while still enjoying elevated motivation and desire ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 01:04:33]).\n* **Use Dopamine Schedules:** Regulating dopamine involves working with dopamine schedules and managing how often and how intensely you trigger peaks relative to your baseline ([Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman @ 00:56:10]). \n\n*(Note: The excerpt discussing specific steps to take after your baseline has already dropped from big peaks cuts off before detailing the full protocol [[01:04:33]].)*",
+        "mode": "rigorous"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::balanced::how does deliberate cold exposure affect dopamine levels": {
+    "answer": "Based on the provided excerpts, deliberate cold exposure affects dopamine levels in the following ways:\n\n* **Significant, High Rise:** Dopamine levels increase significantly, rising to **250% (or 2.5 times) above baseline** [00:02:52], [01:32:34]. Huberman notes this level of increase is comparable to the dopamine increase seen from cocaine [01:32:34].\n* **Gradual Onset:** Unlike adrenaline and noradrenaline (epinephrine and norepinephrine), which spike immediately upon entering cold water, dopamine starts to rise somewhat slowly, kicking in around 10 to 15 minutes after submersion (submerged up to the neck) [00:02:52], [01:32:34].\n* **Sustained Increase Without a Crash:** Unlike many other high-dopamine triggers, cold exposure does not result in a sudden spike and crash. The dopamine increase is sustained after getting out of the water and takes a very long time\u2014**up to three hours**\u2014to return to baseline [00:02:52], [01:32:34].\n* **Mental State:** This sustained elevation explains many of the reported positive mental effects, contributing to an alert, calm state of mind, improved well-being, and enhanced mental clarity [00:02:52], [01:32:34].",
+    "citations": [
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:28:45",
+        "start_seconds": 5325.55,
+        "url": "https://youtu.be/QmOF0crdyRU?t=5325"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:02:52",
+        "start_seconds": 172.16,
+        "url": "https://youtu.be/QmOF0crdyRU?t=172"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:32:34",
+        "start_seconds": 5554.17,
+        "url": "https://youtu.be/QmOF0crdyRU?t=5554"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:29:43",
+        "start_seconds": 5383.24,
+        "url": "https://youtu.be/QmOF0crdyRU?t=5383"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 4,
+    "top_distance": 0.4017,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4017,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 4,
+        "citations": [
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:28:45",
+            "start_seconds": 5325.55,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5325"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:02:52",
+            "start_seconds": 172.16,
+            "url": "https://youtu.be/QmOF0crdyRU?t=172"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:32:34",
+            "start_seconds": 5554.17,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5554"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:29:43",
+            "start_seconds": 5383.24,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5383"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, deliberate cold exposure affects dopamine levels in the following ways:\n\n* **Significant, High Rise:** Dopamine levels increase significantly, rising to **250% (or 2.5 times) above baseline** [00:02:52], [01:32:34]. Huberman notes this level of increase is comparable to the dopamine increase seen from cocaine [01:32:34].\n* **Gradual Onset:** Unlike adrenaline and noradrenaline (epinephrine and norepinephrine), which spike immediately upon entering cold water, dopamine starts to rise somewhat slowly, kicking in around 10 to 15 minutes after submersion (submerged up to the neck) [00:02:52], [01:32:34].\n* **Sustained Increase Without a Crash:** Unlike many other high-dopamine triggers, cold exposure does not result in a sudden spike and crash. The dopamine increase is sustained after getting out of the water and takes a very long time\u2014**up to three hours**\u2014to return to baseline [00:02:52], [01:32:34].\n* **Mental State:** This sustained elevation explains many of the reported positive mental effects, contributing to an alert, calm state of mind, improved well-being, and enhanced mental clarity [00:02:52], [01:32:34].",
+        "citations": [
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:28:45",
+            "start_seconds": 5325.55,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5325"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:02:52",
+            "start_seconds": 172.16,
+            "url": "https://youtu.be/QmOF0crdyRU?t=172"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:32:34",
+            "start_seconds": 5554.17,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5554"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:29:43",
+            "start_seconds": 5383.24,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5383"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::turbo::what is the mind muscle connection": {
+    "answer": "Based on the podcast transcripts, the mind-muscle connection involves where your mind is focused during a movement, specifically focusing on and thinking about contracting the targeted muscle harder rather than just moving the weight ([01:10:46], [01:13:24]). \n\nFor example, Dr. Andy Galpin describes it as performing an exercise\u2014such as a bicep curl\u2014while watching the muscle and actively thinking about contracting it harder ([01:13:24]). Initial research indications suggest that applying this mind-muscle connection, even when performing the same repetitions at the exact same intensity, can result in greater muscle growth (hypertrophy) ([01:13:24]).",
+    "citations": [
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:10:46",
+        "start_seconds": 4246.8,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+      },
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:13:24",
+        "start_seconds": 4404.14,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=4404"
+      },
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:11:36",
+        "start_seconds": 4296.37,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=4296"
+      },
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:16:20",
+        "start_seconds": 4580.234,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=4580"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 0,
+    "top_distance": 0.4753,
+    "mode": "turbo",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4753,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:10:46",
+            "start_seconds": 4246.8,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:13:24",
+            "start_seconds": 4404.14,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4404"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:11:36",
+            "start_seconds": 4296.37,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4296"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:16:20",
+            "start_seconds": 4580.234,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4580"
+          }
+        ],
+        "mode": "turbo"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the podcast transcripts, the mind-muscle connection involves where your mind is focused during a movement, specifically focusing on and thinking about contracting the targeted muscle harder rather than just moving the weight ([01:10:46], [01:13:24]). \n\nFor example, Dr. Andy Galpin describes it as performing an exercise\u2014such as a bicep curl\u2014while watching the muscle and actively thinking about contracting it harder ([01:13:24]). Initial research indications suggest that applying this mind-muscle connection, even when performing the same repetitions at the exact same intensity, can result in greater muscle growth (hypertrophy) ([01:13:24]).",
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:10:46",
+            "start_seconds": 4246.8,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:13:24",
+            "start_seconds": 4404.14,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4404"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:11:36",
+            "start_seconds": 4296.37,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4296"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:16:20",
+            "start_seconds": 4580.234,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4580"
+          }
+        ],
+        "mode": "turbo"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::rigorous::what is the mind muscle connection": {
+    "answer": "Based on the excerpts, the **mind-muscle connection** refers to where your mental focus is directed during a movement\u2014specifically, actively focusing on and thinking about contracting the target muscle harder, rather than just trying to move the weight [01:10:46], [01:13:24]. \n\nKey details provided include:\n* **How it is practiced:** An example given is doing a bicep curl while looking at and watching the biceps and intentionally thinking about contracting it harder [01:13:24].\n* **Underlying biology:** It ties into upper motor neurons residing in the brain controlling the lower motor neurons that control muscle contraction [01:10:46].\n* **Effects on training:** Initial studies indicate that focusing on this connection during hypertrophy training can lead to more muscle growth compared to not using it, even when performing the same repetitions at the exact same intensity [01:13:24]. However, it is noted that these are initial findings and there is not yet a large depth of research supporting it [01:13:24].\n\n*(Source: Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance | Andrew Huberman [01:10:46], [01:13:24])*",
+    "citations": [
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:10:46",
+        "start_seconds": 4246.8,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+      },
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:13:24",
+        "start_seconds": 4404.14,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=4404"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 2,
+    "top_distance": 0.4753,
+    "mode": "rigorous",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4753,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "rigorous"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 2,
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:10:46",
+            "start_seconds": 4246.8,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:13:24",
+            "start_seconds": 4404.14,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4404"
+          }
+        ],
+        "mode": "rigorous"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the excerpts, the **mind-muscle connection** refers to where your mental focus is directed during a movement\u2014specifically, actively focusing on and thinking about contracting the target muscle harder, rather than just trying to move the weight [01:10:46], [01:13:24]. \n\nKey details provided include:\n* **How it is practiced:** An example given is doing a bicep curl while looking at and watching the biceps and intentionally thinking about contracting it harder [01:13:24].\n* **Underlying biology:** It ties into upper motor neurons residing in the brain controlling the lower motor neurons that control muscle contraction [01:10:46].\n* **Effects on training:** Initial studies indicate that focusing on this connection during hypertrophy training can lead to more muscle growth compared to not using it, even when performing the same repetitions at the exact same intensity [01:13:24]. However, it is noted that these are initial findings and there is not yet a large depth of research supporting it [01:13:24].\n\n*(Source: Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance | Andrew Huberman [01:10:46], [01:13:24])*",
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:10:46",
+            "start_seconds": 4246.8,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:13:24",
+            "start_seconds": 4404.14,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4404"
+          }
+        ],
+        "mode": "rigorous"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::turbo::ooga booga": {
+    "answer": "I could not find any relevant information in the podcast transcripts to answer your question.",
+    "citations": [
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:28:07",
+        "start_seconds": 5287.97,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=5287"
+      },
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:55:44",
+        "start_seconds": 6944.38,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=6944"
+      },
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Physical Endurance & Lose Fat | Huberman Lab Guest Series",
+        "episode_id": "oNkDA2F7CjM",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:37:10",
+        "start_seconds": 2230.24,
+        "url": "https://youtu.be/oNkDA2F7CjM?t=2230"
+      },
+      {
+        "episode_title": "Tools for Nutrition & Fitness | Dr. Layne Norton",
+        "episode_id": "CD0bRU1e1ZM",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:36:17",
+        "start_seconds": 5777.4,
+        "url": "https://youtu.be/CD0bRU1e1ZM?t=5777"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 0,
+    "top_distance": 0.8208,
+    "mode": "turbo",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.8208,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:28:07",
+            "start_seconds": 5287.97,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=5287"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:55:44",
+            "start_seconds": 6944.38,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=6944"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Physical Endurance & Lose Fat | Huberman Lab Guest Series",
+            "episode_id": "oNkDA2F7CjM",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:37:10",
+            "start_seconds": 2230.24,
+            "url": "https://youtu.be/oNkDA2F7CjM?t=2230"
+          },
+          {
+            "episode_title": "Tools for Nutrition & Fitness | Dr. Layne Norton",
+            "episode_id": "CD0bRU1e1ZM",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:36:17",
+            "start_seconds": 5777.4,
+            "url": "https://youtu.be/CD0bRU1e1ZM?t=5777"
+          }
+        ],
+        "mode": "turbo"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "I could not find any relevant information in the podcast transcripts to answer your question.",
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:28:07",
+            "start_seconds": 5287.97,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=5287"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:55:44",
+            "start_seconds": 6944.38,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=6944"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Physical Endurance & Lose Fat | Huberman Lab Guest Series",
+            "episode_id": "oNkDA2F7CjM",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:37:10",
+            "start_seconds": 2230.24,
+            "url": "https://youtu.be/oNkDA2F7CjM?t=2230"
+          },
+          {
+            "episode_title": "Tools for Nutrition & Fitness | Dr. Layne Norton",
+            "episode_id": "CD0bRU1e1ZM",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:36:17",
+            "start_seconds": 5777.4,
+            "url": "https://youtu.be/CD0bRU1e1ZM?t=5777"
+          }
+        ],
+        "mode": "turbo"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::turbo::joog joda": {
+    "answer": "I could not find any relevant information in the podcast transcripts to answer your question.",
+    "citations": [
+      {
+        "episode_title": "Dr. Andy Galpin: Optimal Nutrition & Supplementation for Fitness | Huberman Lab Guest Series",
+        "episode_id": "q37ARYnRDGc",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:41:23",
+        "start_seconds": 6083.0,
+        "url": "https://youtu.be/q37ARYnRDGc?t=6083"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:48:11",
+        "start_seconds": 2891.94,
+        "url": "https://youtu.be/QmOF0crdyRU?t=2891"
+      },
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:45:26",
+        "start_seconds": 6326.84,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=6326"
+      },
+      {
+        "episode_title": "Dr. Andy Galpin: Optimal Nutrition & Supplementation for Fitness | Huberman Lab Guest Series",
+        "episode_id": "q37ARYnRDGc",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:02:01",
+        "start_seconds": 7321.639,
+        "url": "https://youtu.be/q37ARYnRDGc?t=7321"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 0,
+    "top_distance": 1.0441,
+    "mode": "turbo",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 1.0441,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: Optimal Nutrition & Supplementation for Fitness | Huberman Lab Guest Series",
+            "episode_id": "q37ARYnRDGc",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:41:23",
+            "start_seconds": 6083.0,
+            "url": "https://youtu.be/q37ARYnRDGc?t=6083"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:48:11",
+            "start_seconds": 2891.94,
+            "url": "https://youtu.be/QmOF0crdyRU?t=2891"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:45:26",
+            "start_seconds": 6326.84,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=6326"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: Optimal Nutrition & Supplementation for Fitness | Huberman Lab Guest Series",
+            "episode_id": "q37ARYnRDGc",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:02:01",
+            "start_seconds": 7321.639,
+            "url": "https://youtu.be/q37ARYnRDGc?t=7321"
+          }
+        ],
+        "mode": "turbo"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "I could not find any relevant information in the podcast transcripts to answer your question.",
+        "citations": [],
+        "mode": "turbo"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::balanced::what is the mind muscle connection": {
+    "answer": "Based on the provided excerpts, the **mind-muscle connection** refers to directing your mental focus and attention toward the specific muscle being worked and actively thinking about contracting it harder during an exercise `[Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance | Andrew Huberman @ 01:10:46]`, `[01:13:24]`.\n\nKey details provided include:\n* **How it works in practice:** An example given is performing a bicep curl where you watch your bicep and consciously think about contracting it harder, rather than simply trying to move the weight `[01:13:24]`.\n* **Neurological link:** It connects to how upper motor neurons in the brain control lower motor neurons that control muscle fibers, shifting focus from merely moving an object to challenging the targeted muscle `[01:10:46]`.\n* **Impact on growth:** Initial indications from recent studies suggest that applying the mind-muscle connection can result in greater muscle growth (hypertrophy) compared to not using it, even when performing the exact same number of repetitions at the same intensity (though there is not yet a large depth of research) `[01:13:24]`.",
+    "citations": [
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:10:46",
+        "start_seconds": 4246.8,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+      },
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:13:24",
+        "start_seconds": 4404.14,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=4404"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 2,
+    "top_distance": 0.4753,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4753,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 2,
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:10:46",
+            "start_seconds": 4246.8,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:13:24",
+            "start_seconds": 4404.14,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4404"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, the **mind-muscle connection** refers to directing your mental focus and attention toward the specific muscle being worked and actively thinking about contracting it harder during an exercise `[Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance | Andrew Huberman @ 01:10:46]`, `[01:13:24]`.\n\nKey details provided include:\n* **How it works in practice:** An example given is performing a bicep curl where you watch your bicep and consciously think about contracting it harder, rather than simply trying to move the weight `[01:13:24]`.\n* **Neurological link:** It connects to how upper motor neurons in the brain control lower motor neurons that control muscle fibers, shifting focus from merely moving an object to challenging the targeted muscle `[01:10:46]`.\n* **Impact on growth:** Initial indications from recent studies suggest that applying the mind-muscle connection can result in greater muscle growth (hypertrophy) compared to not using it, even when performing the exact same number of repetitions at the same intensity (though there is not yet a large depth of research) `[01:13:24]`.",
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:10:46",
+            "start_seconds": 4246.8,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:13:24",
+            "start_seconds": 4404.14,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4404"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::C0DMdUqF73Q,CD0bRU1e1ZM,IAnhFUUCq6c,Ibj1k3IZTNU,K4Ze-Sp6aUE,QmOF0crdyRU,STAffeSFBVk,hFL6qRIJZ_Y,oNkDA2F7CjM,q37ARYnRDGc::turbo::how does deliberate cold exposure affect dopamine levels": {
+    "answer": "Based on the provided excerpts, deliberate cold exposure affects dopamine levels in the following ways:\n\n* **Substantial Increase:** Cold water exposure leads to a significant increase in dopamine, rising as high as 2.5 times (or 250%) above baseline levels\u2014an increase comparable to what is seen with substances like cocaine [[00:02:52], [01:32:34]].\n* **Gradual Onset:** Unlike the immediate spike in adrenaline and norepinephrine upon entering the cold water, the rise in dopamine begins somewhat slowly, kicking in around 10 to 15 minutes after submersion [[00:02:52], [01:32:34]].\n* **Sustained Duration (No Crash):** Rather than causing a sharp peak followed by a crash, cold exposure produces a sustained elevation in dopamine that continues after exiting the water, taking up to three hours to return down to baseline [[00:02:52], [01:32:34]]. \n* **Baseline Support:** It provides healthy, sustained increases in dopamine that can maintain or even increase baseline levels [[01:28:45]].",
+    "citations": [
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:28:45",
+        "start_seconds": 5325.55,
+        "url": "https://youtu.be/QmOF0crdyRU?t=5325"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:02:52",
+        "start_seconds": 172.16,
+        "url": "https://youtu.be/QmOF0crdyRU?t=172"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:32:34",
+        "start_seconds": 5554.17,
+        "url": "https://youtu.be/QmOF0crdyRU?t=5554"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:29:43",
+        "start_seconds": 5383.24,
+        "url": "https://youtu.be/QmOF0crdyRU?t=5383"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 0,
+    "top_distance": 0.4017,
+    "mode": "turbo",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4017,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "citations": [
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:28:45",
+            "start_seconds": 5325.55,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5325"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:02:52",
+            "start_seconds": 172.16,
+            "url": "https://youtu.be/QmOF0crdyRU?t=172"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:32:34",
+            "start_seconds": 5554.17,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5554"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:29:43",
+            "start_seconds": 5383.24,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5383"
+          }
+        ],
+        "mode": "turbo"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, deliberate cold exposure affects dopamine levels in the following ways:\n\n* **Substantial Increase:** Cold water exposure leads to a significant increase in dopamine, rising as high as 2.5 times (or 250%) above baseline levels\u2014an increase comparable to what is seen with substances like cocaine [[00:02:52], [01:32:34]].\n* **Gradual Onset:** Unlike the immediate spike in adrenaline and norepinephrine upon entering the cold water, the rise in dopamine begins somewhat slowly, kicking in around 10 to 15 minutes after submersion [[00:02:52], [01:32:34]].\n* **Sustained Duration (No Crash):** Rather than causing a sharp peak followed by a crash, cold exposure produces a sustained elevation in dopamine that continues after exiting the water, taking up to three hours to return down to baseline [[00:02:52], [01:32:34]]. \n* **Baseline Support:** It provides healthy, sustained increases in dopamine that can maintain or even increase baseline levels [[01:28:45]].",
+        "citations": [
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:28:45",
+            "start_seconds": 5325.55,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5325"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:02:52",
+            "start_seconds": 172.16,
+            "url": "https://youtu.be/QmOF0crdyRU?t=172"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:32:34",
+            "start_seconds": 5554.17,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5554"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:29:43",
+            "start_seconds": 5383.24,
+            "url": "https://youtu.be/QmOF0crdyRU?t=5383"
+          }
+        ],
+        "mode": "turbo"
+      }
+    ]
+  }
+}
