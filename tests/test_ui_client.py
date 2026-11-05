@@ -8,6 +8,7 @@ from ui.components import (
     render_episodes_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
+    render_mode_slider_html,
     render_workflow_graph_html,
 )
 
@@ -46,13 +47,34 @@ def test_theme_css_and_components_render_without_gradio():
     assert ".wf-node" in css
     assert "a.gai-pill" in css
 
-    graph = render_workflow_graph_html(active_node="rewrite_query", chunks=4, relevant=0, rewrites=1)
+    graph = render_workflow_graph_html(active_node="rewrite_query", chunks=4, relevant=0, rewrites=1, mode="rigorous")
     assert "is-retrying" in graph
     assert "Rewrites: 1 / 2" in graph
     assert "Retries &lt; 2?" in graph
 
+    balanced_graph = render_workflow_graph_html(active_node="generate", mode="balanced", top_distance=0.28)
+    assert "Workflow · Balanced RAG" in balanced_graph
+    assert "dist &lt; 0.35?" in balanced_graph
+    assert "Yes · Skip Grade" in balanced_graph
+    assert "dist: 0.28" in balanced_graph
+
+    turbo_graph = render_workflow_graph_html(active_node="generate", mode="turbo")
+    assert "⚡ Turbo" in turbo_graph
+    assert "Fused Bypass" in turbo_graph
+    assert "Bypassed" in turbo_graph
+
+    slider_turbo = render_mode_slider_html("turbo")
+    assert "is-turbo" in slider_turbo
+    assert "ms-thumb" in slider_turbo
+
+    slider_bal = render_mode_slider_html("balanced")
+    assert "is-balanced" in slider_bal
+
+    slider_rig = render_mode_slider_html("rigorous")
+    assert "is-rigorous" in slider_rig
+
     aborted_graph = render_workflow_graph_html(
-        active_node="abort", chunks=4, relevant=0, rewrites=2, done=True, aborted=True
+        active_node="abort", chunks=4, relevant=0, rewrites=2, done=True, aborted=True, mode="rigorous"
     )
     assert "is-aborted" in aborted_graph
     assert "Max retries (2/2)" in aborted_graph

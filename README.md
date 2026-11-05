@@ -188,19 +188,37 @@ The system abstracts model initialization via `app/factory.py`, making it provid
 
 ## Public UI (PodSeek Studio)
 
-The Gradio app (`ui/app.py`) is a 3-column Bento Studio client of the FastAPI backend:
-- **Left Column (`✦ Absorb`):** Unified command capsule for ingesting Huberman Lab episodes (verifying the YouTube channel via oEmbed), animated ingestion status, and an indexed episode library.
-- **Center Column (`Distill →`):** Ephemeral Session Chat rendering answers with **Google AI Overview inline stadium citation pills** (`<Episode Title> · <Timestamp>`), collapsible preset questions, and a multiline composer (`Enter` to Distill, `Shift + Enter` for newline).
-- **Right Column (Live Flowchart & SSE Stream):** Standard ISO flowchart with 4-sided perimeter trace animation, dual decision diamonds (`≥1 relevant?` and `Retries < 2?`), `🛑 Abort` circuit-breaker node, temporary **Episode Ingestion** workflow swap during `✦ Absorb`, and a color-coded `.modern-scroll` SSE Event Stream.
-- **Header Oval Sliders:** Right-aligned single-click oval toggle sliders for switching views (`💬 Studio <-> 🤓 Stats for Nerds`) and themes (`☀️ Light <-> 🌙 Dark`) in-place without moving your mouse.
+The Gradio app (`ui/app.py`) is a 3-column Bento Studio client of the FastAPI backend (or standalone in-process):
+- **Left Column (`✦ Absorb`):** Unified command capsule for ingesting Huberman Lab episodes (verifying the YouTube channel via oEmbed), animated ingestion status, and a scrollable indexed episode library (`max-height: calc(100vh - 370px)`).
+- **Center Column (`Distill →`):** Ephemeral Session Chat rendering answers with **Google AI Overview inline stadium citation pills** (`<Episode Title> · <Timestamp>`), collapsible preset questions, an equidistant **3-Slot Mode Slider** (`⚡ Turbo` · `⚖️ Balanced` · `🎯 Rigorous`), and a multiline composer (`Enter` to Distill, `Shift + Enter` for newline).
+- **Right Column (Live Flowchart & SSE Stream):** 5-tier standard ISO flowchart with 4-sided perimeter trace animations, dual decision diamonds (`≥1 relevant?` and `Retries < N?`), `🛑 Abort` circuit-breaker node, retry loopbacks, temporary **Episode Ingestion** workflow swap during `✦ Absorb`, and a color-coded `.modern-scroll` SSE Event Stream.
+- **Header Oval Sliders:** Right-aligned single-click oval toggle sliders for switching views (`💬 Studio <-> 🤓 Stats for Nerds`) and themes (`☀️ Light <-> 🌙 Dark`) in-place without moving your mouse. Default theme is cleanly Light mode.
 
-```bash
-pip install -r requirements-ui.txt
-# API must already be running, from Docker or uvicorn
-python -m ui.app
-```
+### Tri-Mode Execution Strategies
 
-`PODSEEK_API_URL` (or `ASKPODCAST_API_URL`) defaults to `http://localhost:8000`. Set `PODSEEK_UI_MODE=inprocess` to call the graph inside the UI process instead of over HTTP. Set `PODSEEK_DEMO_FALLBACK=true` to show a cached example response when the API cannot be reached.
+| Mode | Topology & Workflow | Rewrites | Best For |
+| :--- | :--- | :---: | :--- |
+| **⚡ Turbo** | 1-call fused retrieval and synthesis; grading & rewrites bypassed | 0 | Sub-2s rapid lookups, fact verification, and cost minimization |
+| **⚖️ Balanced** | Fast-path distance check (`dist < 0.35` skips grade), fallback grading, single retry | 1 | General exploration with high precision and low latency |
+| **🎯 Rigorous** | Full Corrective RAG: all chunks graded, dual decision diamonds, circuit breaker | 2 | Complex synthesis, multi-part questions, and dense technical topics |
+
+---
+
+## ☁️ Cloud Deployment (Render.com)
+
+PodSeek is configured for zero-friction cloud deployment on [Render.com](https://render.com) using its free native Python web service:
+
+1. Connect your GitHub repository to Render as a **Web Service**.
+2. Set configuration:
+   - **Runtime:** `Python 3`
+   - **Build Command:** `pip install -r requirements.txt -r requirements-ui.txt`
+   - **Start Command:** `python -m ui.app`
+3. Add Environment Variables:
+   - `GEMINI_API_KEY`: *(your Google AI Studio key)*
+   - `PODSEEK_UI_MODE`: `inprocess`
+   - `PORT`: Automatically provided by Render; `ui/app.py` binds to `0.0.0.0:$PORT` dynamically.
+
+---
 
 ## Tracing (LangSmith)
 

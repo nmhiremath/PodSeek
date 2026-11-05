@@ -1,5 +1,7 @@
 """API request and response schemas."""
 
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -18,6 +20,10 @@ class AskRequest(BaseModel):
     """Incoming user query payload."""
 
     question: str = Field(min_length=3, max_length=500, description="Question to ask the podcast archive.")
+    mode: Literal["turbo", "balanced", "rigorous"] = Field(
+        default="balanced",
+        description="Execution mode: 'turbo' (fused 1-call), 'balanced' (distance threshold fast-path), or 'rigorous' (full CRAG loop).",
+    )
 
 
 class AskResponse(BaseModel):
@@ -28,6 +34,9 @@ class AskResponse(BaseModel):
     citations: list[Citation] = Field(default_factory=list)
     rewrites_attempted: int = 0
     relevant_chunks_used: int = 0
+    mode: str = Field(default="balanced", description="Execution mode used ('turbo', 'balanced', 'rigorous').")
+    top_distance: float | None = Field(default=None, description="Cosine distance of top retrieved chunk if available.")
+    latency_ms: float | None = Field(default=None, description="Total execution latency in milliseconds.")
 
 
 class IngestRequest(BaseModel):

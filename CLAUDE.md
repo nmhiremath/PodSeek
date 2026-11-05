@@ -133,3 +133,13 @@ python -m ui.app
 # Offline eval (no API key)
 python -m scripts.evaluate
 ```
+
+---
+
+## 6. Recent Work & Change Log (2026-11-04)
+- **Tri-Mode Execution (`Turbo`, `Balanced`, `Rigorous`):** Added mode selection slider and dynamic routing in LangGraph and Gradio client.
+- **5-Tier Flowchart Architecture:** Expanded workflow SVG canvases to 440px with non-overlapping corridors, retry loopbacks, and circuit-breaker abort nodes.
+- **Refusal Guardrail:** Suppressed citation generation and links when `generate()` produces a refusal answer on out-of-domain input.
+- **Viewport Height & Theme Normalization:** Enforced internal scrolling for the episode list and default Light mode without OS dark mode overrides.
+- **Render.com Cloud Readiness:** Added dynamic `$PORT` and `0.0.0.0` binding in `ui/app.py` for free cloud deployment.
+- **Tests & Quality:** All 37 unit tests pass offline; `ruff check .` and `pyright` pass with 0 errors.

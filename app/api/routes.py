@@ -1,6 +1,8 @@
 """FastAPI route definitions for AskPodcast."""
 
 import json
+import re
+import time
 from collections.abc import AsyncGenerator
 from pathlib import Path
 from typing import Any, cast
@@ -13,7 +15,7 @@ from pydantic import BaseModel, Field
 
 from app.agent.graph import corrective_rag_agent
 from app.agent.state import AgentState
-from app.factory import get_chat_model
+from app.factory import get_chat_model, get_collection_name
 from app.ingestion import (
     captions_to_segments,
     chunk_segments,
@@ -31,7 +33,7 @@ from app.schemas import (
     IngestResponse,
     Show,
 )
-from app.vectorstore import index_chunks
+from app.vectorstore import get_vectorstore, index_chunks
 
 router = APIRouter()
 
@@ -109,14 +111,58 @@ def _build_citations(documents: list) -> list[Citation]:
     return citations
 
 
-def _initial_state(question: str) -> AgentState:
+def _initial_state(question: str, mode: str = "balanced") -> AgentState:
     return {
         "question": question,
         "documents": [],
         "relevant_documents": [],
         "rewrite_count": 0,
         "generation": "",
+        "mode": mode,  # type: ignore[typeddict-item]
+        "top_distance": 1.0,
+        "is_exact_match": False,
     }
+
+
+_QA_CACHE: dict[str, dict[str, Any]] = {}
+_QA_CACHE_LOADED = False
+_QA_CACHE_FILE = Path("data/raw/qa_cache.json")
+
+
+def _qa_cache_key(question: str, mode: str = "balanced") -> str:
+    """Build a normalized cache key scoped to the active collection, indexed episode set, and mode."""
+    norm_q = re.sub(r"[^a-z0-9]+", " ", question.strip().lower()).strip()
+    raw_dir = Path("data/raw")
+    ep_ids: list[str] = []
+    if raw_dir.exists():
+        ep_ids = sorted(p.stem for p in raw_dir.glob("*/*.json"))
+    return f"{get_collection_name()}::{','.join(ep_ids)}::{mode}::{norm_q}"
+
+
+def _get_cached_qa(question: str, mode: str = "balanced") -> dict[str, Any] | None:
+    """Return a cached QA entry if the normalized question was already answered for the current library and mode."""
+    global _QA_CACHE_LOADED
+    if not _QA_CACHE_LOADED:
+        _QA_CACHE_LOADED = True
+        if _QA_CACHE_FILE.exists():
+            try:
+                loaded = json.loads(_QA_CACHE_FILE.read_text())
+                if isinstance(loaded, dict):
+                    _QA_CACHE.update(loaded)
+            except Exception:
+                pass
+    return _QA_CACHE.get(_qa_cache_key(question, mode=mode))
+
+
+def _set_cached_qa(question: str, entry: dict[str, Any], mode: str = "balanced") -> None:
+    """Persist a verified QA entry to memory and disk cache."""
+    key = _qa_cache_key(question, mode=mode)
+    _QA_CACHE[key] = entry
+    try:
+        _QA_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        _QA_CACHE_FILE.write_text(json.dumps(_QA_CACHE, indent=2))
+    except Exception:
+        pass
 
 
 def _node_event(node_name: str, node_output: dict) -> dict:
@@ -125,8 +171,20 @@ def _node_event(node_name: str, node_output: dict) -> dict:
         "node": node_name,
         "rewrites": node_output.get("rewrite_count", 0),
     }
+    if "mode" in node_output:
+        event_data["mode"] = node_output["mode"]
+    if "top_distance" in node_output:
+        event_data["top_distance"] = node_output["top_distance"]
+    if "is_exact_match" in node_output:
+        event_data["is_exact_match"] = node_output["is_exact_match"]
     if node_name == "retrieve":
         event_data["chunks_retrieved"] = len(node_output.get("documents", []))
+        if "top_distance" in node_output:
+            event_data["top_distance"] = node_output["top_distance"]
+        if "relevant_documents" in node_output:
+            event_data["citations"] = [
+                citation.model_dump() for citation in _build_citations(node_output["relevant_documents"])
+            ]
     elif node_name == "grade_documents":
         relevant = node_output.get("relevant_documents", [])
         event_data["relevant_chunks"] = len(relevant)
@@ -135,14 +193,58 @@ def _node_event(node_name: str, node_output: dict) -> dict:
         event_data["rewritten_query"] = node_output.get("question", "")
     elif node_name == "generate":
         event_data["generation"] = node_output.get("generation", "")
+        if "relevant_documents" in node_output:
+            event_data["citations"] = [
+                citation.model_dump() for citation in _build_citations(node_output["relevant_documents"])
+            ]
     return event_data
 
 
-def iter_agent_events(question: str):
-    """Yield the same node payloads as POST /ask/stream, without the SSE framing."""
-    for event in corrective_rag_agent.stream(_initial_state(question), config=trace_config("/ask/stream")):
+def iter_agent_events(question: str, mode: str = "balanced"):
+    """Yield the same node payloads as POST /ask/stream, serving from QA cache when available."""
+    cached = _get_cached_qa(question, mode=mode)
+    if cached and isinstance(cached.get("events"), list):
+        for ev in cached["events"]:
+            yield {**ev, "cached": True, "mode": mode}
+        return
+
+    collected_events: list[dict[str, Any]] = []
+    last_relevant = 0
+    last_citations: list[dict[str, Any]] = []
+    last_rewrites = 0
+    last_answer = ""
+    top_distance: float | None = None
+
+    for event in corrective_rag_agent.stream(_initial_state(question, mode=mode), config=trace_config("/ask/stream")):
         for node_name, node_output in event.items():
-            yield _node_event(node_name, node_output)
+            shaped = _node_event(node_name, node_output)
+            shaped["mode"] = mode
+            collected_events.append(shaped)
+            last_rewrites = max(last_rewrites, int(shaped.get("rewrites") or 0))
+            if shaped.get("citations"):
+                last_citations = list(shaped["citations"])
+            if node_name == "retrieve" and "top_distance" in shaped:
+                top_distance = shaped["top_distance"]
+            elif node_name == "grade_documents":
+                last_relevant = int(shaped.get("relevant_chunks") or 0)
+            elif node_name == "generate":
+                last_answer = str(shaped.get("generation") or "")
+            yield shaped
+
+    if last_answer and (last_relevant > 0 or mode == "turbo"):
+        _set_cached_qa(
+            question,
+            {
+                "answer": last_answer,
+                "citations": last_citations,
+                "rewrites": last_rewrites,
+                "relevant_chunks": last_relevant,
+                "top_distance": top_distance,
+                "mode": mode,
+                "events": collected_events,
+            },
+            mode=mode,
+        )
 
 
 # ==============================================================================
@@ -195,14 +297,57 @@ def ingest_episode(request: IngestRequest) -> IngestResponse:
         cache_dir = Path("data/raw") / request.show
         cache_dir.mkdir(parents=True, exist_ok=True)
         cache_file = cache_dir / f"{video_id}.json"
+        active_collection = get_collection_name()
 
-        # 1. Load or fetch transcript
+        # 0. Fast-path cache check: if already cached and indexed in active Chroma collection,
+        # short-circuit immediately without segmenting, chunking, embedding, or summarizing.
         payload: dict[str, Any]
+        already_indexed = False
         if cache_file.exists():
             payload = json.loads(cache_file.read_text())
             title = str(payload.get("title", f"Episode {video_id}"))
             captions = list(payload.get("captions", []))
+            indexed_cols = payload.get("indexed_collections", [])
+            if isinstance(indexed_cols, list) and active_collection in indexed_cols:
+                already_indexed = True
+            else:
+                existing = get_vectorstore().get(where={"episode_id": video_id}, limit=1, include=[])
+                if existing and existing.get("ids"):
+                    already_indexed = True
+
+            has_summary = (
+                "short_summary" in payload
+                and isinstance(payload["short_summary"], str)
+                and bool(payload["short_summary"])
+            )
+            if already_indexed and has_summary:
+                raw_takeaways = payload.get("key_takeaways", [])
+                raw_keywords = payload.get("keywords", [])
+                cached_chunks = int(payload.get("chunks_indexed") or 0)
+                cached_segments = int(payload.get("segments_parsed") or len(captions))
+                if not cached_chunks:
+                    all_ids = get_vectorstore().get(where={"episode_id": video_id}, include=[])
+                    cached_chunks = len(all_ids.get("ids", []))
+                    payload["chunks_indexed"] = cached_chunks
+                if not isinstance(indexed_cols, list) or active_collection not in indexed_cols:
+                    payload["indexed_collections"] = [
+                        *(indexed_cols if isinstance(indexed_cols, list) else []),
+                        active_collection,
+                    ]
+                    cache_file.write_text(json.dumps(payload, indent=2))
+                return IngestResponse(
+                    status="cached",
+                    episode_id=video_id,
+                    episode_title=title,
+                    segments_parsed=cached_segments,
+                    chunks_indexed=cached_chunks,
+                    short_summary=payload["short_summary"],
+                    long_summary=str(payload.get("long_summary", "")),
+                    key_takeaways=[str(x) for x in raw_takeaways] if isinstance(raw_takeaways, list) else [],
+                    keywords=[str(x) for x in raw_keywords] if isinstance(raw_keywords, list) else [],
+                )
         else:
+            # 1. Fetch metadata & raw captions for a brand-new episode
             title, author_name = fetch_video_metadata(video_id)
             if not is_huberman_channel(author_name):
                 raise HTTPException(
@@ -221,7 +366,7 @@ def ingest_episode(request: IngestRequest) -> IngestResponse:
             }
             cache_file.write_text(json.dumps(payload, indent=2))
 
-        # 2. Build segments & chunks
+        # 2. Build segments & chunks; only call embedding model if not already in ChromaDB
         segments = captions_to_segments(
             captions,
             show=cast(Show, request.show),
@@ -230,7 +375,7 @@ def ingest_episode(request: IngestRequest) -> IngestResponse:
             speaker=request.speaker,
         )
         chunks = chunk_segments(segments)
-        indexed_count = index_chunks(chunks)
+        indexed_count = len(chunks) if already_indexed else index_chunks(chunks)
 
         # 3. Load or generate multi-tier summary and keywords
         short_summary: str
@@ -253,12 +398,19 @@ def ingest_episode(request: IngestRequest) -> IngestResponse:
             key_takeaways = analysis.key_takeaways
             keywords = analysis.keywords
 
-            # Cache the analysis into the JSON file
-            payload["short_summary"] = short_summary
-            payload["long_summary"] = long_summary
-            payload["key_takeaways"] = key_takeaways
-            payload["keywords"] = keywords
-            cache_file.write_text(json.dumps(payload, indent=2))
+        # Cache analysis and indexing state into the JSON file
+        existing_cols = payload.get("indexed_collections", [])
+        cols_list = [str(c) for c in existing_cols] if isinstance(existing_cols, list) else []
+        if active_collection not in cols_list:
+            cols_list.append(active_collection)
+        payload["segments_parsed"] = len(segments)
+        payload["chunks_indexed"] = indexed_count
+        payload["indexed_collections"] = cols_list
+        payload["short_summary"] = short_summary
+        payload["long_summary"] = long_summary
+        payload["key_takeaways"] = key_takeaways
+        payload["keywords"] = keywords
+        cache_file.write_text(json.dumps(payload, indent=2))
 
         return IngestResponse(
             status="success",
@@ -280,17 +432,75 @@ def ingest_episode(request: IngestRequest) -> IngestResponse:
 @router.post("/ask", response_model=AskResponse)
 def ask_question(request: AskRequest) -> AskResponse:
     """Submit a question and receive a complete answer with clickable timestamp citations."""
+    start_time = time.perf_counter()
+    req_mode = request.mode or "balanced"
     try:
-        final_state = corrective_rag_agent.invoke(_initial_state(request.question), config=trace_config("/ask"))
+        cached = _get_cached_qa(request.question, mode=req_mode)
+        if cached and cached.get("answer"):
+            raw_cits = cached.get("citations") or []
+            latency = round((time.perf_counter() - start_time) * 1000, 1)
+            return AskResponse(
+                question=request.question,
+                answer=str(cached["answer"]),
+                citations=[Citation.model_validate(c) for c in raw_cits],
+                rewrites_attempted=int(cached.get("rewrites") or 0),
+                relevant_chunks_used=int(cached.get("relevant_chunks") or len(raw_cits)),
+                mode=req_mode,
+                top_distance=cached.get("top_distance"),
+                latency_ms=latency,
+            )
+
+        final_state = corrective_rag_agent.invoke(
+            _initial_state(request.question, mode=req_mode), config=trace_config("/ask")
+        )
         relevant_docs = final_state.get("relevant_documents", [])
         citations = _build_citations(relevant_docs)
+        answer = final_state.get("generation", "")
+        rewrites = final_state.get("rewrite_count", 0)
+        top_dist = final_state.get("top_distance")
+        latency = round((time.perf_counter() - start_time) * 1000, 1)
+
+        if answer and (relevant_docs or req_mode == "turbo"):
+            cit_dicts = [c.model_dump() for c in citations]
+            _set_cached_qa(
+                request.question,
+                {
+                    "answer": answer,
+                    "citations": cit_dicts,
+                    "rewrites": rewrites,
+                    "relevant_chunks": len(relevant_docs),
+                    "top_distance": top_dist,
+                    "mode": req_mode,
+                    "events": [
+                        {
+                            "node": "retrieve",
+                            "rewrites": rewrites,
+                            "chunks_retrieved": len(final_state.get("documents", [])) or 4,
+                            "top_distance": top_dist,
+                            "mode": req_mode,
+                        },
+                        {
+                            "node": "grade_documents",
+                            "rewrites": rewrites,
+                            "relevant_chunks": len(relevant_docs),
+                            "citations": cit_dicts,
+                            "mode": req_mode,
+                        },
+                        {"node": "generate", "rewrites": rewrites, "generation": answer, "mode": req_mode},
+                    ],
+                },
+                mode=req_mode,
+            )
 
         return AskResponse(
             question=request.question,
-            answer=final_state.get("generation", ""),
+            answer=answer,
             citations=citations,
-            rewrites_attempted=final_state.get("rewrite_count", 0),
+            rewrites_attempted=rewrites,
             relevant_chunks_used=len(relevant_docs),
+            mode=req_mode,
+            top_distance=top_dist,
+            latency_ms=latency,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Agent execution failed: {e}")
@@ -299,9 +509,10 @@ def ask_question(request: AskRequest) -> AskResponse:
 @router.post("/ask/stream")
 async def stream_question(request: AskRequest) -> StreamingResponse:
     """Stream LangGraph node events and final answer in real-time via Server-Sent Events."""
+    req_mode = request.mode or "balanced"
 
     async def event_generator() -> AsyncGenerator[str]:
-        for event_data in iter_agent_events(request.question):
+        for event_data in iter_agent_events(request.question, mode=req_mode):
             yield f"data: {json.dumps(event_data)}\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
