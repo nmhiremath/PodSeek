@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: podseek
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt -r requirements-ui.txt
+    startCommand: python -m ui.app
+    envVars:
+      - key: PODSEEK_UI_MODE
+        value: inprocess
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: GEMINI_API_KEY
+        sync: false
