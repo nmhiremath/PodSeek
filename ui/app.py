@@ -556,7 +556,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     '<div style="border-top:1px solid var(--border-hairline);margin:10px 0 8px;padding-top:10px;'
                     'font-size:12.5px;font-weight:700;">Indexed Episodes</div>'
                 )
-                episodes_html = gr.HTML(render_episodes_html([]))
+                episodes_html = gr.HTML(load_episodes_html)
 
             # ENTITY 2 (Center 5 cols): Hero Session Chat + Collapsible Presets + Multiline Capsule ("Distill ->")
             with gr.Column(scale=5, elem_classes=["ap-card"]):

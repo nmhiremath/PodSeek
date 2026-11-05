@@ -154,9 +154,19 @@ class InProcessClient:
 
 
 def make_client() -> RemoteClient | InProcessClient:
-    """remote (default) uses PODSEEK_API_URL / ASKPODCAST_API_URL. inprocess imports the API handlers."""
-    mode = (os.getenv("PODSEEK_UI_MODE") or os.getenv("ASKPODCAST_UI_MODE", "remote")).strip().lower()
+    """Select RemoteClient if a remote API URL is specified; otherwise default to InProcessClient."""
+    mode = (os.getenv("PODSEEK_UI_MODE") or os.getenv("ASKPODCAST_UI_MODE", "")).strip().lower()
     if mode == "inprocess":
         return InProcessClient()
-    url = os.getenv("PODSEEK_API_URL") or os.getenv("ASKPODCAST_API_URL", DEFAULT_API_URL)
-    return RemoteClient(url)
+    if mode == "remote":
+        url = os.getenv("PODSEEK_API_URL") or os.getenv("ASKPODCAST_API_URL", DEFAULT_API_URL)
+        return RemoteClient(url)
+
+    # When no explicit mode is set:
+    # If a custom remote URL is provided in the environment, use RemoteClient.
+    # Otherwise, default to InProcessClient so single-service deployments (like Render or local python -m ui.app)
+    # automatically read data/raw/ and ChromaDB in-process without needing a separate FastAPI server on :8000.
+    custom_url = os.getenv("PODSEEK_API_URL") or os.getenv("ASKPODCAST_API_URL")
+    if custom_url:
+        return RemoteClient(custom_url)
+    return InProcessClient()
