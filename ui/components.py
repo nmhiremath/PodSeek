@@ -503,8 +503,49 @@ def render_episodes_html(items: list[dict]) -> str:
     )
 
 
+def render_spotlight_workflow_html(
+    active_node: str = "retrieve",
+    chunks: int = 0,
+    relevant: int = 0,
+    rewrites: int = 0,
+    mode: str = "balanced",
+    top_distance: float | None = None,
+    done: bool = False,
+    aborted: bool = False,
+    cached: bool = False,
+) -> str:
+    """Render the actual full SVG flowchart animation just like desktop, directly inside the active chat turn."""
+    flowchart_svg = render_workflow_graph_html(
+        active_node=active_node,
+        chunks=chunks,
+        relevant=relevant,
+        rewrites=rewrites,
+        done=done,
+        aborted=aborted,
+        cached=cached,
+        mode=mode,
+        top_distance=top_distance,
+    )
+    mode_label = "⚡ Turbo" if mode == "turbo" else ("🎯 Rigorous" if mode == "rigorous" else "⚖️ Balanced")
+
+    if done:
+        return (
+            '<details class="ap-trace-details">'
+            f'<summary><span style="color:var(--done-stroke);">✓</span> CRAG Flowchart · {chunks} chunks · {mode_label} <span style="font-size:10px;opacity:0.7;">▾</span></summary>'
+            '<div style="margin-top:6px;max-width:100%;overflow-x:auto;" class="modern-scroll">'
+            + flowchart_svg
+            + "</div></details>"
+        )
+
+    return (
+        '<div class="ap-spotlight-card" style="padding:6px;overflow-x:auto;margin-bottom:12px;">'
+        + flowchart_svg
+        + "</div>"
+    )
+
+
 def render_chat_session_html(history: list[dict]) -> str:
-    """Render the ephemeral session chat thread with rendered Markdown and Google AI Overview inline pills."""
+    """Render the ephemeral session chat thread with rendered Markdown, inline pills, and focus-locked spotlight workflow."""
     if not history:
         return (
             '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll ap-chat-empty" '
@@ -518,14 +559,24 @@ def render_chat_session_html(history: list[dict]) -> str:
         q = html.escape(str(item.get("question", "")))
         raw_answer = str(item.get("answer", ""))
         cits = list(item.get("citations") or [])
-        rendered_answer = render_markdown_with_pills(raw_answer, cits)
+        wf_info = item.get("workflow")
+        spotlight_block = ""
+        if isinstance(wf_info, dict):
+            spotlight_block = render_spotlight_workflow_html(**wf_info)
+
+        if raw_answer in {"Distilling transcripts...", "Distilling grounded response...", ""} and spotlight_block:
+            rendered_answer = ""
+        else:
+            rendered_answer = render_markdown_with_pills(raw_answer, cits)
+
+        answer_content = f"{spotlight_block}{rendered_answer}" if spotlight_block else rendered_answer
         turns.append(
             f'<div style="display:flex;justify-content:flex-end;margin-bottom:10px;">'
             f'<div style="max-width:85%;background:var(--accent);color:#fff;padding:8px 13px;'
             f'border-radius:12px 12px 3px 12px;font-size:12.5px;font-weight:500;">'
             f"{q}</div></div>"
             f'<div class="ap-subtle" style="padding:13px 15px;margin-bottom:14px;font-size:12.5px;line-height:1.6;">'
-            f"{rendered_answer}</div>"
+            f"{answer_content}</div>"
         )
     return (
         '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll" '

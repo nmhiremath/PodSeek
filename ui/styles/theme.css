@@ -878,3 +878,146 @@ button#ap-mode-slider.is-rigorous .slot-rigorous {
     padding: 10px 12px 20px !important;
   }
 }
+
+/* ==========================================================================
+   MOBILE RESPONSIVE ARCHITECTURE (< 768px Viewports)
+   1. Column Reordering: Center Column (Chat & Distill) -> order: 1 (Immediately in view)
+   2. Left Column (Episodes & Ingest) -> order: 2
+   3. Desktop Workflow Column -> Hidden on mobile (preventing 600px redundant scroll)
+   4. Inline Spotlight Reasoning Card & Collapsible Trace Badges
+   ========================================================================== */
+@media (max-width: 768px) {
+  .gradio-container {
+    padding: 8px 8px 16px !important;
+  }
+
+  .ap-header-row {
+    padding: 8px 10px !important;
+    margin-bottom: 8px !important;
+  }
+
+  #ap-studio-view {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  /* Center Column: Session Chat & Distill takes primary viewport focus */
+  .ap-col-center {
+    order: 1 !important;
+    width: 100% !important;
+  }
+
+  /* Left Column: Episode Library & Ingest follows below chat */
+  .ap-col-left {
+    order: 2 !important;
+    width: 100% !important;
+  }
+
+  /* Right Column: Desktop-only graph hidden on mobile; replaced by inline Spotlight */
+  .ap-col-right {
+    display: none !important;
+  }
+
+  /* Mobile chat height tuning */
+  #ap-chat-scroll,
+  .ap-chat-empty {
+    height: clamp(140px, calc(100vh - 440px), 320px) !important;
+    min-height: 140px !important;
+  }
+
+  .ap-distill-capsule {
+    padding: 8px 88px 8px 12px !important;
+  }
+
+  button.ap-capsule-btn {
+    height: 30px !important;
+    padding: 0 11px !important;
+    font-size: 11.5px !important;
+  }
+
+  .ap-episodes-list {
+    max-height: 240px !important;
+  }
+}
+
+/* --- Inline Spotlight Reasoning Card & Dynamic Trace Badge --- */
+@keyframes apSpotlightFade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ap-spotlight-card {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-hairline) !important;
+  border-radius: 14px !important;
+  padding: 11px 13px !important;
+  margin-bottom: 10px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  animation: apSpotlightFade 0.22s ease-out !important;
+}
+
+.ap-spotlight-step {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 6px 9px !important;
+  border-radius: 9px !important;
+  background-color: var(--bg-subtle) !important;
+  border: 1px solid var(--border-hairline) !important;
+  font-size: 11.5px !important;
+  margin-bottom: 3px !important;
+  transition: all 0.16s ease !important;
+}
+
+.ap-spotlight-step.is-active {
+  border-color: var(--run-stroke) !important;
+  background-color: rgba(37, 99, 235, 0.09) !important;
+}
+
+.ap-spotlight-step.is-done {
+  border-color: var(--done-stroke) !important;
+}
+
+.ap-spotlight-step.is-retry {
+  border-color: var(--retry-stroke) !important;
+  background-color: rgba(217, 119, 6, 0.09) !important;
+}
+
+.ap-spotlight-connector {
+  width: 2px !important;
+  height: 8px !important;
+  margin: 0 auto !important;
+  background-color: var(--border-hairline) !important;
+}
+
+.ap-spotlight-connector.is-active {
+  background-color: var(--run-stroke) !important;
+}
+
+/* Collapsible Trace Summary Pill */
+details.ap-trace-details summary {
+  list-style: none !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--text-muted) !important;
+  background-color: var(--bg-subtle) !important;
+  border: 1px solid var(--border-hairline) !important;
+  padding: 4px 10px !important;
+  border-radius: 9999px !important;
+  margin-bottom: 8px !important;
+  transition: all 0.15s ease !important;
+}
+
+details.ap-trace-details summary::-webkit-details-marker {
+  display: none !important;
+}
+
+details.ap-trace-details summary:hover {
+  color: var(--text-main) !important;
+  border-color: var(--accent) !important;
+}

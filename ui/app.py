@@ -328,9 +328,19 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
         top_dist: float | None = None
 
         # Clear input immediately and hide sample questions once first question is asked
+        wf_state = {
+            "active_node": "retrieve",
+            "chunks": 0,
+            "relevant": 0,
+            "rewrites": 0,
+            "mode": mode_val,
+            "top_distance": None,
+            "done": False,
+            "aborted": False,
+        }
         yield (
             render_chat_session_html(
-                current_history + [{"question": cleaned, "answer": "Distilling transcripts...", "citations": []}]
+                current_history + [{"question": cleaned, "answer": "", "citations": [], "workflow": wf_state}]
             ),
             current_history,
             render_workflow_graph_html(active_node="retrieve", mode=mode_val),
@@ -345,8 +355,23 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 if "delta" in event and event["delta"]:
                     streaming_answer += str(event["delta"])
                     answer = streaming_answer
+                    wf_state = {
+                        "active_node": "generate",
+                        "chunks": chunks,
+                        "relevant": relevant,
+                        "rewrites": rewrites,
+                        "mode": mode_val,
+                        "top_distance": top_dist,
+                        "done": False,
+                        "aborted": aborted,
+                    }
                     preview_history = current_history + [
-                        {"question": cleaned, "answer": streaming_answer, "citations": citations}
+                        {
+                            "question": cleaned,
+                            "answer": streaming_answer,
+                            "citations": citations,
+                            "workflow": wf_state,
+                        }
                     ]
                     yield (
                         render_chat_session_html(preview_history),
@@ -428,8 +453,23 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 else:
                     next_active = node
 
+                wf_state = {
+                    "active_node": next_active,
+                    "chunks": chunks,
+                    "relevant": relevant,
+                    "rewrites": rewrites,
+                    "mode": mode_val,
+                    "top_distance": top_dist,
+                    "done": (next_active in {"done", "abort"}),
+                    "aborted": aborted,
+                }
                 preview_history = current_history + [
-                    {"question": cleaned, "answer": answer or "Distilling grounded response...", "citations": citations}
+                    {
+                        "question": cleaned,
+                        "answer": answer or "Distilling grounded response...",
+                        "citations": citations,
+                        "workflow": wf_state,
+                    }
                 ]
                 yield (
                     render_chat_session_html(preview_history),
@@ -451,7 +491,20 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 )
         except Exception as exc:
             if _demo_fallback_enabled():
-                demo_turn = {"question": cleaned, "answer": DEMO_ANSWER, "citations": DEMO_CITATIONS}
+                demo_wf = {
+                    "active_node": "done",
+                    "chunks": 4,
+                    "relevant": 1,
+                    "rewrites": 0,
+                    "mode": mode_val,
+                    "done": True,
+                }
+                demo_turn = {
+                    "question": cleaned,
+                    "answer": DEMO_ANSWER,
+                    "citations": DEMO_CITATIONS,
+                    "workflow": demo_wf,
+                }
                 updated = current_history + [demo_turn]
                 logs.append(("✓ [demo_fallback] Loaded cached example response", "var(--done-stroke)"))
                 yield (
@@ -493,7 +546,19 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 else:
                     answer = f"Distill failed: {exc}"
 
-        final_history = current_history + [{"question": cleaned, "answer": answer, "citations": citations}]
+        wf_final = {
+            "active_node": "abort" if aborted else "done",
+            "chunks": chunks,
+            "relevant": relevant,
+            "rewrites": rewrites,
+            "mode": mode_val,
+            "top_distance": top_dist,
+            "done": True,
+            "aborted": aborted,
+        }
+        final_history = current_history + [
+            {"question": cleaned, "answer": answer, "citations": citations, "workflow": wf_final}
+        ]
         yield (
             render_chat_session_html(final_history),
             final_history,
@@ -559,7 +624,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
         # PAGE 1: 3-Column Studio View
         with gr.Row(visible=True, elem_id="ap-studio-view"):
             # ENTITY 1 (Left 3 cols): Unified Command Capsule ("✦ Absorb" inside box) + Episodes by Title
-            with gr.Column(scale=3, elem_classes=["ap-card"]):
+            with gr.Column(scale=3, elem_classes=["ap-card", "ap-col-left"]):
                 gr.HTML('<div style="font-size:12.5px;font-weight:700;margin-bottom:6px;">Ingest Episode</div>')
                 with gr.Row(elem_classes=["ap-ingest-capsule"]):
                     video_input = gr.Textbox(
@@ -587,7 +652,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 episodes_html = gr.HTML(load_episodes_html)
 
             # ENTITY 2 (Center 5 cols): Hero Session Chat + Collapsible Presets + Multiline Capsule ("Distill ->")
-            with gr.Column(scale=5, elem_classes=["ap-card"]):
+            with gr.Column(scale=5, elem_classes=["ap-card", "ap-col-center"]):
                 with gr.Row(elem_classes=["ap-inline-row"]):
                     gr.HTML(
                         '<div style="flex:1;"><span style="font-size:13px;font-weight:700;">Session Chat</span> '
@@ -633,7 +698,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     )
 
             # ENTITY 3 (Right 4 cols): Cyclic Workflow Graph + Color-Coded SSE Stream
-            with gr.Column(scale=4):
+            with gr.Column(scale=4, elem_classes=["ap-col-right"]):
                 graph_html = gr.HTML(render_workflow_graph_html(mode="balanced"))
                 sse_html = gr.HTML(render_sse_log_html([]))
 
