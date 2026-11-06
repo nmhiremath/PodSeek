@@ -215,21 +215,32 @@ def iter_agent_events(question: str, mode: str = "balanced"):
     last_answer = ""
     top_distance: float | None = None
 
-    for event in corrective_rag_agent.stream(_initial_state(question, mode=mode), config=trace_config("/ask/stream")):
-        for node_name, node_output in event.items():
-            shaped = _node_event(node_name, node_output)
-            shaped["mode"] = mode
-            collected_events.append(shaped)
-            last_rewrites = max(last_rewrites, int(shaped.get("rewrites") or 0))
-            if shaped.get("citations"):
-                last_citations = list(shaped["citations"])
-            if node_name == "retrieve" and "top_distance" in shaped:
-                top_distance = shaped["top_distance"]
-            elif node_name == "grade_documents":
-                last_relevant = int(shaped.get("relevant_chunks") or 0)
-            elif node_name == "generate":
-                last_answer = str(shaped.get("generation") or "")
-            yield shaped
+    for mode_type, payload in corrective_rag_agent.stream(
+        _initial_state(question, mode=mode),
+        config=trace_config("/ask/stream"),
+        stream_mode=["updates", "custom"],
+    ):
+        if mode_type == "custom" and isinstance(payload, dict) and "delta" in payload:
+            delta = str(payload["delta"])
+            last_answer += delta
+            yield {"node": "generate", "delta": delta, "mode": mode}
+            continue
+
+        if mode_type == "updates" and isinstance(payload, dict):
+            for node_name, node_output in payload.items():
+                shaped = _node_event(node_name, node_output)
+                shaped["mode"] = mode
+                collected_events.append(shaped)
+                last_rewrites = max(last_rewrites, int(shaped.get("rewrites") or 0))
+                if shaped.get("citations"):
+                    last_citations = list(shaped["citations"])
+                if node_name == "retrieve" and "top_distance" in shaped:
+                    top_distance = shaped["top_distance"]
+                elif node_name == "grade_documents":
+                    last_relevant = int(shaped.get("relevant_chunks") or 0)
+                elif node_name == "generate":
+                    last_answer = str(shaped.get("generation") or last_answer)
+                yield shaped
 
     if last_answer and (last_relevant > 0 or mode == "turbo"):
         _set_cached_qa(

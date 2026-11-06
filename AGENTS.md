@@ -309,3 +309,5 @@ An initial pass on `2026-11-02` created the foundational files for the four requ
    - Un-ignored `data/raw/huberman_lab/` to commit 10 pre-downloaded episodes and persistent `qa_cache.json` directly into Git so cloud hosts (Render/Hugging Face) run without hitting YouTube IP blocks. Added clean HTTP 429 response handling in `app/api/routes.py`.
 7. **Viewport-Responsive Layout & Episode Separation (Shipped):**
    - Dynamically clamped chat empty state (`clamp(100px, calc(100vh - 580px), 240px)`), active chat thread, and SSE log height to guarantee all columns fit in `100vh` on laptop displays without window scroll. Added `margin-bottom: 8px` and rounded corners to indexed episode tiles. Removed stats slider from header.
+8. **Token-Level LLM Streaming (Shipped):**
+   - Implemented real-time token streaming using LangGraph 1.2+ `get_stream_writer()` in `generate` node (`app/agent/nodes.py`), `stream_mode=["updates", "custom"]` in `iter_agent_events` (`app/api/routes.py`), and progressive token rendering in `ui/app.py`. Words now type live into the chat bubble before being converted to finalized markdown with Google AI Overview timestamp citation pills.

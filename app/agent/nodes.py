@@ -6,6 +6,7 @@ from typing import Literal
 from langchain_core.documents import Document
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
+from langgraph.config import get_stream_writer
 from pydantic import BaseModel, Field
 
 from app.agent.state import AgentState
@@ -180,10 +181,19 @@ def generate(state: AgentState) -> dict:
     question = state["question"]
     docs = state["relevant_documents"] if "relevant_documents" in state else state.get("documents", [])
 
+    # Safe resolution of LangGraph stream writer (handles standalone unit test execution)
+    try:
+        writer = get_stream_writer()
+    except Exception:
+        writer = None
+
     # If even after retries we have zero relevant chunks
     if not docs:
+        refusal = "I could not find any relevant information in the podcast transcripts to answer your question."
+        if writer:
+            writer({"delta": refusal})
         return {
-            "generation": "I could not find any relevant information in the podcast transcripts to answer your question.",
+            "generation": refusal,
             "relevant_documents": [],
         }
 
@@ -231,8 +241,23 @@ def generate(state: AgentState) -> dict:
     )
 
     chain = prompt | llm
-    reply = chain.invoke({"question": question, "context": context_str})
-    answer = str(getattr(reply, "text", getattr(reply, "content", reply))).strip()
+    full_text = ""
+    try:
+        for chunk in chain.stream({"question": question, "context": context_str}):
+            token = str(getattr(chunk, "text", getattr(chunk, "content", chunk)))
+            full_text += token
+            if writer:
+                writer({"delta": token})
+    except Exception:
+        pass
+
+    if not full_text:
+        reply = chain.invoke({"question": question, "context": context_str})
+        full_text = str(getattr(reply, "text", getattr(reply, "content", reply)))
+        if writer:
+            writer({"delta": full_text})
+
+    answer = full_text.strip()
 
     is_refusal = (
         "could not find any relevant information" in answer.lower()

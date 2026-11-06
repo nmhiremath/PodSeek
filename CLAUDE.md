@@ -142,4 +142,5 @@ python -m scripts.evaluate
 - **Refusal Guardrail:** Suppressed citation generation and links when `generate()` produces a refusal answer on out-of-domain input.
 - **Viewport Height & Theme Normalization:** Enforced internal scrolling for the episode list and default Light mode without OS dark mode overrides.
 - **Render.com Cloud Readiness:** Added dynamic `$PORT` and `0.0.0.0` binding in `ui/app.py` for free cloud deployment.
+- **Token-Level Streaming:** End-to-end token streaming via LangGraph `get_stream_writer()` in `generate`, `stream_mode=['updates', 'custom']` in `iter_agent_events`, and progressive Gradio chat rendering.
 - **Tests & Quality:** All 37 unit tests pass offline; `ruff check .` and `pyright` pass with 0 errors.

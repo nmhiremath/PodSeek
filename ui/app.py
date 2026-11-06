@@ -323,6 +323,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
         aborted = False
         is_cached = False
         answer = ""
+        streaming_answer = ""
         citations: list[dict] = []
         top_dist: float | None = None
 
@@ -340,6 +341,33 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
 
         try:
             for event in client.ask_stream(cleaned, mode=mode_val):
+                # Handle real-time token deltas emitted during the generate stage
+                if "delta" in event and event["delta"]:
+                    streaming_answer += str(event["delta"])
+                    answer = streaming_answer
+                    preview_history = current_history + [
+                        {"question": cleaned, "answer": streaming_answer, "citations": citations}
+                    ]
+                    yield (
+                        render_chat_session_html(preview_history),
+                        current_history,
+                        render_workflow_graph_html(
+                            active_node="generate",
+                            chunks=chunks,
+                            relevant=relevant,
+                            rewrites=rewrites,
+                            done=False,
+                            aborted=aborted,
+                            cached=is_cached,
+                            mode=mode_val,
+                            top_distance=top_dist,
+                        ),
+                        render_sse_log_html(logs),
+                        "",
+                        gr.update(visible=False),
+                    )
+                    continue
+
                 node = str(event.get("node", ""))
                 rewrites = max(rewrites, int(event.get("rewrites") or 0))
                 if "top_distance" in event and event["top_distance"] is not None:
@@ -376,7 +404,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     logs.append((f"↻ [rewrite_query] Retry #{rewrites}: {rq}", "var(--retry-stroke)"))
                     next_active = "retrieve"
                 elif node == "generate":
-                    answer = str(event.get("generation", ""))
+                    answer = str(event.get("generation") or streaming_answer or "")
                     if not citations and event.get("citations"):
                         citations = list(event["citations"])
                     if aborted or (relevant == 0 and rewrites >= 2):
