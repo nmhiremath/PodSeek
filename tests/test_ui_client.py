@@ -55,13 +55,13 @@ def test_theme_css_and_components_render_without_gradio():
     balanced_graph = render_workflow_graph_html(active_node="generate", mode="balanced", top_distance=0.28)
     assert "Workflow · Balanced RAG" in balanced_graph
     assert "dist &lt; 0.35?" in balanced_graph
-    assert "Yes · Skip Grade" in balanced_graph
+    assert "Skip Grading" in balanced_graph
     assert "dist: 0.28" in balanced_graph
 
     turbo_graph = render_workflow_graph_html(active_node="generate", mode="turbo")
-    assert "⚡ Turbo" in turbo_graph
-    assert "Fused Bypass" in turbo_graph
-    assert "Bypassed" in turbo_graph
+    assert "Workflow · Turbo RAG" in turbo_graph
+    assert "⚡ Fused Bypass" in turbo_graph
+    assert "✨ Fused Generate &amp; Cite" in turbo_graph
 
     slider_turbo = render_mode_slider_html("turbo")
     assert "is-turbo" in slider_turbo
@@ -134,9 +134,59 @@ def test_theme_css_and_components_render_without_gradio():
     assert "<code>" not in chat
     assert ")." not in chat
 
+    empty_chat = render_chat_session_html([], episode_count=23)
+    assert "Ask across Huberman Lab&#39;s" in empty_chat or "Ask across Huberman Lab's" in empty_chat
+    assert "23" in empty_chat
+    assert "most viewed episodes." in empty_chat
+    assert "ap-kb-count-link" in empty_chat
+
 
 def test_is_huberman_channel_verifier():
     assert is_huberman_channel("Andrew Huberman") is True
     assert is_huberman_channel("Huberman Lab Clips") is True
     assert is_huberman_channel("Rick Astley") is False
     assert is_huberman_channel("") is False
+
+
+def test_top_50_episodes_list_integrity():
+    from scripts.ingest_top_episodes import TOP_50_HUBERMAN_EPISODES
+
+    assert len(TOP_50_HUBERMAN_EPISODES) == 50
+    ids = [ep["id"] for ep in TOP_50_HUBERMAN_EPISODES]
+    assert len(set(ids)) == 50, "Duplicate episode ID found in TOP_50_HUBERMAN_EPISODES"
+    for ep in TOP_50_HUBERMAN_EPISODES:
+        assert ep["id"] and len(ep["id"]) == 11, f"Invalid YouTube ID: {ep['id']}"
+        assert ep["title"] and len(ep["title"]) > 5, f"Invalid episode title: {ep['title']}"
+
+
+def test_workflow_all_modes_and_aborted_states():
+    # Balanced mode abort state
+    bal_aborted = render_workflow_graph_html(
+        active_node="abort", chunks=4, relevant=0, rewrites=1, done=True, aborted=True, mode="balanced"
+    )
+    assert "Workflow · Balanced RAG" in bal_aborted
+    assert "is-aborted" in bal_aborted
+    assert "Max retries (1/1)" in bal_aborted
+
+    # Turbo mode completion
+    turbo_done = render_workflow_graph_html(
+        active_node="generate", chunks=4, relevant=4, rewrites=0, done=True, mode="turbo"
+    )
+    assert "Workflow · Turbo RAG" in turbo_done
+    assert "✓ Done" in turbo_done
+
+    # Rigorous mode multiple rewrites
+    rig_retry = render_workflow_graph_html(
+        active_node="rewrite_query", chunks=4, relevant=0, rewrites=2, mode="rigorous"
+    )
+    assert "Workflow · Corrective RAG" in rig_retry
+    assert "Rewrites: 2 / 2" in rig_retry
+
+
+def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
+    css = load_theme_css("theme.css")
+    assert "scale(0.88)" in css
+    assert "scale(0.80)" in css
+    assert "scale(0.72)" in css
+    assert ".ap-ingest-capsule" in css
+    assert ".ap-distill-capsule" in css

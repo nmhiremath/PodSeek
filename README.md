@@ -365,7 +365,8 @@ PodSeek/
 │   ├── ask_agent.py           # Interactive CLI runner for the agent
 │   ├── evaluate.py            # Offline/live evaluation & optional LLM judge CLI
 │   ├── fetch_episode.py       # Standalone episode downloader & cacher
-│   └── index_and_search.py    # Standalone vector indexing & retrieval script
+│   ├── index_and_search.py    # Standalone vector indexing & retrieval script
+│   └── ingest_top_episodes.py # Batch ingestion pipeline for top 50 Huberman episodes
 ├── ui/
 │   ├── __init__.py
 │   ├── app.py                 # Gradio 3-Column Bento Studio UI (Absorb + Distill + Live Graph)

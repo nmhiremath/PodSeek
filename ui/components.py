@@ -4,6 +4,8 @@ This module intentionally does not import Gradio so every view builder and
 formatter can be unit-tested in isolation.
 """
 
+from __future__ import annotations
+
 import html
 import re
 from pathlib import Path
@@ -341,11 +343,11 @@ def render_ingest_workflow_graph_html(
 
     return f"""
     <div class="wf-dot-grid">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <span style="font-size:12px;font-weight:700;">Workflow · Episode Ingestion</span>
-        <span class="ap-subtle" style="font-size:12px;font-family:monospace;padding:2px 8px;">{badge_text}</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;white-space:nowrap;">
+        <span style="font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">Workflow · Episode Ingestion</span>
+        <span class="ap-subtle" style="font-size:12px;font-family:monospace;padding:2px 8px;white-space:nowrap;flex-shrink:0;">{badge_text}</span>
       </div>
-      <div style="position:relative;width:330px;height:300px;margin:0 auto;">
+      <div class="wf-canvas-wrap" data-orig-height="300" style="position:relative;width:330px;height:300px;margin:0 auto;">
         <svg width="330" height="300" viewBox="0 0 330 300" style="position:absolute;inset:0;pointer-events:none;">
           <!-- 0. Verify Right (178,26) -> Cache Left (192,26) -->
           <path d="M 178 26 L 192 26" class="{c_ver_cache}" />
@@ -396,19 +398,19 @@ def render_ingest_workflow_graph_html(
         </div>
 
         <!-- Cache Node (Right of 1. Verify) -->
-        <div class="wf-node {cache_cls}" style="left:192px;top:4px;width:134px;height:44px;padding:6px 9px;">
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
-            <span style="font-weight:600;">⚡ DB Cache</span>
-            <span style="font-family:monospace;">{cache_status}</span>
+        <div class="wf-node {cache_cls}" style="left:190px;top:4px;width:132px;height:44px;padding:6px 9px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;white-space:nowrap;gap:4px;">
+            <span style="font-weight:600;flex-shrink:0;">⚡ DB Cache</span>
+            <span style="font-family:monospace;font-size:10px;flex-shrink:0;">{cache_status}</span>
           </div>
           <div class="ap-muted" style="font-size:10.5px;font-family:monospace;margin-top:1px;white-space:nowrap;">{cache_sub}</div>
         </div>
 
         <!-- Abort Terminator Node (Right of Huberman Lab? Diamond) -->
-        <div class="wf-node {abt_cls}" style="left:192px;top:64px;width:134px;height:48px;border-radius:16px;padding:7px 9px;">
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
-            <span style="font-weight:600;">🛑 Abort</span>
-            <span style="font-family:monospace;color:{"#EF4444" if is_aborted else "inherit"};">{abt_status}</span>
+        <div class="wf-node {abt_cls}" style="left:190px;top:64px;width:132px;height:48px;border-radius:16px;padding:7px 9px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;white-space:nowrap;gap:4px;">
+            <span style="font-weight:600;flex-shrink:0;">🛑 Abort</span>
+            <span style="font-family:monospace;font-size:10px;flex-shrink:0;color:{"#EF4444" if is_aborted else "inherit"};">{abt_status}</span>
           </div>
           <div class="ap-muted" style="font-size:10.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{short_reason}</div>
         </div>
@@ -457,22 +459,92 @@ def render_ingest_workflow_graph_html(
 
 
 def render_header_brand_html() -> str:
-    """Render the top-left PodSeek brand header."""
+    """Render the top-left PodSeek brand lockup with desktop sidebar toggle."""
+    panel_icon_svg = (
+        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+        'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+        '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>'
+        '<line x1="9" y1="3" x2="9" y2="21"/>'
+        "</svg>"
+    )
+    toggle_btn = (
+        '<button id="ap-sidebar-toggle-btn" type="button" title="Toggle Knowledge Base (Cmd+B)" '
+        "onclick=\"if (window.togglePodSeekDrawer) { window.togglePodSeekDrawer(false); } else { const col = document.querySelector('.ap-col-left'); if (col) { const isCol = col.classList.toggle('is-collapsed'); try { localStorage.setItem('podseek_sidebar_collapsed', isCol ? '1' : '0'); } catch(e){} } }\">"
+        f"{panel_icon_svg}"
+        "</button>"
+    )
     return (
-        '<div style="display:flex;align-items:center;gap:10px;">'
-        '<div style="width:28px;height:28px;border-radius:7px;background:var(--accent);color:#fff;'
-        'display:flex;align-items:center;justify-content:center;font-family:monospace;font-weight:700;font-size:12px;">PS</div>'
-        '<div><div style="font-size:14px;font-weight:700;line-height:1.2;">PodSeek</div>'
-        '<div class="ap-muted" style="font-size:12px;">Huberman Lab Knowledge Engine</div></div>'
+        '<div class="ap-brand-lockup">'
+        f"{toggle_btn}"
+        '<div class="ap-brand-badge">PS</div>'
+        '<div class="ap-brand-meta">'
+        '<div class="ap-brand-title">PodSeek</div>'
+        '<div class="ap-muted ap-header-subtitle">Huberman Lab Knowledge Engine</div>'
+        "</div>"
         "</div>"
     )
 
 
+def render_header_controls_html() -> str:
+    """Render the right-aligned header controls: Mobile Library Drawer button + Light/Dark Theme Slider."""
+    mobile_lib_btn = (
+        '<button id="ap-mobile-library-btn" type="button" title="Open Knowledge Base" '
+        "onclick=\"if (window.togglePodSeekDrawer) { window.togglePodSeekDrawer(false); } else { const col = document.querySelector('.ap-col-left'); const bd = document.getElementById('ap-mobile-drawer-backdrop'); if (col) { const isOpen = col.classList.toggle('mobile-drawer-open'); if (bd) bd.classList.toggle('is-open', isOpen); document.body.classList.toggle('ap-drawer-open', isOpen); } }\">"
+        '<span style="font-size:12px;line-height:1;display:inline-flex;align-items:center;">📚</span>'
+        '<span style="line-height:1;">Library</span>'
+        '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:middle;"><path d="M19 9l-7 7-7-7"/></svg>'
+        "</button>"
+    )
+    theme_slider = (
+        '<button id="ap-theme-slider" type="button" title="Toggle Light / Dark theme" '
+        'onclick="(() => {'
+        "const isDark = !document.documentElement.classList.contains('ap-dark');"
+        "document.documentElement.classList.toggle('ap-dark', isDark);"
+        "document.body.classList.toggle('ap-dark', isDark);"
+        "document.querySelector('.gradio-container')?.classList.toggle('ap-dark', isDark);"
+        "document.querySelector('gradio-app')?.classList.toggle('ap-dark', isDark);"
+        "if (!isDark) {"
+        "document.documentElement.classList.remove('dark');"
+        "document.body.classList.remove('dark');"
+        "document.querySelector('.gradio-container')?.classList.remove('dark');"
+        "document.querySelector('gradio-app')?.classList.remove('dark');"
+        "}"
+        "try { localStorage.setItem('podseek_theme', isDark ? 'dark' : 'light'); } catch (e) {}"
+        "const bg = isDark ? '#111113' : '#F8F9FA';"
+        "document.documentElement.style.setProperty('background-color', bg, 'important');"
+        "document.body.style.setProperty('background-color', bg, 'important');"
+        "const gApp = document.querySelector('gradio-app');"
+        "if (gApp) gApp.style.setProperty('background-color', bg, 'important');"
+        '})()">'
+        '<span class="ts-thumb"></span>'
+        '<span class="ts-icon ts-sun">'
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" '
+        'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+        '<circle cx="12" cy="12" r="4"/>'
+        '<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2'
+        'M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'
+        "</svg></span>"
+        '<span class="ts-icon ts-moon">'
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" '
+        'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+        '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+        "</svg></span>"
+        "</button>"
+    )
+    return f'<div class="ap-slider-wrap">{mobile_lib_btn}{theme_slider}</div>'
+
+
 def render_episodes_html(items: list[dict]) -> str:
-    """Render the scrollable list of indexed episodes using episode titles (no raw video IDs)."""
+    """Render the scrollable list of indexed episodes for the desktop regular left pane."""
+    count = len(items)
+    heading_html = (
+        '<div class="ap-episodes-heading" '
+        'style="border-top:1px solid var(--border-hairline);margin:8px 0 6px;padding-top:8px;'
+        f'font-size:12.5px;font-weight:700;color:var(--text-main);">Indexed Episodes ({count})</div>'
+    )
     if not items:
         return (
-            '<div class="ap-muted" style="font-size:12px;font-family:monospace;padding:8px 0;">'
+            heading_html + '<div class="ap-muted" style="font-size:12px;font-family:monospace;padding:8px 0;">'
             "No indexed episodes in data/raw/ yet."
             "</div>"
         )
@@ -485,9 +557,9 @@ def render_episodes_html(items: list[dict]) -> str:
         thumb = f"https://i.ytimg.com/vi/{ep_id}/hqdefault.jpg"
         cards.append(
             f'<a href="{url}" target="_blank" rel="noopener noreferrer" class="ap-subtle" '
-            f'style="display:flex;align-items:center;gap:10px;padding:9px 10px;text-decoration:none;margin-bottom:8px;border-radius:10px;">'
+            f'style="display:flex;align-items:center;gap:10px;padding:8px 9px;text-decoration:none;margin-bottom:6px;border-radius:10px;">'
             f'<img src="{thumb}" alt="" '
-            f'style="width:48px;height:32px;object-fit:cover;border-radius:6px;flex-shrink:0;background:#18181B;" />'
+            f'style="width:46px;height:30px;object-fit:cover;border-radius:6px;flex-shrink:0;background:#18181B;" />'
             f'<div style="min-width:0;flex:1;">'
             f'<div style="font-size:12px;font-weight:600;line-height:1.35;color:var(--text-main);'
             f'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">'
@@ -495,11 +567,101 @@ def render_episodes_html(items: list[dict]) -> str:
             f'<div class="ap-muted" style="font-size:11px;margin-top:2px;">Huberman Lab</div>'
             f"</div></a>"
         )
+    cards_html = "".join(cards)
     return (
-        '<div class="ap-episodes-list modern-scroll" '
-        'style="max-height:clamp(160px, calc(100vh - 360px), 480px);overflow-y:auto;padding-right:4px;">'
-        + "".join(cards)
+        heading_html + '<div class="ap-episodes-list modern-scroll" '
+        'style="max-height:clamp(180px, calc(100vh - 360px), 480px);overflow-y:auto;padding-right:4px;">'
+        + cards_html
         + "</div>"
+    )
+
+
+def render_header_library_html(items: list[dict]) -> str:
+    """Render top header bar controls: mobile-only library drawer pill + theme toggle slider."""
+    count = len(items)
+    btn_label = f"📚 {count} Eps" if count > 0 else "📚 0 Eps"
+    if not items:
+        cards_html = (
+            '<div class="ap-muted" style="font-size:11.5px;font-family:monospace;padding:12px 8px;text-align:center;">'
+            "No indexed episodes yet.<br/>Use ✦ Absorb to add one."
+            "</div>"
+        )
+    else:
+        cards: list[str] = []
+        for ep in items:
+            ep_id = html.escape(str(ep.get("episode_id", "")))
+            raw_title = str(ep.get("episode_title") or "Huberman Lab Episode")
+            title = html.escape(raw_title)
+            url = html.escape(str(ep.get("url") or f"https://youtu.be/{ep_id}"))
+            thumb = f"https://i.ytimg.com/vi/{ep_id}/hqdefault.jpg"
+            cards.append(
+                f'<a href="{url}" target="_blank" rel="noopener noreferrer" class="ap-subtle" '
+                f'style="display:flex;align-items:center;gap:10px;padding:8px 10px;text-decoration:none;margin-bottom:6px;border-radius:10px;transition:background 0.15s ease;">'
+                f'<img src="{thumb}" alt="" '
+                f'style="width:44px;height:28px;object-fit:cover;border-radius:5px;flex-shrink:0;background:#18181B;" />'
+                f'<div style="min-width:0;flex:1;">'
+                f'<div style="font-size:11.5px;font-weight:600;line-height:1.35;color:var(--text-main);'
+                f'display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">'
+                f"{title}</div>"
+                f'<div class="ap-muted" style="font-size:10.5px;margin-top:2px;">Huberman Lab</div>'
+                f"</div></a>"
+            )
+        cards_html = "".join(cards)
+
+    chevron_svg = (
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" '
+        'stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.65;flex-shrink:0;">'
+        '<path d="M19 9l-7 7-7-7" />'
+        "</svg>"
+    )
+
+    theme_btn_html = (
+        '<button id="ap-theme-slider" type="button" title="Toggle Light / Dark theme" '
+        'onclick="(() => {'
+        "const isDark = !document.documentElement.classList.contains('ap-dark');"
+        "document.documentElement.classList.toggle('ap-dark', isDark);"
+        "document.documentElement.classList.toggle('dark', isDark);"
+        "document.body.classList.toggle('ap-dark', isDark);"
+        "document.body.classList.toggle('dark', isDark);"
+        "document.querySelector('.gradio-container')?.classList.toggle('ap-dark', isDark);"
+        "const bg = isDark ? '#111113' : '#F8F9FA';"
+        "document.documentElement.style.setProperty('background-color', bg, 'important');"
+        "document.body.style.setProperty('background-color', bg, 'important');"
+        "const gApp = document.querySelector('gradio-app');"
+        "if (gApp) gApp.style.setProperty('background-color', bg, 'important');"
+        '})()">'
+        '<span class="ts-thumb"></span>'
+        '<span class="ts-icon ts-sun">'
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" '
+        'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+        '<circle cx="12" cy="12" r="4"/>'
+        '<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2'
+        'M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'
+        "</svg></span>"
+        '<span class="ts-icon ts-moon">'
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" '
+        'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
+        '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+        "</svg></span>"
+        "</button>"
+    )
+
+    return (
+        '<div class="ap-slider-wrap">'
+        '<details class="ap-header-episodes-dropdown ap-mobile-only">'
+        f'<summary class="ap-header-episodes-btn" title="View Indexed Huberman Lab Episodes">'
+        f"<span>{btn_label}</span>{chevron_svg}"
+        "</summary>"
+        '<div class="ap-header-episodes-menu modern-scroll">'
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 6px 8px;border-bottom:1px solid var(--border-hairline);margin-bottom:6px;">'
+        f'<span style="font-size:11.5px;font-weight:700;color:var(--text-main);">Indexed Episodes ({count})</span>'
+        '<span class="ap-muted" style="font-size:10px;font-family:monospace;">Huberman Lab</span>'
+        "</div>"
+        f"{cards_html}"
+        "</div>"
+        "</details>"
+        f"{theme_btn_html}"
+        "</div>"
     )
 
 
@@ -532,27 +694,34 @@ def render_spotlight_workflow_html(
         return (
             '<details class="ap-trace-details">'
             f'<summary><span style="color:var(--done-stroke);">✓</span> CRAG Flowchart · {chunks} chunks · {mode_label} <span style="font-size:10px;opacity:0.7;">▾</span></summary>'
-            '<div style="margin-top:6px;max-width:100%;overflow-x:auto;" class="modern-scroll">'
+            '<div style="margin-top:6px;max-width:100%;overflow:hidden;" class="modern-scroll">'
             + flowchart_svg
             + "</div></details>"
         )
 
     return (
-        '<div class="ap-spotlight-card" style="padding:6px;overflow-x:auto;margin-bottom:12px;">'
+        '<div class="ap-spotlight-card" style="padding:6px;overflow:hidden;margin-bottom:12px;">'
         + flowchart_svg
         + "</div>"
     )
 
 
-def render_chat_session_html(history: list[dict]) -> str:
+def render_chat_session_html(history: list[dict], episode_count: int = 23) -> str:
     """Render the ephemeral session chat thread with rendered Markdown, inline pills, and focus-locked spotlight workflow."""
     if not history:
+        count_display = str(episode_count if episode_count > 0 else 23)
+        onclick_js = "if (window.togglePodSeekDrawer) { window.togglePodSeekDrawer(true); } else { const col = document.querySelector('.ap-col-left'); if (col) { col.classList.remove('is-collapsed'); col.classList.add('mobile-drawer-open'); document.getElementById('ap-mobile-drawer-backdrop')?.classList.add('is-open'); document.body.classList.add('ap-drawer-open'); } }"
         return (
-            '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll ap-chat-empty" '
-            'style="height:clamp(100px, calc(100vh - 580px), 240px);display:flex;align-items:center;justify-content:center;">'
-            '<div class="ap-muted" style="font-size:12.5px;text-align:center;padding:0 20px;">'
-            "Ask a question below or click a preset question to distill insights from Huberman Lab transcripts."
-            "</div></div>"
+            '<div class="ap-chat-viewport-wrap">'
+            '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll ap-chat-empty">'
+            '<div style="max-width:560px;margin:0 auto;text-align:center;padding:16px 20px;">'
+            '<div style="font-size:21px;font-weight:700;margin-bottom:8px;letter-spacing:-0.025em;color:var(--text-main);line-height:1.3;">'
+            f'Ask across Huberman Lab\'s <button type="button" onclick="{onclick_js}" class="ap-kb-count-link" title="Open Knowledge Base">{count_display}</button> most viewed episodes.'
+            "</div>"
+            '<div class="ap-muted" style="font-size:14px;line-height:1.55;font-weight:400;">'
+            "Pick a research-backed topic below or ask any question to distill grounded citations with timestamp deep links."
+            "</div></div></div>"
+            "</div>"
         )
     turns: list[str] = []
     for item in history:
@@ -564,25 +733,38 @@ def render_chat_session_html(history: list[dict]) -> str:
         if isinstance(wf_info, dict):
             spotlight_block = render_spotlight_workflow_html(**wf_info)
 
-        if raw_answer in {"Distilling transcripts...", "Distilling grounded response...", ""} and spotlight_block:
-            rendered_answer = ""
+        if raw_answer in {"Distilling transcripts...", "Distilling grounded response...", ""}:
+            rendered_answer = (
+                '<div class="ap-desktop-streaming ap-muted" style="display:flex;align-items:center;gap:8px;font-size:13.5px;">'
+                '<span class="ap-spin">✦</span> Distilling grounded response...</div>'
+            )
         else:
             rendered_answer = render_markdown_with_pills(raw_answer, cits)
 
         answer_content = f"{spotlight_block}{rendered_answer}" if spotlight_block else rendered_answer
         turns.append(
-            f'<div style="display:flex;justify-content:flex-end;margin-bottom:10px;">'
-            f'<div style="max-width:85%;background:var(--accent);color:#fff;padding:8px 13px;'
-            f'border-radius:12px 12px 3px 12px;font-size:12.5px;font-weight:500;">'
+            f'<div style="display:flex;justify-content:flex-end;margin-bottom:12px;">'
+            f'<div style="max-width:85%;background:var(--accent);color:#fff;padding:10px 16px;'
+            f'border-radius:16px 16px 4px 16px;font-size:14.5px;font-weight:500;line-height:1.45;letter-spacing:-0.01em;">'
             f"{q}</div></div>"
-            f'<div class="ap-subtle" style="padding:13px 15px;margin-bottom:14px;font-size:12.5px;line-height:1.6;">'
+            f'<div class="ap-subtle" style="padding:16px 18px;margin-bottom:16px;font-size:14.5px;line-height:1.65;letter-spacing:-0.005em;border-radius:16px;">'
             f"{answer_content}</div>"
         )
     return (
+        '<div class="ap-chat-viewport-wrap">'
         '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll" '
         'style="height:clamp(160px, calc(100vh - 480px), 380px);overflow-y:auto;padding-right:4px;">'
         + "".join(turns)
         + "</div>"
+        '<div id="ap-chat-scroll-nav" class="ap-chat-scroll-nav">'
+        '<button type="button" id="ap-scroll-top-btn" class="ap-chat-nav-btn" title="Scroll to top" aria-label="Scroll to top" onclick="const c = document.getElementById(\'ap-chat-scroll\'); if (c) c.scrollTo({ top: 0, behavior: \'smooth\' });">'
+        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>'
+        "</button>"
+        '<button type="button" id="ap-scroll-bottom-btn" class="ap-chat-nav-btn" title="Scroll to bottom" aria-label="Scroll to bottom" onclick="const c = document.getElementById(\'ap-chat-scroll\'); if (c) c.scrollTo({ top: c.scrollHeight, behavior: \'smooth\' });">'
+        '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+        "</button>"
+        "</div>"
+        "</div>"
     )
 
 
@@ -646,18 +828,18 @@ def _render_turbo_workflow_html(
     )
 
     top_badge_html = (
-        '<span class="ap-subtle" style="font-size:12px;font-family:monospace;padding:2px 8px;color:var(--done-stroke);border-color:var(--done-stroke);">⚡ Cache Hit</span>'
+        '<span class="ap-subtle" style="font-size:12px;font-family:monospace;padding:2px 8px;color:var(--done-stroke);border-color:var(--done-stroke);white-space:nowrap;flex-shrink:0;">⚡ Cache Hit</span>'
         if is_cached
-        else '<span class="ap-subtle" style="font-size:11px;font-family:monospace;padding:2px 8px;color:var(--accent);">⚡ Turbo · 0 Rewrites</span>'
+        else '<span class="ap-subtle" style="font-size:10.5px;font-family:monospace;padding:2px 6px;color:var(--accent);white-space:nowrap;flex-shrink:0;">⚡ Fast · 0 Rewrites</span>'
     )
 
     return f"""
     <div class="wf-dot-grid">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <span style="font-size:12px;font-weight:700;">Workflow · Turbo RAG</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;white-space:nowrap;">
+        <span style="font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">Workflow · Turbo RAG</span>
         {top_badge_html}
       </div>
-      <div style="position:relative;width:330px;height:440px;margin:0 auto;">
+      <div class="wf-canvas-wrap" data-orig-height="440" style="position:relative;width:330px;height:440px;margin:0 auto;">
         <svg width="330" height="440" viewBox="0 0 330 440" style="position:absolute;inset:0;pointer-events:none;">
           <!-- 0. Retrieve <-> QA Cache -->
           <path d="M 178 35 L 192 35" class="{c_ret_cache}" stroke-width="1.5" />
@@ -824,6 +1006,7 @@ def _render_balanced_workflow_html(
         if is_fast_path and (done or is_cached)
         else ("conn-running" if (active_node == "generate" and is_fast_path) else "conn-idle")
     )
+    fastpath_arrow = "var(--done-stroke)" if is_fast_path else "var(--border-strong)"
     c_grd_dec = (
         "conn-completed"
         if (done or aborted_due_to_retries or is_cached)
@@ -886,18 +1069,18 @@ def _render_balanced_workflow_html(
     )
 
     top_badge_html = (
-        '<span class="ap-subtle" style="font-size:12px;font-family:monospace;padding:2px 8px;color:var(--done-stroke);border-color:var(--done-stroke);">⚡ Cache Hit</span>'
+        '<span class="ap-subtle" style="font-size:11.5px;font-family:monospace;padding:2px 8px;color:var(--done-stroke);border-color:var(--done-stroke);white-space:nowrap;flex-shrink:0;">⚡ Cache Hit</span>'
         if is_cached
-        else f'<span class="ap-subtle" style="font-size:11px;font-family:monospace;padding:2px 8px;">⚖️ Balanced · Rewrites: {rewrites} / 1</span>'
+        else f'<span class="ap-subtle" style="font-size:10.5px;font-family:monospace;padding:2px 6px;white-space:nowrap;flex-shrink:0;">Rewrites: {rewrites} / 1</span>'
     )
 
     return f"""
     <div class="wf-dot-grid">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <span style="font-size:12px;font-weight:700;">Workflow · Balanced RAG</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;white-space:nowrap;">
+        <span style="font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">Workflow · Balanced RAG</span>
         {top_badge_html}
       </div>
-      <div style="position:relative;width:330px;height:440px;margin:0 auto;">
+      <div class="wf-canvas-wrap" data-orig-height="440" style="position:relative;width:330px;height:440px;margin:0 auto;">
         <svg width="330" height="440" viewBox="0 0 330 440" style="position:absolute;inset:0;pointer-events:none;">
           <!-- 0. Retrieve <-> QA Cache -->
           <path d="M 178 35 L 192 35" class="{c_ret_cache}" stroke-width="1.5" />
@@ -910,11 +1093,11 @@ def _render_balanced_workflow_html(
           <polygon points="94,86 142,100 94,114 46,100" fill="var(--bg-card)" stroke="{diamond0_stroke}" stroke-width="1.5" />
           <text x="94" y="103" text-anchor="middle" fill="var(--text-main)" font-size="8.5" font-weight="700" font-family="monospace">dist &lt; 0.35?</text>
 
-          <!-- Fast-Path Left Bypass Line: Diamond 0 Left (46, 100) -> left to 6 -> down to 370 -> Generate Left (10, 370) -->
-          <path d="M 46 100 L 6 100 L 6 370 L 10 370" class="{c_fastpath}" stroke-width="1.8" stroke-dasharray="4 3" />
-          <polygon points="7,367 11,370 7,373" fill="var(--done-stroke)" />
-          <rect x="1" y="225" width="76" height="15" rx="3" fill="var(--bg-card)" stroke="var(--done-stroke)" stroke-width="1" />
-          <text x="39" y="236" text-anchor="middle" fill="var(--done-stroke)" font-size="7.5" font-weight="700" font-family="monospace">Yes · Skip Grade</text>
+          <!-- Fast-Path Left Bypass Line: Diamond 0 Left (46, 100) -> left to 8 -> down to 205 -> right to 36 -> down to 345 (centered through Skip Grading box at x=36) -->
+          <path d="M 46 100 L 8 100 L 8 205 L 36 205 L 36 345" class="{c_fastpath}" stroke-width="1.8" stroke-dasharray="4 3" />
+          <polygon points="33,341 36,346 39,341" fill="{fastpath_arrow}" />
+          <rect x="2" y="225" width="68" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="36" y="236" text-anchor="middle" fill="var(--done-stroke)" font-size="8.5" font-weight="600" font-family="monospace">Skip Grading</text>
 
           <!-- Fallback Line: Diamond 0 Bottom (94, 114) -> Grade Top (94, 148) -->
           <path d="M 94 114 L 94 148" class="{c_ret_grd}" stroke-width="1.5" />
@@ -936,30 +1119,30 @@ def _render_balanced_workflow_html(
           <rect x="76" y="310" width="36" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
           <text x="94" y="321" text-anchor="middle" fill="var(--done-stroke)" font-size="10" font-weight="600" font-family="monospace">Yes</text>
 
-          <!-- No Branch: Diamond 1 Right (148, 265) -> Diamond 2 Left (204, 265) -->
-          <path d="M 148 265 L 204 265" class="{c_dec1_dec2}" stroke-width="1.5" />
-          <polygon points="200,262 205,265 200,268" fill="var(--border-strong)" />
-          <rect x="162" y="258" width="28" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
-          <text x="176" y="269" text-anchor="middle" fill="var(--retry-stroke)" font-size="10" font-weight="600" font-family="monospace">No</text>
+          <!-- No Branch: Diamond 1 Right (148, 265) -> Diamond 2 Left (202, 265) -->
+          <path d="M 148 265 L 202 265" class="{c_dec1_dec2}" stroke-width="1.5" />
+          <polygon points="198,262 203,265 198,268" fill="var(--border-strong)" />
+          <rect x="160" y="258" width="28" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="174" y="269" text-anchor="middle" fill="var(--retry-stroke)" font-size="10" font-weight="600" font-family="monospace">No</text>
 
-          <!-- Decision Diamond 2: Retries < 1? (Center: 259, 265) -->
-          <polygon points="259,238 314,265 259,292 204,265" fill="var(--bg-card)" stroke="{diamond2_stroke}" stroke-width="1.75" />
-          <text x="259" y="268" text-anchor="middle" fill="var(--text-main)" font-size="9.5" font-weight="600" font-family="monospace">Retries &lt; 1?</text>
+          <!-- Decision Diamond 2: Retries < 1? (Center: 256, 265) -->
+          <polygon points="256,238 310,265 256,292 202,265" fill="var(--bg-card)" stroke="{diamond2_stroke}" stroke-width="1.75" />
+          <text x="256" y="268" text-anchor="middle" fill="var(--text-main)" font-size="9.5" font-weight="600" font-family="monospace">Retries &lt; 1?</text>
 
-          <!-- Yes (Retry): Diamond 2 Top (259, 238) -> Rewrite Bottom (259, 198) -->
-          <path d="M 259 238 L 259 198" class="{c_dec2_rew}" stroke-width="1.5" />
-          <polygon points="256,202 259,197 262,202" fill="var(--border-strong)" />
-          <rect x="241" y="210" width="36" height="14" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
-          <text x="259" y="220" text-anchor="middle" fill="var(--retry-stroke)" font-size="9.5" font-weight="600" font-family="monospace">Yes</text>
+          <!-- Yes (Retry): Diamond 2 Top (256, 238) -> Rewrite Bottom (256, 198) -->
+          <path d="M 256 238 L 256 198" class="{c_dec2_rew}" stroke-width="1.5" />
+          <polygon points="253,202 256,197 259,202" fill="var(--border-strong)" />
+          <rect x="238" y="210" width="36" height="14" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="256" y="220" text-anchor="middle" fill="var(--retry-stroke)" font-size="9.5" font-weight="600" font-family="monospace">Yes</text>
 
-          <!-- No (Abort): Diamond 2 Bottom (259, 292) -> Abort Top (259, 345) -->
-          <path d="M 259 292 L 259 345" class="{c_dec2_abt}" stroke-width="1.5" />
-          <polygon points="256,341 259,346 262,341" fill="var(--border-strong)" />
-          <rect x="245" y="310" width="28" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
-          <text x="259" y="321" text-anchor="middle" fill="#EF4444" font-size="10" font-weight="600" font-family="monospace">No</text>
+          <!-- No (Abort): Diamond 2 Bottom (256, 292) -> Abort Top (256, 345) -->
+          <path d="M 256 292 L 256 345" class="{c_dec2_abt}" stroke-width="1.5" />
+          <polygon points="253,341 256,346 259,341" fill="var(--border-strong)" />
+          <rect x="242" y="310" width="28" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="256" y="321" text-anchor="middle" fill="#EF4444" font-size="10" font-weight="600" font-family="monospace">No</text>
 
-          <!-- Loopback: Rewrite Top (215, 148) -> Retrieve Right Side (178, 35) -->
-          <path d="M 215 148 L 215 70 L 185 70 L 185 35 L 178 35" class="{c_rew_ret}" stroke-width="1.5" />
+          <!-- Loopback: Rewrite Top (212, 148) -> Retrieve Right Side (178, 35) -->
+          <path d="M 212 148 L 212 70 L 185 70 L 185 35 L 178 35" class="{c_rew_ret}" stroke-width="1.5" />
           <polygon points="182,32 177,35 182,38" fill="var(--border-strong)" />
         </svg>
 
@@ -977,16 +1160,16 @@ def _render_balanced_workflow_html(
         </div>
 
         <!-- Node 2: QA Cache -->
-        <div class="wf-node {cache_cls}" style="left:192px;top:10px;width:134px;height:50px;">
-          <svg class="node-trace-svg" viewBox="0 0 136 52">
-            <rect class="trace-base" x="1.5" y="1.5" width="133" height="49" rx="10" />
-            <rect class="trace-beam" x="1.5" y="1.5" width="133" height="49" rx="10" pathLength="100" />
+        <div class="wf-node {cache_cls}" style="left:190px;top:10px;width:132px;height:50px;">
+          <svg class="node-trace-svg" viewBox="0 0 134 52">
+            <rect class="trace-base" x="1.5" y="1.5" width="131" height="49" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="131" height="49" rx="10" pathLength="100" />
           </svg>
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
-            <span style="font-weight:600;">⚡ QA Cache</span>
-            <span style="font-family:monospace;color:{"var(--done-stroke)" if is_cached else "inherit"};">{cache_status}</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;white-space:nowrap;gap:4px;">
+            <span style="font-weight:600;flex-shrink:0;">⚡ QA Cache</span>
+            <span style="font-family:monospace;font-size:10px;flex-shrink:0;color:{"var(--done-stroke)" if is_cached else "inherit"};">{cache_status}</span>
           </div>
-          <div class="ap-muted" style="font-size:11px;font-family:monospace;margin-top:2px;white-space:nowrap;">{cache_sub}</div>
+          <div class="ap-muted" style="font-size:10.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{cache_sub}</div>
         </div>
 
         <!-- Node 3: Grade (Fallback) -->
@@ -1003,16 +1186,16 @@ def _render_balanced_workflow_html(
         </div>
 
         <!-- Node 4: Rewrite (Retry 1/1) -->
-        <div class="wf-node {rew_cls}" style="left:192px;top:148px;width:134px;height:50px;">
-          <svg class="node-trace-svg" viewBox="0 0 136 52">
-            <rect class="trace-base" x="1.5" y="1.5" width="133" height="49" rx="10" />
-            <rect class="trace-beam" x="1.5" y="1.5" width="133" height="49" rx="10" pathLength="100" />
+        <div class="wf-node {rew_cls}" style="left:190px;top:148px;width:132px;height:50px;">
+          <svg class="node-trace-svg" viewBox="0 0 134 52">
+            <rect class="trace-base" x="1.5" y="1.5" width="131" height="49" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="131" height="49" rx="10" pathLength="100" />
           </svg>
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
-            <span style="font-weight:600;">✍️ Rewrite</span>
-            <span style="font-family:monospace;">{rew_status}</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;white-space:nowrap;gap:4px;">
+            <span style="font-weight:600;flex-shrink:0;">✍️ Rewrite</span>
+            <span style="font-family:monospace;font-size:10px;flex-shrink:0;">{rew_status}</span>
           </div>
-          <div class="ap-muted" style="font-size:11.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{rew_sub}</div>
+          <div class="ap-muted" style="font-size:10.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{rew_sub}</div>
         </div>
 
         <!-- Node 5: Generate (Destination for Fast-Path or Relevant Grade) -->
@@ -1029,12 +1212,12 @@ def _render_balanced_workflow_html(
         </div>
 
         <!-- Node 6: Abort (Circuit Breaker Terminator) -->
-        <div class="wf-node {abt_cls}" style="left:192px;top:345px;width:134px;height:50px;border-radius:16px;">
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
-            <span style="font-weight:600;">🛑 Abort</span>
-            <span style="font-family:monospace;color:{"#EF4444" if aborted_due_to_retries else "inherit"};">{abt_status}</span>
+        <div class="wf-node {abt_cls}" style="left:190px;top:345px;width:132px;height:50px;border-radius:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;white-space:nowrap;gap:4px;">
+            <span style="font-weight:600;flex-shrink:0;">🛑 Abort</span>
+            <span style="font-family:monospace;font-size:10px;flex-shrink:0;color:{"#EF4444" if aborted_due_to_retries else "inherit"};">{abt_status}</span>
           </div>
-          <div class="ap-muted" style="font-size:11px;font-family:monospace;margin-top:2px;white-space:nowrap;">{abt_sub}</div>
+          <div class="ap-muted" style="font-size:10.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{abt_sub}</div>
         </div>
       </div>
     </div>
@@ -1172,18 +1355,18 @@ def _render_rigorous_workflow_html(
     )
 
     top_badge_html = (
-        '<span class="ap-subtle" style="font-size:12px;font-family:monospace;padding:2px 8px;color:var(--done-stroke);border-color:var(--done-stroke);">⚡ Cache Hit</span>'
+        '<span class="ap-subtle" style="font-size:11.5px;font-family:monospace;padding:2px 8px;color:var(--done-stroke);border-color:var(--done-stroke);white-space:nowrap;flex-shrink:0;">⚡ Cache Hit</span>'
         if is_cached
-        else f'<span class="ap-subtle" style="font-size:11px;font-family:monospace;padding:2px 8px;">🎯 Rigorous · Rewrites: {rewrites} / 2</span>'
+        else f'<span class="ap-subtle" style="font-size:10.5px;font-family:monospace;padding:2px 6px;white-space:nowrap;flex-shrink:0;">Rewrites: {rewrites} / 2</span>'
     )
 
     return f"""
     <div class="wf-dot-grid">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <span style="font-size:12px;font-weight:700;">Workflow · Corrective RAG</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px;white-space:nowrap;">
+        <span style="font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">Workflow · Corrective RAG</span>
         {top_badge_html}
       </div>
-      <div style="position:relative;width:330px;height:440px;margin:0 auto;">
+      <div class="wf-canvas-wrap" data-orig-height="440" style="position:relative;width:330px;height:440px;margin:0 auto;">
         <svg width="330" height="440" viewBox="0 0 330 440" style="position:absolute;inset:0;pointer-events:none;">
           <!-- 0. Retrieve <-> QA Cache -->
           <path d="M 178 35 L 192 35" class="{c_ret_cache}" stroke-width="1.5" />
@@ -1220,20 +1403,20 @@ def _render_rigorous_workflow_html(
           <text x="259" y="268" text-anchor="middle" fill="var(--text-main)"
                 font-size="9.5" font-weight="600" font-family="monospace">Retries &lt; 2?</text>
 
-          <!-- 7. Yes (Retry): Diamond 2 Top (259,238) -> Rewrite Bottom (259,198) -->
-          <path d="M 259 238 L 259 198" class="{c_dec2_rew}" stroke-width="1.5" />
-          <polygon points="256,202 259,197 262,202" fill="var(--border-strong)" />
-          <rect x="241" y="210" width="36" height="14" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
-          <text x="259" y="220" text-anchor="middle" fill="var(--retry-stroke)" font-size="9.5" font-weight="600" font-family="monospace">Yes</text>
+          <!-- 7. Yes (Retry): Diamond 2 Top (256,238) -> Rewrite Bottom (256,198) -->
+          <path d="M 256 238 L 256 198" class="{c_dec2_rew}" stroke-width="1.5" />
+          <polygon points="253,202 256,197 259,202" fill="var(--border-strong)" />
+          <rect x="238" y="210" width="36" height="14" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="256" y="220" text-anchor="middle" fill="var(--retry-stroke)" font-size="9.5" font-weight="600" font-family="monospace">Yes</text>
 
-          <!-- 8. No (Abort): Diamond 2 Bottom (259,292) -> Abort Top (259,345) -->
-          <path d="M 259 292 L 259 345" class="{c_dec2_abt}" stroke-width="1.5" />
-          <polygon points="256,341 259,346 262,341" fill="var(--border-strong)" />
-          <rect x="245" y="310" width="28" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
-          <text x="259" y="321" text-anchor="middle" fill="#EF4444" font-size="10" font-weight="600" font-family="monospace">No</text>
+          <!-- 8. No (Abort): Diamond 2 Bottom (256,292) -> Abort Top (256,345) -->
+          <path d="M 256 292 L 256 345" class="{c_dec2_abt}" stroke-width="1.5" />
+          <polygon points="253,341 256,346 259,341" fill="var(--border-strong)" />
+          <rect x="242" y="310" width="28" height="15" rx="4" fill="var(--bg-card)" stroke="var(--border-hairline)" />
+          <text x="256" y="321" text-anchor="middle" fill="#EF4444" font-size="10" font-weight="600" font-family="monospace">No</text>
 
-          <!-- 9. Loopback: Rewrite Top (215,148) -> Retrieve Right Side (178,35) -->
-          <path d="M 215 148 L 215 70 L 185 70 L 185 35 L 178 35" class="{c_rew_ret}" stroke-width="1.5" />
+          <!-- 9. Loopback: Rewrite Top (212,148) -> Retrieve Right Side (178,35) -->
+          <path d="M 212 148 L 212 70 L 185 70 L 185 35 L 178 35" class="{c_rew_ret}" stroke-width="1.5" />
           <polygon points="182,32 177,35 182,38" fill="var(--border-strong)" />
         </svg>
 
@@ -1251,16 +1434,16 @@ def _render_rigorous_workflow_html(
         </div>
 
         <!-- Node 2: QA Cache -->
-        <div class="wf-node {cache_cls}" style="left:192px;top:10px;width:134px;height:50px;">
-          <svg class="node-trace-svg" viewBox="0 0 136 52">
-            <rect class="trace-base" x="1.5" y="1.5" width="133" height="49" rx="10" />
-            <rect class="trace-beam" x="1.5" y="1.5" width="133" height="49" rx="10" pathLength="100" />
+        <div class="wf-node {cache_cls}" style="left:190px;top:10px;width:132px;height:50px;">
+          <svg class="node-trace-svg" viewBox="0 0 134 52">
+            <rect class="trace-base" x="1.5" y="1.5" width="131" height="49" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="131" height="49" rx="10" pathLength="100" />
           </svg>
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
-            <span style="font-weight:600;">⚡ QA Cache</span>
-            <span style="font-family:monospace;color:{"var(--done-stroke)" if is_cached else "inherit"};">{cache_status}</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;white-space:nowrap;gap:4px;">
+            <span style="font-weight:600;flex-shrink:0;">⚡ QA Cache</span>
+            <span style="font-family:monospace;font-size:10px;flex-shrink:0;color:{"var(--done-stroke)" if is_cached else "inherit"};">{cache_status}</span>
           </div>
-          <div class="ap-muted" style="font-size:11px;font-family:monospace;margin-top:2px;white-space:nowrap;">{cache_sub}</div>
+          <div class="ap-muted" style="font-size:10.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{cache_sub}</div>
         </div>
 
         <!-- Node 3: Grade -->
@@ -1277,16 +1460,16 @@ def _render_rigorous_workflow_html(
         </div>
 
         <!-- Node 4: Rewrite -->
-        <div class="wf-node {rew_cls}" style="left:192px;top:148px;width:134px;height:50px;">
-          <svg class="node-trace-svg" viewBox="0 0 136 52">
-            <rect class="trace-base" x="1.5" y="1.5" width="133" height="49" rx="10" />
-            <rect class="trace-beam" x="1.5" y="1.5" width="133" height="49" rx="10" pathLength="100" />
+        <div class="wf-node {rew_cls}" style="left:190px;top:148px;width:132px;height:50px;">
+          <svg class="node-trace-svg" viewBox="0 0 134 52">
+            <rect class="trace-base" x="1.5" y="1.5" width="131" height="49" rx="10" />
+            <rect class="trace-beam" x="1.5" y="1.5" width="131" height="49" rx="10" pathLength="100" />
           </svg>
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
-            <span style="font-weight:600;">✍️ Rewrite</span>
-            <span style="font-family:monospace;">{rew_status}</span>
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;white-space:nowrap;gap:4px;">
+            <span style="font-weight:600;flex-shrink:0;">✍️ Rewrite</span>
+            <span style="font-family:monospace;font-size:10px;flex-shrink:0;">{rew_status}</span>
           </div>
-          <div class="ap-muted" style="font-size:11.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{rew_sub}</div>
+          <div class="ap-muted" style="font-size:10.5px;font-family:monospace;margin-top:2px;white-space:nowrap;">{rew_sub}</div>
         </div>
 
         <!-- Node 5: Generate -->
@@ -1303,10 +1486,10 @@ def _render_rigorous_workflow_html(
         </div>
 
         <!-- Node 6: Abort -->
-        <div class="wf-node {abt_cls}" style="left:192px;top:345px;width:134px;height:50px;border-radius:16px;">
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;white-space:nowrap;">
-            <span style="font-weight:600;">🛑 Abort</span>
-            <span style="font-family:monospace;color:{"#EF4444" if is_aborted else "inherit"};">{abt_status}</span>
+        <div class="wf-node {abt_cls}" style="left:190px;top:345px;width:132px;height:50px;border-radius:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;white-space:nowrap;gap:4px;">
+            <span style="font-weight:600;flex-shrink:0;">🛑 Abort</span>
+            <span style="font-family:monospace;font-size:10px;flex-shrink:0;color:{"#EF4444" if is_aborted else "inherit"};">{abt_status}</span>
           </div>
           <div class="ap-muted" style="font-size:11px;font-family:monospace;margin-top:2px;white-space:nowrap;">{abt_sub}</div>
         </div>

@@ -16320,5 +16320,9 @@
     "Phenethylamine (PEA)",
     "Oxytocin",
     "Ventral tegmental area"
+  ],
+  "chunks_indexed": 142,
+  "indexed_collections": [
+    "podcast_chunks_gemini-embedding-2"
   ]
 }

@@ -4,7 +4,9 @@ The widgets call AskPodcastClient. View rendering lives in `ui/components.py`
 and stylesheets live in `ui/styles/theme.css`.
 """
 
+import json
 import os
+import random
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -26,6 +28,7 @@ from ui.components import (  # noqa: E402
     render_chat_session_html,
     render_episodes_html,
     render_header_brand_html,
+    render_header_controls_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
     render_mode_slider_html,
@@ -37,11 +40,87 @@ from ui.components import (  # noqa: E402
 DEFAULT_SHOW = "huberman_lab"
 DEFAULT_SPEAKER = "Andrew Huberman"
 
-PRESET_QUESTIONS = [
-    "What causes a dopamine crash and how do I prevent it?",
-    "How does deliberate cold exposure affect dopamine levels?",
-    "What is the mind-muscle connection?",
+SAMPLE_QUESTIONS: list[str] = [
+    "☀️ What is the optimal morning sunlight viewing protocol for circadian health?",
+    "⚡ How do I prevent a severe dopamine crash and manage baseline motivation?",
+    "🧊 How does deliberate cold exposure trigger sustained dopamine release?",
+    "☕ How long should I delay morning caffeine intake to avoid an afternoon crash?",
+    "😴 What is the optimal sleep cocktail: magnesium L-threonate, theanine & apigenin?",
+    "🫁 How does the physiological sigh rapidly reduce acute stress and heart rate?",
+    "🧠 What neurochemistry protocols help improve focus and manage ADHD?",
+    "🏋️ What is the mind-muscle connection and how does it drive hypertrophy?",
+    "🔥 What are the optimal sauna heat protocols for growth hormone release?",
+    "🏃 How much Zone 2 cardio is recommended for mitochondrial health?",
+    "🍽️ How does intermittent fasting impact mental clarity, autophagy, and insulin?",
+    "💊 What is the ideal creatine monohydrate dosage for cognitive and brain function?",
+    "🍷 How does alcohol consumption disrupt sleep architecture and REM stages?",
+    "💧 Why are sodium, potassium, and magnesium critical for brain electrical firing?",
+    "💪 What natural behavioral protocols help optimize testosterone and hormone health?",
+    "🧘 How does Non-Sleep Deep Rest (NSDR) accelerate neuroplasticity and recovery?",
+    "👁️ How does panoramic vision down-regulate autonomic stress circuits?",
+    "🦠 How does the gut microbiome communicate with the brain to regulate mood?",
+    "🎯 How can visual focus and gaze fixation increase mental alertness?",
+    "🛡️ How do you prevent burnout by distinguishing acute vs chronic cortisol spikes?",
 ]
+
+
+def pick_random_presets() -> list[str]:
+    """Pick 3 distinct random questions from the Huberman Lab question bank."""
+    return random.sample(SAMPLE_QUESTIONS, 3)
+
+
+QUIRKY_PLACEHOLDERS: list[str] = [
+    # Huberman Mannerisms & Catchphrases
+    "Zero-cost tool: ask a question...",
+    "Thank you for your interest in science...",
+    "Did you get your morning sunlight today?...",
+    "Take a physiological sigh, then ask...",
+    "Overcome your limbic friction...",
+    "Lean into your forward center of mass...",
+    "I want to emphasize: ask anything...",
+    "Waiting 90 minutes for morning caffeine?...",
+    "Switch to panoramic vision and ask...",
+    "Surfing the dopamine wave pool...",
+    "Not medical advice, just pure science...",
+    "Costello-approved health protocols...",
+    "What does the peer-reviewed data say?...",
+    "Visual focus drives cognitive focus...",
+    "Engage prefrontal top-down control...",
+    "Entering Non-Sleep Deep Rest (NSDR)...",
+    "Syncing with your circadian zeitgebers...",
+    "Dopamine, acetylcholine, or serotonin?...",
+    "Thinking at Zone 2 cardio pace...",
+    "Hot sauna or cold plunge curiosity?...",
+    # Pop Culture & Lore Mashups
+    "May the neuroplasticity be with you...",
+    "Speak, friend, and enter the podcast...",
+    "One does not simply skip morning sunlight...",
+    "Houston, we have a question...",
+    "Elementary, my dear Huberman...",
+    "Hit me with your best hypothesis...",
+    "To sleep or not to sleep? Ask away...",
+    "I've got 99 problems but dopamine ain't one...",
+    "With great protocols comes great recovery...",
+    # Inquisitive, Witty & Philosophical
+    "What would Socrates ask Huberman?...",
+    "Curiosity didn't kill the cat, lack of sleep did...",
+    "Talk neurobiology to me...",
+    "Feed me science, Dr. Huberman...",
+    "Ask away. Dopamine guaranteed...",
+    "What makes your synapses fire?...",
+    "Ready when you are, biohacker...",
+    "Tell me what protocols you need...",
+    "Got a burning biological query?...",
+    "Question everything. Especially caffeine timing...",
+    "Ask me anything, I've got the transcripts...",
+    "Looking for scientific enlightenment?...",
+]
+
+
+def pick_random_placeholder() -> str:
+    """Pick a random quirky, funny, or pop-culture placeholder for the ask capsule."""
+    return random.choice(QUIRKY_PLACEHOLDERS)
+
 
 DEMO_ANSWER = (
     "**Viewing bright sunlight** within 30–60 minutes of waking triggers an optimal cortisol peak "
@@ -58,7 +137,7 @@ DEMO_CITATIONS = [
     }
 ]
 
-_INIT_UI_JS = """() => {
+_INIT_UI_JS_TEMPLATE = """() => {
     window.podSeekSelectMode = (modeVal) => {
         const btn = document.getElementById('ap-mode-slider');
         if (btn) {
@@ -79,13 +158,21 @@ _INIT_UI_JS = """() => {
         }
     };
     const setupPodSeekUI = () => {
-        const isDark = document.documentElement.classList.contains('ap-dark') ||
-                       document.body.classList.contains('ap-dark') ||
-                       document.body.classList.contains('dark');
+        let isDark = false;
+        try {
+            isDark = localStorage.getItem('podseek_theme') === 'dark';
+        } catch (e) {}
+
         if (isDark) {
-            document.documentElement.classList.add('ap-dark', 'dark');
-            document.body.classList.add('ap-dark', 'dark');
+            document.documentElement.classList.add('ap-dark');
+            document.body.classList.add('ap-dark');
             document.querySelector('.gradio-container')?.classList.add('ap-dark');
+            document.querySelector('gradio-app')?.classList.add('ap-dark');
+        } else {
+            document.documentElement.classList.remove('ap-dark', 'dark');
+            document.body.classList.remove('ap-dark', 'dark');
+            document.querySelector('.gradio-container')?.classList.remove('ap-dark', 'dark');
+            document.querySelector('gradio-app')?.classList.remove('ap-dark', 'dark');
         }
         const bg = isDark ? '#111113' : '#F8F9FA';
         document.documentElement.style.setProperty('background-color', bg, 'important');
@@ -99,6 +186,134 @@ _INIT_UI_JS = """() => {
             epList.style.setProperty('max-height', 'calc(100vh - 370px)', 'important');
         }
 
+        const headerRow = document.querySelector('.ap-header-row');
+        if (headerRow) {
+            headerRow.style.setProperty('margin-bottom', '0px', 'important');
+            headerRow.style.setProperty('margin-top', '0px', 'important');
+        }
+        const studioView = document.getElementById('ap-studio-view');
+        if (studioView) {
+            studioView.style.setProperty('margin-top', '0px', 'important');
+        }
+        const backdropWrap = document.querySelector('.ap-mobile-drawer-backdrop-wrap');
+        if (backdropWrap && window.innerWidth > 768) {
+            backdropWrap.style.setProperty('display', 'none', 'important');
+            backdropWrap.style.setProperty('height', '0px', 'important');
+            backdropWrap.style.setProperty('margin', '0px', 'important');
+            backdropWrap.style.setProperty('padding', '0px', 'important');
+        }
+
+        const colRight = document.querySelector('.ap-col-right');
+        if (colRight) {
+            colRight.style.setProperty('padding-top', '0px', 'important');
+            colRight.style.setProperty('margin-top', '0px', 'important');
+            const wf = colRight.querySelector('.wf-dot-grid');
+            if (wf) {
+                wf.style.setProperty('margin-top', '0px', 'important');
+                let parent = wf.parentElement;
+                while (parent && parent !== colRight) {
+                    parent.style.setProperty('padding-top', '0px', 'important');
+                    parent.style.setProperty('margin-top', '0px', 'important');
+                    parent.style.setProperty('border-top-width', '0px', 'important');
+                    parent = parent.parentElement;
+                }
+            }
+        }
+
+        window.togglePodSeekDrawer = (openOnly = false) => {
+            const col = document.querySelector('.ap-col-left');
+            const bd = document.getElementById('ap-mobile-drawer-backdrop');
+            if (!col) return;
+            if (window.innerWidth <= 768) {
+                const willOpen = openOnly ? true : !col.classList.contains('mobile-drawer-open');
+                col.classList.toggle('mobile-drawer-open', willOpen);
+                if (bd) bd.classList.toggle('is-open', willOpen);
+                document.body.classList.toggle('ap-drawer-open', willOpen);
+            } else {
+                const willOpen = openOnly ? true : col.classList.contains('is-collapsed');
+                if (willOpen) {
+                    col.classList.remove('is-collapsed');
+                    try { localStorage.setItem('podseek_sidebar_collapsed', '0'); } catch(e){}
+                    col.classList.add('ap-drawer-pulse');
+                    setTimeout(() => col.classList.remove('ap-drawer-pulse'), 1400);
+                } else {
+                    col.classList.add('is-collapsed');
+                    try { localStorage.setItem('podseek_sidebar_collapsed', '1'); } catch(e){}
+                }
+            }
+        };
+
+        const colLeft = document.querySelector('.ap-col-left');
+        if (colLeft && window.innerWidth > 768) {
+            try {
+                if (localStorage.getItem('podseek_sidebar_collapsed') !== '0') {
+                    colLeft.classList.add('is-collapsed');
+                }
+            } catch (e) {
+                colLeft.classList.add('is-collapsed');
+            }
+        }
+
+        const drawer = document.querySelector('.ap-col-left');
+        if (drawer && !drawer.dataset.psSwipeBound) {
+            drawer.dataset.psSwipeBound = '1';
+            let startY = 0;
+            let currentY = 0;
+            let isDragging = false;
+
+            const onTouchStart = (e) => {
+                if (window.innerWidth > 768) return;
+                if (drawer.classList.contains('mobile-drawer-open')) {
+                    if (drawer.scrollTop <= 5 || e.target.closest('.ap-mobile-drawer-header')) {
+                        startY = e.touches[0].clientY;
+                        isDragging = true;
+                        drawer.style.transition = 'none';
+                    }
+                }
+            };
+
+            const onTouchMove = (e) => {
+                if (!isDragging) return;
+                currentY = e.touches[0].clientY;
+                const deltaY = currentY - startY;
+                if (deltaY > 0) {
+                    if (e.cancelable) e.preventDefault();
+                    drawer.style.transform = `translateY(${deltaY}px)`;
+                }
+            };
+
+            const onTouchEnd = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                drawer.style.transition = 'transform 0.28s cubic-bezier(0.32, 0.72, 0, 1)';
+                const deltaY = currentY - startY;
+                if (deltaY > 60) {
+                    drawer.classList.remove('mobile-drawer-open');
+                    document.getElementById('ap-mobile-drawer-backdrop')?.classList.remove('is-open');
+                    document.body.classList.remove('ap-drawer-open');
+                    drawer.style.transform = '';
+                } else {
+                    drawer.style.transform = '';
+                }
+                startY = 0;
+                currentY = 0;
+            };
+
+            drawer.addEventListener('touchstart', onTouchStart, { passive: true });
+            drawer.addEventListener('touchmove', onTouchMove, { passive: false });
+            drawer.addEventListener('touchend', onTouchEnd, { passive: true });
+        }
+
+        if (!window.__podseekKeyBound) {
+            window.__podseekKeyBound = true;
+            window.addEventListener('keydown', (e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'b') {
+                    e.preventDefault();
+                    document.getElementById('ap-sidebar-toggle-btn')?.click();
+                }
+            });
+        }
+
         const ingestTa = document.querySelector('#ap-ingest-input textarea, #ap-ingest-input input');
         if (ingestTa && !ingestTa.dataset.psBound) {
             ingestTa.dataset.psBound = '1';
@@ -109,7 +324,91 @@ _INIT_UI_JS = """() => {
                 }
             });
         }
-        const ta = document.querySelector('#ap-distill-input textarea');
+        let vp = document.querySelector('meta[name="viewport"]');
+        if (vp && !vp.content.includes('interactive-widget')) {
+            vp.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover";
+        }
+
+        if (window.visualViewport && !window.__podseekViewportBound) {
+            window.__podseekViewportBound = true;
+            const handleViewportResize = () => {
+                if (window.innerWidth > 768) return;
+                const capsule = document.querySelector('.ap-distill-capsule');
+                const modeRow = document.querySelector('.ap-mode-row');
+                const vv = window.visualViewport;
+                const keyboardHeight = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+                if (keyboardHeight > 50) {
+                    if (capsule) {
+                        capsule.style.setProperty('bottom', `${keyboardHeight + 8}px`, 'important');
+                    }
+                    if (modeRow) {
+                        modeRow.style.setProperty('display', 'none', 'important');
+                    }
+                } else {
+                    if (capsule) {
+                        capsule.style.removeProperty('bottom');
+                    }
+                    if (modeRow) {
+                        modeRow.style.removeProperty('display');
+                    }
+                }
+            };
+            window.visualViewport.addEventListener('resize', handleViewportResize);
+            window.visualViewport.addEventListener('scroll', handleViewportResize);
+        }
+
+        const ta = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
+        if (ta) {
+            ta.placeholder = '';
+            ta.removeAttribute('placeholder');
+            ta.setAttribute('data-placeholder-disabled', 'true');
+        }
+        const capsule = document.querySelector('.ap-distill-capsule');
+        if (capsule) {
+            // Remove any orphan or duplicate wraps across the entire document
+            const existingWraps = document.querySelectorAll('.ap-typewriter-wrap');
+            if (existingWraps.length > 0) {
+                const firstWrap = existingWraps[0];
+                if (firstWrap.parentElement !== capsule) {
+                    capsule.appendChild(firstWrap);
+                }
+                for (let i = 1; i < existingWraps.length; i++) {
+                    existingWraps[i].remove();
+                }
+            } else {
+                const wrap = document.createElement('div');
+                wrap.className = 'ap-typewriter-wrap';
+                wrap.setAttribute('aria-hidden', 'true');
+                wrap.innerHTML = '<span class="ap-typewriter-text"></span><span class="ap-typewriter-cursor"></span>';
+                capsule.appendChild(wrap);
+            }
+
+            if (!capsule.dataset.psClickBound) {
+                capsule.dataset.psClickBound = '1';
+                capsule.addEventListener('click', (e) => {
+                    if (e.target && (e.target.id === 'ap-distill-btn' || e.target.closest('#ap-distill-btn'))) return;
+                    const taInput = capsule.querySelector('textarea, input');
+                    if (taInput && document.activeElement !== taInput) {
+                        taInput.focus();
+                    }
+                });
+            }
+        }
+        if (ta && !ta.dataset.psInputBound) {
+            ta.dataset.psInputBound = '1';
+            ta.addEventListener('input', () => {
+                const wrap = document.querySelector('.ap-typewriter-wrap');
+                if (wrap) {
+                    if (ta.value && ta.value.trim().length > 0) {
+                        wrap.style.setProperty('display', 'none', 'important');
+                        wrap.style.setProperty('visibility', 'hidden', 'important');
+                    } else {
+                        wrap.style.removeProperty('display');
+                        wrap.style.removeProperty('visibility');
+                    }
+                }
+            });
+        }
         if (ta && !ta.dataset.psBound) {
             ta.dataset.psBound = '1';
             ta.addEventListener('keydown', (e) => {
@@ -118,18 +417,326 @@ _INIT_UI_JS = """() => {
                     document.getElementById('ap-distill-btn')?.click();
                 }
             });
+            ta.addEventListener('focus', () => {
+                const wrap = document.querySelector('.ap-typewriter-wrap');
+                if (wrap) {
+                    wrap.style.setProperty('display', 'none', 'important');
+                    wrap.style.setProperty('visibility', 'hidden', 'important');
+                }
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => {
+                        if (window.visualViewport) {
+                            const vv = window.visualViewport;
+                            const keyboardHeight = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+                            const capsule = document.querySelector('.ap-distill-capsule');
+                            const modeRow = document.querySelector('.ap-mode-row');
+                            if (capsule && keyboardHeight > 50) {
+                                capsule.style.setProperty('bottom', `${keyboardHeight + 8}px`, 'important');
+                            }
+                            if (modeRow) {
+                                modeRow.style.setProperty('display', 'none', 'important');
+                            }
+                        }
+                        const chatEl = document.getElementById('ap-chat-scroll');
+                        if (chatEl && !chatEl.classList.contains('ap-chat-empty')) {
+                            chatEl.scrollTop = chatEl.scrollHeight;
+                        }
+                    }, 120);
+                }
+            });
+            ta.addEventListener('blur', () => {
+                const wrap = document.querySelector('.ap-typewriter-wrap');
+                if (wrap && (!ta.value || ta.value.trim().length === 0)) {
+                    wrap.style.removeProperty('display');
+                    wrap.style.removeProperty('visibility');
+                }
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => {
+                        const capsule = document.querySelector('.ap-distill-capsule');
+                        const modeRow = document.querySelector('.ap-mode-row');
+                        if (capsule) capsule.style.removeProperty('bottom');
+                        if (modeRow) modeRow.style.removeProperty('display');
+                    }, 120);
+                }
+            });
         }
+
+        // Clean up any old scroll nav attached directly to centerCol
+        const strayNav = document.querySelector('.ap-col-center > #ap-chat-scroll-nav');
+        if (strayNav) strayNav.remove();
+
+        const getEffectiveScroll = () => {
+            const chat = document.getElementById('ap-chat-scroll');
+            if (!chat) return { top: 0, max: 0, target: null };
+            if (chat.scrollHeight > chat.clientHeight + 15) {
+                return { top: chat.scrollTop, max: chat.scrollHeight - chat.clientHeight, target: chat };
+            }
+            let p = chat.parentElement;
+            while (p && p !== document.body) {
+                if (p.scrollHeight > p.clientHeight + 15) {
+                    return { top: p.scrollTop, max: p.scrollHeight - p.clientHeight, target: p };
+                }
+                p = p.parentElement;
+            }
+            const docEl = document.documentElement || document.body;
+            if (docEl.scrollHeight > docEl.clientHeight + 15) {
+                return { top: window.scrollY || docEl.scrollTop, max: docEl.scrollHeight - docEl.clientHeight, target: window };
+            }
+            return { top: chat.scrollTop, max: chat.scrollHeight - chat.clientHeight, target: chat };
+        };
+
+        const topBtn = document.getElementById('ap-scroll-top-btn');
+        const bottomBtn = document.getElementById('ap-scroll-bottom-btn');
+
+        if (topBtn && !topBtn.dataset.psBound) {
+            topBtn.dataset.psBound = '1';
+            topBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const { target } = getEffectiveScroll();
+                if (target === window) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else if (target) {
+                    target.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            });
+        }
+
+        if (bottomBtn && !bottomBtn.dataset.psBound) {
+            bottomBtn.dataset.psBound = '1';
+            bottomBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const { target } = getEffectiveScroll();
+                if (target === window) {
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                } else if (target) {
+                    target.scrollTo({ top: target.scrollHeight, behavior: 'smooth' });
+                }
+            });
+        }
+
+        const updateScrollNav = () => {
+            const chat = document.getElementById('ap-chat-scroll');
+            const tb = document.getElementById('ap-scroll-top-btn');
+            const bb = document.getElementById('ap-scroll-bottom-btn');
+            if (!chat || chat.classList.contains('ap-chat-empty')) {
+                if (tb) tb.classList.remove('is-visible');
+                if (bb) bb.classList.remove('is-visible');
+                return;
+            }
+
+            const { top, max } = getEffectiveScroll();
+            if (max <= 15) {
+                if (tb) tb.classList.remove('is-visible');
+                if (bb) bb.classList.remove('is-visible');
+                return;
+            }
+
+            if (top > 30) {
+                tb?.classList.add('is-visible');
+            } else {
+                tb?.classList.remove('is-visible');
+            }
+
+            if (top < max - 30) {
+                bb?.classList.add('is-visible');
+            } else {
+                bb?.classList.remove('is-visible');
+            }
+        };
+        window.updateChatScrollNav = updateScrollNav;
+
+        const chatEl = document.getElementById('ap-chat-scroll');
+        if (chatEl && !chatEl.dataset.psScrollBound) {
+            chatEl.dataset.psScrollBound = '1';
+            chatEl.addEventListener('scroll', updateScrollNav, { passive: true });
+        }
+
+        const handleWheel = (e) => {
+            const { target } = getEffectiveScroll();
+            if (!target) return;
+            if (target === window) {
+                window.scrollBy({ top: e.deltaY });
+            } else {
+                target.scrollTop += e.deltaY;
+            }
+            if (window.updateChatScrollNav) window.updateChatScrollNav();
+        };
+
+        if (chatEl && !chatEl.dataset.psWheelBound) {
+            chatEl.dataset.psWheelBound = '1';
+            chatEl.addEventListener('wheel', handleWheel, { passive: true });
+        }
+
+        const centerCol = document.querySelector('.ap-col-center');
+        if (centerCol && !centerCol.dataset.psWheelBound) {
+            centerCol.dataset.psWheelBound = '1';
+            centerCol.addEventListener('wheel', handleWheel, { passive: true });
+        }
+
+        const fitWorkflowCanvas = () => {
+            // Desktop right column is 380px wide and fits the 330px workflow canvas natively with zero transform
+            // Mobile spotlight cards scale instantly via pure CSS media queries with zero latency
+            document.querySelectorAll('.ap-spotlight-card .wf-canvas-wrap').forEach(wrap => {
+                if (window.innerWidth <= 440) return;
+                const grid = wrap.closest('.wf-dot-grid') || wrap.parentElement;
+                if (!grid) return;
+                const containerWidth = grid.clientWidth;
+                if (containerWidth > 0 && containerWidth < 325) {
+                    const scale = Math.min(1, Math.max(0.55, (containerWidth - 14) / 330));
+                    wrap.style.transform = `scale(${scale.toFixed(4)})`;
+                    wrap.style.transformOrigin = 'top center';
+                    const origH = parseFloat(wrap.getAttribute('data-orig-height') || '440');
+                    const diff = origH * (1 - scale);
+                    wrap.style.marginBottom = `-${diff.toFixed(1)}px`;
+                } else {
+                    wrap.style.transform = '';
+                    wrap.style.transformOrigin = '';
+                    wrap.style.marginBottom = '';
+                }
+            });
+        };
+        window.fitWorkflowCanvas = fitWorkflowCanvas;
+        fitWorkflowCanvas();
+
+        if (!window.__podseekScrollBound) {
+            window.__podseekScrollBound = true;
+            window.addEventListener('scroll', updateScrollNav, { passive: true });
+            window.addEventListener('resize', () => {
+                updateScrollNav();
+                fitWorkflowCanvas();
+            }, { passive: true });
+            document.querySelector('.ap-col-center')?.addEventListener('scroll', updateScrollNav, { passive: true });
+        }
+
+        updateScrollNav();
     };
     setupPodSeekUI();
-    const obs = new MutationObserver(() => {
-        setupPodSeekUI();
-        const chatEl = document.getElementById('ap-chat-scroll');
-        if (chatEl) chatEl.scrollTop = chatEl.scrollHeight;
+    try { window.scrollTo(0, 0); } catch (e) {}
+
+    // Animated Typewriter Engine: types character by character, holds for 2 seconds, backspaces, and picks next
+    if (!window.__podseekTypewriterStarted) {
+        window.__podseekTypewriterStarted = true;
+        const phrases = __TYPEWRITER_PHRASES__;
+        let phraseIdx = Math.floor(Math.random() * phrases.length);
+        let charIdx = 0;
+        let isDeleting = false;
+
+        const runStep = () => {
+            const taInput = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
+            if (taInput && (taInput.placeholder || taInput.hasAttribute('placeholder'))) {
+                taInput.placeholder = '';
+                taInput.removeAttribute('placeholder');
+            }
+
+            // Ensure only one typewriter wrap is active and remove any duplicates
+            const allWraps = document.querySelectorAll('.ap-typewriter-wrap');
+            if (allWraps.length > 1) {
+                for (let i = 1; i < allWraps.length; i++) allWraps[i].remove();
+            }
+            const wrapEl = allWraps[0] || null;
+            const textEl = wrapEl ? wrapEl.querySelector('.ap-typewriter-text') : null;
+
+            const isFocused = (document.activeElement === taInput);
+            const hasText = Boolean(taInput && taInput.value && taInput.value.trim().length > 0);
+
+            if (isFocused || hasText) {
+                if (wrapEl) {
+                    wrapEl.style.setProperty('display', 'none', 'important');
+                    wrapEl.style.setProperty('visibility', 'hidden', 'important');
+                }
+                setTimeout(runStep, 150);
+                return;
+            }
+
+            if (wrapEl) {
+                wrapEl.style.removeProperty('display');
+                wrapEl.style.removeProperty('visibility');
+                wrapEl.style.setProperty('opacity', '0.35', 'important');
+            }
+
+            const currentPhrase = phrases[phraseIdx] || "Ask across episodes...";
+
+            if (!isDeleting) {
+                charIdx++;
+                if (textEl) textEl.textContent = currentPhrase.substring(0, charIdx);
+
+                if (charIdx >= currentPhrase.length) {
+                    isDeleting = true;
+                    // Exactly 2 seconds pause when text is fully typed
+                    setTimeout(runStep, 2000);
+                    return;
+                }
+                const typeSpeed = Math.floor(Math.random() * 12) + 32;
+                setTimeout(runStep, typeSpeed);
+            } else {
+                charIdx--;
+                if (textEl) textEl.textContent = currentPhrase.substring(0, charIdx);
+
+                if (charIdx <= 0) {
+                    isDeleting = false;
+                    let nextIdx;
+                    do {
+                        nextIdx = Math.floor(Math.random() * phrases.length);
+                    } while (nextIdx === phraseIdx && phrases.length > 1);
+                    phraseIdx = nextIdx;
+                    charIdx = 0;
+                    setTimeout(runStep, 350);
+                    return;
+                }
+                setTimeout(runStep, 18);
+            }
+        };
+
+        setTimeout(runStep, 80);
+    }
+
+    let setupDebounce;
+    const obs = new MutationObserver((mutations) => {
+        // Skip mutations caused solely by the typewriter text/cursor
+        const onlyTypewriter = mutations.every(m => {
+            const t = m.target;
+            return t && (
+                (t.classList && (t.classList.contains('ap-typewriter-text') || t.classList.contains('ap-typewriter-cursor'))) ||
+                (t.parentElement && t.parentElement.classList && t.parentElement.classList.contains('ap-typewriter-wrap'))
+            );
+        });
+        if (onlyTypewriter) return;
+
+        clearTimeout(setupDebounce);
+        setupDebounce = setTimeout(() => {
+            setupPodSeekUI();
+        }, 50);
+
+        // Auto-scroll chat only when actual chat turns or messages change AND user was already near bottom
+        const hasChatMutation = mutations.some(m => {
+            const chat = document.getElementById('ap-chat-scroll');
+            return chat && chat.contains(m.target);
+        });
+        if (hasChatMutation) {
+            const chatEl = document.getElementById('ap-chat-scroll');
+            if (chatEl && !chatEl.classList.contains('ap-chat-empty')) {
+                const distanceFromBottom = chatEl.scrollHeight - chatEl.scrollTop - chatEl.clientHeight;
+                if (distanceFromBottom < 100) {
+                    chatEl.scrollTop = chatEl.scrollHeight;
+                }
+            }
+            if (window.updateChatScrollNav) {
+                window.updateChatScrollNav();
+            }
+            if (window.fitWorkflowCanvas) {
+                setTimeout(window.fitWorkflowCanvas, 20);
+            }
+        }
+
         const sseEl = document.getElementById('ap-sse-scroll');
         if (sseEl) sseEl.scrollTop = sseEl.scrollHeight;
     });
     obs.observe(document.body, { childList: true, subtree: true });
 }"""
+
+_INIT_UI_JS = _INIT_UI_JS_TEMPLATE.replace("__TYPEWRITER_PHRASES__", json.dumps(QUIRKY_PLACEHOLDERS))
 
 __all__ = ["build_demo", "format_citations", "format_event"]
 
@@ -149,6 +756,15 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
         except Exception:
             return render_episodes_html([])
 
+    def get_episode_count() -> int:
+        try:
+            items = client.episodes()
+            return len(items) if items else 23
+        except Exception:
+            return 23
+
+    init_ep_count = get_episode_count()
+
     def on_ingest(video_url_or_id: str):
         cleaned = video_url_or_id.strip()
         current_eps = load_episodes_html()
@@ -158,7 +774,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             )
             err_logs = [("✕ [ingest] Missing episode link", "#EF4444")]
             yield (
-                err_box,
+                gr.update(value=err_box, visible=True),
                 current_eps,
                 render_ingest_workflow_graph_html(active_step="abort", error=True, abort_reason="Empty link"),
                 render_sse_log_html(err_logs, endpoint="POST /ingest"),
@@ -166,7 +782,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             )
             time.sleep(3.2)
             yield (
-                "",
+                gr.update(value="", visible=False),
                 current_eps,
                 render_workflow_graph_html(),
                 render_sse_log_html(err_logs, endpoint="POST /ingest"),
@@ -204,7 +820,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
 
         # Always show Stage 1 (Verify Channel) first and clear input box immediately
         yield (
-            render_ingest_status_html("loading", stages[0][1], stages[0][2]),
+            gr.update(value=render_ingest_status_html("loading", stages[0][1], stages[0][2]), visible=True),
             current_eps,
             render_ingest_workflow_graph_html(active_step="verify"),
             render_sse_log_html(ingest_logs, endpoint="POST /ingest"),
@@ -220,7 +836,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 if len(ingest_logs) <= stage_idx and stage_idx < len(stages):
                     ingest_logs.append((log_line, "var(--accent)"))
                 yield (
-                    render_ingest_status_html("loading", title_txt, detail_txt),
+                    gr.update(value=render_ingest_status_html("loading", title_txt, detail_txt), visible=True),
                     current_eps,
                     render_ingest_workflow_graph_html(active_step=step_key),
                     render_sse_log_html(ingest_logs, endpoint="POST /ingest"),
@@ -247,7 +863,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     banner_title = f"Absorbed {chunks_n} chunks"
 
                 yield (
-                    render_ingest_status_html("success", banner_title, title),
+                    gr.update(value=render_ingest_status_html("success", banner_title, title), visible=True),
                     updated_eps,
                     render_ingest_workflow_graph_html(active_step="done", chunks_indexed=chunks_n, cached=is_cached),
                     render_sse_log_html(ingest_logs, endpoint="POST /ingest"),
@@ -255,7 +871,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 )
                 time.sleep(3.2)
                 yield (
-                    "",
+                    gr.update(value="", visible=False),
                     updated_eps,
                     render_workflow_graph_html(),
                     render_sse_log_html(ingest_logs, endpoint="POST /ingest"),
@@ -273,7 +889,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     reason = "Invalid link"
 
                 yield (
-                    status_box,
+                    gr.update(value=status_box, visible=True),
                     current_eps,
                     render_ingest_workflow_graph_html(active_step="abort", error=True, abort_reason=reason),
                     render_sse_log_html(ingest_logs, endpoint="POST /ingest"),
@@ -281,7 +897,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 )
                 time.sleep(4.0)
                 yield (
-                    "",
+                    gr.update(value="", visible=False),
                     current_eps,
                     render_workflow_graph_html(),
                     render_sse_log_html(ingest_logs, endpoint="POST /ingest"),
@@ -297,8 +913,12 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
         logs = [(f"⚡ Switched execution mode to {mode_label}", "var(--accent)")]
         return render_workflow_graph_html(mode=mode_val), render_sse_log_html(logs), render_mode_slider_html(mode_val)
 
-    def on_ask(question: str, history: list[dict], mode_label: str = "⚖️ Balanced"):
+    def on_ask(question: Any, history: list[dict] | Any = None, mode_label: str = "⚖️ Balanced"):
+        if not isinstance(question, str):
+            question = str(getattr(question, "value", question or ""))
         cleaned = question.strip()
+        if not isinstance(history, list):
+            history = []
         current_history = list(history or [])
         mode_val = (
             "turbo"
@@ -373,21 +993,12 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                             "workflow": wf_state,
                         }
                     ]
+                    no_change = getattr(gr, "skip", lambda: gr.update())()
                     yield (
                         render_chat_session_html(preview_history),
                         current_history,
-                        render_workflow_graph_html(
-                            active_node="generate",
-                            chunks=chunks,
-                            relevant=relevant,
-                            rewrites=rewrites,
-                            done=False,
-                            aborted=aborted,
-                            cached=is_cached,
-                            mode=mode_val,
-                            top_distance=top_dist,
-                        ),
-                        render_sse_log_html(logs),
+                        no_change,
+                        no_change,
                         "",
                         gr.update(visible=False),
                     )
@@ -579,80 +1190,105 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
         )
 
     def on_clear():
-        return render_chat_session_html([]), [], gr.update(visible=True)
+        q1, q2, q3 = pick_random_presets()
+        return (
+            render_chat_session_html([], episode_count=get_episode_count()),
+            [],
+            gr.update(visible=True),
+            "",
+            gr.update(value=q1),
+            gr.update(value=q2),
+            gr.update(value=q3),
+            q1,
+            q2,
+            q3,
+        )
 
-    with gr.Blocks(title="PodSeek", css=load_theme_css(stylesheet)) as demo:
+    viewport_meta = (
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover">'
+        '<link rel="preconnect" href="https://fonts.googleapis.com">'
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+        '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
+    )
+    with gr.Blocks(title="PodSeek", fill_width=True, css=load_theme_css(stylesheet), head=viewport_meta) as demo:
         chat_state = gr.State([])
+        init_q1, init_q2, init_q3 = pick_random_presets()
+        preset_1_state = gr.State(init_q1)
+        preset_2_state = gr.State(init_q2)
+        preset_3_state = gr.State(init_q3)
 
-        # Top Header Bar: Brand on Left + Single-Click Oval Toggle Sliders Flush Right
+        # Top Header Bar: Brand on Left + Controls (Library Drawer on Mobile + Theme Toggle) Flush Right
         with gr.Row(elem_classes=["ap-card", "ap-header-row"]):
-            gr.HTML(render_header_brand_html(), elem_classes=["ap-header-brand"])
             gr.HTML(
-                '<div class="ap-slider-wrap">'
-                '<button id="ap-theme-slider" type="button" title="Toggle Light / Dark theme" '
-                'onclick="(() => {'
-                "const isDark = !document.documentElement.classList.contains('ap-dark');"
-                "document.documentElement.classList.toggle('ap-dark', isDark);"
-                "document.documentElement.classList.toggle('dark', isDark);"
-                "document.body.classList.toggle('ap-dark', isDark);"
-                "document.body.classList.toggle('dark', isDark);"
-                "document.querySelector('.gradio-container')?.classList.toggle('ap-dark', isDark);"
-                "const bg = isDark ? '#111113' : '#F8F9FA';"
-                "document.documentElement.style.setProperty('background-color', bg, 'important');"
-                "document.body.style.setProperty('background-color', bg, 'important');"
-                "const gApp = document.querySelector('gradio-app');"
-                "if (gApp) gApp.style.setProperty('background-color', bg, 'important');"
-                '})()">'
-                '<span class="ts-thumb"></span>'
-                '<span class="ts-icon ts-sun">'
-                '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" '
-                'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
-                '<circle cx="12" cy="12" r="4"/>'
-                '<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2'
-                'M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'
-                "</svg></span>"
-                '<span class="ts-icon ts-moon">'
-                '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" '
-                'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
-                '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
-                "</svg></span>"
-                "</button>"
-                "</div>",
-                elem_classes=["ap-header-controls"],
+                f'<div class="ap-header-inner-row">'
+                f'<div class="ap-header-brand">{render_header_brand_html()}</div>'
+                f'<div class="ap-header-controls">{render_header_controls_html()}</div>'
+                f"</div>",
+                elem_classes=["ap-header-wrap"],
             )
+
+        # Backdrop for Mobile Slide-Over Drawer
+        gr.HTML(
+            '<div id="ap-mobile-drawer-backdrop" '
+            "onclick=\"document.querySelector('.ap-col-left')?.classList.remove('mobile-drawer-open'); "
+            "document.body.classList.remove('ap-drawer-open'); "
+            "this.classList.remove('is-open');\"></div>",
+            elem_classes=["ap-mobile-drawer-backdrop-wrap"],
+        )
 
         # PAGE 1: 3-Column Studio View
         with gr.Row(visible=True, elem_id="ap-studio-view"):
-            # ENTITY 1 (Left 3 cols): Unified Command Capsule ("✦ Absorb" inside box) + Episodes by Title
-            with gr.Column(scale=3, elem_classes=["ap-card", "ap-col-left"]):
-                gr.HTML('<div style="font-size:12.5px;font-weight:700;margin-bottom:6px;">Ingest Episode</div>')
-                with gr.Row(elem_classes=["ap-ingest-capsule"]):
-                    video_input = gr.Textbox(
-                        label="",
-                        show_label=False,
-                        container=False,
-                        placeholder="Paste Huberman Lab link...",
-                        lines=2,
-                        max_lines=3,
-                        elem_id="ap-ingest-input",
-                        elem_classes=["ap-capsule-input"],
+            # ENTITY 1 (Left): Collapsible Sidebar on Desktop / Slide-Over Sheet on Mobile (hidden by default)
+            with gr.Column(scale=2, elem_classes=["ap-card", "ap-col-left", "is-collapsed"]):
+                with gr.Column(
+                    elem_id="ap-bento-accordion",
+                    elem_classes=["ap-bento-accordion"],
+                ):
+                    gr.HTML(
+                        '<div class="ap-mobile-drawer-header">'
+                        '<div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;">'
+                        '<div style="width:36px;height:4px;border-radius:9999px;background:var(--border-strong);opacity:0.6;"></div>'
+                        '<div style="width:100%;display:flex;align-items:center;justify-content:space-between;padding-top:2px;">'
+                        '<div style="display:flex;align-items:center;gap:6px;">'
+                        '<span style="font-size:14px;">📚</span>'
+                        '<span style="font-weight:700;font-size:13.5px;color:var(--text-main);">Knowledge Base</span>'
+                        "</div>"
+                        '<button type="button" class="ap-drawer-close-btn" '
+                        "onclick=\"document.querySelector('.ap-col-left')?.classList.remove('mobile-drawer-open'); "
+                        "document.body.classList.remove('ap-drawer-open'); "
+                        "document.getElementById('ap-mobile-drawer-backdrop')?.classList.remove('is-open');\">"
+                        "<span>Hide</span>"
+                        '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 9l-7 7-7-7"/></svg>'
+                        "</button>"
+                        "</div>"
+                        "</div>"
+                        "</div>"
+                        '<div class="ap-ingest-title" style="font-size:12.5px;font-weight:700;margin:8px 0 6px;">Ingest Episode</div>',
+                        elem_classes=["ap-sidebar-header-wrap"],
                     )
-                    ingest_btn = gr.Button(
-                        "✦ Absorb",
-                        variant="primary",
-                        size="sm",
-                        elem_id="ap-ingest-btn",
-                        elem_classes=["ap-capsule-btn"],
-                    )
-                ingest_status = gr.HTML("")
-                gr.HTML(
-                    '<div style="border-top:1px solid var(--border-hairline);margin:10px 0 8px;padding-top:10px;'
-                    'font-size:12.5px;font-weight:700;">Indexed Episodes</div>'
-                )
-                episodes_html = gr.HTML(load_episodes_html)
+                    with gr.Row(elem_classes=["ap-ingest-capsule"]):
+                        video_input = gr.Textbox(
+                            label="",
+                            show_label=False,
+                            container=False,
+                            placeholder="Paste YouTube link...",
+                            lines=1,
+                            max_lines=1,
+                            elem_id="ap-ingest-input",
+                            elem_classes=["ap-capsule-input"],
+                        )
+                        ingest_btn = gr.Button(
+                            "✦ Absorb",
+                            variant="primary",
+                            size="sm",
+                            elem_id="ap-ingest-btn",
+                            elem_classes=["ap-capsule-btn"],
+                        )
+                    ingest_status = gr.HTML("", visible=False, elem_id="ap-ingest-status-wrap")
+                    episodes_html = gr.HTML(load_episodes_html, elem_classes=["ap-episodes-list-block"])
 
-            # ENTITY 2 (Center 5 cols): Hero Session Chat + Collapsible Presets + Multiline Capsule ("Distill ->")
-            with gr.Column(scale=5, elem_classes=["ap-card", "ap-col-center"]):
+            # ENTITY 2 (Center): Hero Session Chat + Collapsible Presets + Multiline Capsule ("Distill ->")
+            with gr.Column(scale=8, elem_classes=["ap-card", "ap-col-center"]):
                 with gr.Row(elem_classes=["ap-inline-row"]):
                     gr.HTML(
                         '<div style="flex:1;"><span style="font-size:13px;font-weight:700;">Session Chat</span> '
@@ -660,15 +1296,17 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     )
                     clear_btn = gr.Button("Clear", size="sm", elem_classes=["ap-btn-ghost"])
 
-                chat_html = gr.HTML(render_chat_session_html([]))
+                chat_html = gr.HTML(render_chat_session_html([], episode_count=init_ep_count))
 
                 with gr.Row(elem_classes=["ap-presets-row"], visible=True) as presets_row:
-                    preset_1 = gr.Button(PRESET_QUESTIONS[0], size="sm", elem_classes=["ap-preset-pill"])
-                    preset_2 = gr.Button(PRESET_QUESTIONS[1], size="sm", elem_classes=["ap-preset-pill"])
-                    preset_3 = gr.Button(PRESET_QUESTIONS[2], size="sm", elem_classes=["ap-preset-pill"])
+                    preset_1 = gr.Button(init_q1, size="sm", elem_classes=["ap-preset-pill"])
+                    preset_2 = gr.Button(init_q2, size="sm", elem_classes=["ap-preset-pill"])
+                    preset_3 = gr.Button(init_q3, size="sm", elem_classes=["ap-preset-pill"])
 
-                with gr.Row(elem_classes=["ap-mode-bar"]):
+                with gr.Row(elem_classes=["ap-mode-row"]):
                     mode_slider_html = gr.HTML(render_mode_slider_html("balanced"))
+
+                with gr.Group(elem_id="ap-mode-radio-wrap", elem_classes=["ap-hidden-bridge"]):
                     mode_radio = gr.Radio(
                         choices=["⚡ Turbo", "⚖️ Balanced", "🎯 Rigorous"],
                         value="⚖️ Balanced",
@@ -683,8 +1321,8 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                         label="",
                         show_label=False,
                         container=False,
-                        placeholder="Ask a question across episodes...",
-                        lines=2,
+                        placeholder="",
+                        lines=1,
                         max_lines=5,
                         elem_id="ap-distill-input",
                         elem_classes=["ap-capsule-input"],
@@ -697,20 +1335,49 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                         elem_classes=["ap-capsule-btn"],
                     )
 
-            # ENTITY 3 (Right 4 cols): Cyclic Workflow Graph + Color-Coded SSE Stream
-            with gr.Column(scale=4, elem_classes=["ap-col-right"]):
-                graph_html = gr.HTML(render_workflow_graph_html(mode="balanced"))
-                sse_html = gr.HTML(render_sse_log_html([]))
+            # ENTITY 3 (Right): Cyclic Workflow Graph + Color-Coded SSE Stream
+            with gr.Column(scale=3, elem_classes=["ap-col-right"]):
+                graph_html = gr.HTML(render_workflow_graph_html(mode="balanced"), elem_classes=["ap-workflow-block"])
+                sse_html = gr.HTML(render_sse_log_html([]), elem_classes=["ap-sse-block"])
 
         # PAGE 2: Stats for Nerds View
         with gr.Row(visible=True, elem_id="ap-nerds-view", elem_classes=["ap-view-hidden"]):
             with gr.Column(scale=12):
                 gr.HTML(render_stats_for_nerds_html())
 
-        def load_initial_view() -> tuple[str, str]:
-            return load_episodes_html(), render_workflow_graph_html(mode="balanced")
+        def load_initial_view() -> tuple[str, str, str, Any, Any, Any, Any, str, str, str]:
+            q1, q2, q3 = pick_random_presets()
+            count = get_episode_count()
+            return (
+                load_episodes_html(),
+                render_workflow_graph_html(mode="balanced"),
+                render_chat_session_html([], episode_count=count),
+                "",
+                gr.update(value=q1),
+                gr.update(value=q2),
+                gr.update(value=q3),
+                q1,
+                q2,
+                q3,
+            )
 
-        demo.load(load_initial_view, outputs=[episodes_html, graph_html], show_progress="hidden", js=_INIT_UI_JS)
+        demo.load(
+            load_initial_view,
+            outputs=[
+                episodes_html,
+                graph_html,
+                chat_html,
+                question_input,
+                preset_1,
+                preset_2,
+                preset_3,
+                preset_1_state,
+                preset_2_state,
+                preset_3_state,
+            ],
+            show_progress="hidden",
+            js=_INIT_UI_JS,
+        )
         mode_radio.change(
             on_mode_change,
             inputs=[mode_radio],
@@ -745,23 +1412,38 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             outputs=ask_outputs,
             show_progress="hidden",
         )
-        clear_btn.click(on_clear, outputs=[chat_html, chat_state, presets_row], show_progress="hidden")
+        clear_btn.click(
+            on_clear,
+            outputs=[
+                chat_html,
+                chat_state,
+                presets_row,
+                question_input,
+                preset_1,
+                preset_2,
+                preset_3,
+                preset_1_state,
+                preset_2_state,
+                preset_3_state,
+            ],
+            show_progress="hidden",
+        )
 
-        preset_1.click(lambda: PRESET_QUESTIONS[0], outputs=question_input, show_progress="hidden").then(
+        preset_1.click(
             on_ask,
-            inputs=[question_input, chat_state, mode_radio],
+            inputs=[preset_1_state, chat_state, mode_radio],
             outputs=ask_outputs,
             show_progress="hidden",
         )
-        preset_2.click(lambda: PRESET_QUESTIONS[1], outputs=question_input, show_progress="hidden").then(
+        preset_2.click(
             on_ask,
-            inputs=[question_input, chat_state, mode_radio],
+            inputs=[preset_2_state, chat_state, mode_radio],
             outputs=ask_outputs,
             show_progress="hidden",
         )
-        preset_3.click(lambda: PRESET_QUESTIONS[2], outputs=question_input, show_progress="hidden").then(
+        preset_3.click(
             on_ask,
-            inputs=[question_input, chat_state, mode_radio],
+            inputs=[preset_3_state, chat_state, mode_radio],
             outputs=ask_outputs,
             show_progress="hidden",
         )
@@ -770,5 +1452,29 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
 
 
 if __name__ == "__main__":
+    import socket
+
     port = int(os.environ.get("PORT", "7860"))
-    build_demo().launch(server_name="0.0.0.0", server_port=port)
+
+    def get_wifi_ip() -> str:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            ip = s.getsockname()[0]
+            s.close()
+            return ip
+        except Exception:
+            return "127.0.0.1"
+
+    wifi_ip = get_wifi_ip()
+    print("=" * 64)
+    print(f"📱 Phone & Wi-Fi Devices:  http://{wifi_ip}:{port}")
+    print(f"💻 This Mac:              http://localhost:{port}")
+    print("=" * 64)
+
+    # Launch bound to 0.0.0.0 for LAN visibility, with share link fallback
+    app = build_demo()
+    try:
+        app.launch(server_name="0.0.0.0", server_port=port, share=True, show_api=False)
+    except Exception:
+        app.launch(server_name="0.0.0.0", server_port=port, share=False, show_api=False)

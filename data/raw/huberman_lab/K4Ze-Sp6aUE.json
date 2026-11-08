@@ -27935,5 +27935,9 @@
     "Metabolic Adaptation",
     "Satiety Signaling",
     "Total Daily Energy Expenditure"
+  ],
+  "chunks_indexed": 257,
+  "indexed_collections": [
+    "podcast_chunks_gemini-embedding-2"
   ]
 }

@@ -26061,5 +26061,9 @@
     "Tart Cherry Extract",
     "Anabolic Window",
     "Single-Ingredient Supplements"
+  ],
+  "chunks_indexed": 229,
+  "indexed_collections": [
+    "podcast_chunks_gemini-embedding-2"
   ]
 }

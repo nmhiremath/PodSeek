@@ -5,7 +5,7 @@ This document is the single source of truth for AI assistants (Claude Code, Anti
 ---
 
 ## 0. Streamlined Pair Programming & Tutoring Protocol
-1. **One File at a Time:** Never create or edit more than ONE file in a single turn.
+1. **One File at a Time (Backend Only):** For backend code changes (`app/`, `scripts/`, etc.), never create or edit more than ONE file in a single turn. For UI changes (`ui/`, `huggingface/`, styles, components, templates), this restriction does not apply—coordinate and apply all necessary UI changes across multiple files in a single turn without waiting.
 2. **Direct Action with Transparent Rationale:** Apply file edits directly in the turn while clearly explaining "the why" and the architectural rationale. Do not interrupt with unnecessary intermediate confirmation prompts ("Ready for me to edit?").
 3. **Question Isolation:** If the user asks a question, answer the question ONLY. Do not write, modify, or run code in the same turn.
 4. **No Speculative Tool Execution:** Do not run test runners, build tools, or terminal commands unless the user explicitly requested them in their prompt.
@@ -76,7 +76,8 @@ PodSeek/
 │   ├── fetch_episode.py       # CLI tool to download and cache episode transcript
 │   ├── index_and_search.py    # Ingests cached episode into ChromaDB & searches
 │   ├── ask_agent.py           # Interactive CLI runner for Corrective RAG agent
-│   └── evaluate.py            # Offline or live eval of evals/questions.json
+│   ├── evaluate.py            # Offline or live eval of evals/questions.json
+│   └── ingest_top_episodes.py # Batch ingestion pipeline for top 50 Huberman episodes
 ├── evals/
 │   └── questions.json         # Fixed questions for episode QmOF0crdyRU
 ├── ui/                        # Gradio 3-Column Bento Studio UI (HTTP/SSE by default)
@@ -136,11 +137,13 @@ python -m scripts.evaluate
 
 ---
 
-## 6. Recent Work & Change Log (2026-11-04)
-- **Tri-Mode Execution (`Turbo`, `Balanced`, `Rigorous`):** Added mode selection slider and dynamic routing in LangGraph and Gradio client.
-- **5-Tier Flowchart Architecture:** Expanded workflow SVG canvases to 440px with non-overlapping corridors, retry loopbacks, and circuit-breaker abort nodes.
+## 6. Recent Work & Change Log
+- **50-Episode Knowledge Base & Ingestion Pipeline:** Added `scripts/ingest_top_episodes.py` tracking the 50 most-watched Huberman Lab episodes, indexing them into ChromaDB with transcript JSONs cached under `data/raw/huberman_lab/`. Added human-browser session headers and cookiejar support (`cookies.txt`) in `app/ingestion/youtube.py`.
+- **Flowchart Stability & Stream Optimization:** Eliminated workflow canvas flickering and zoom-out during live token streaming by skipping graph yields on token deltas, removing CSS canvas transitions, and locking the desktop sidebar flowchart to `transform: none`.
+- **Mobile Responsive Proportional Scaling:** Added responsive media queries (`@media (max-width: 500px)` -> `scale(0.88)`, `410px` -> `scale(0.80)`, `365px` -> `scale(0.72)`) for mobile spotlight and trace cards so SVG flowcharts fit edge-to-edge without horizontal clipping.
+- **Capsule Input Layout:** Refined `.ap-ingest-capsule` padding (`0 88px 0 14px`) and compact placeholder (`"Paste YouTube link..."`) to prevent text truncation on narrow sidebar widths.
+- **Tri-Mode Execution (`Turbo`, `Balanced`, `Rigorous`):** Mode selection slider and dynamic routing in LangGraph and Gradio client.
+- **5-Tier Flowchart Architecture:** 440px SVG canvas with non-overlapping corridors, retry loopbacks, and circuit-breaker abort nodes.
 - **Refusal Guardrail:** Suppressed citation generation and links when `generate()` produces a refusal answer on out-of-domain input.
-- **Viewport Height & Theme Normalization:** Enforced internal scrolling for the episode list and default Light mode without OS dark mode overrides.
-- **Render.com Cloud Readiness:** Added dynamic `$PORT` and `0.0.0.0` binding in `ui/app.py` for free cloud deployment.
 - **Token-Level Streaming:** End-to-end token streaming via LangGraph `get_stream_writer()` in `generate`, `stream_mode=['updates', 'custom']` in `iter_agent_events`, and progressive Gradio chat rendering.
-- **Tests & Quality:** All 37 unit tests pass offline; `ruff check .` and `pyright` pass with 0 errors.
+- **Tests & Quality:** All 40 unit tests pass offline; `ruff check .` and `pyright` pass with 0 errors.

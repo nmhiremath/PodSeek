@@ -72,9 +72,70 @@ def fetch_video_title(video_id: str) -> str:
     return title
 
 
+def _create_youtube_session():
+    """Create a requests.Session with human browser headers and optional cookiejar."""
+    import http.cookiejar
+    from pathlib import Path
+
+    import requests
+
+    session = requests.Session()
+    session.headers.update(
+        {
+            "User-Agent": (
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+            ),
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept": "*/*",
+            "Referer": "https://www.youtube.com/",
+        }
+    )
+
+    # Check for optional exported cookies to bypass IP throttles
+    for path in (Path("cookies.txt"), Path("data/cookies.txt"), Path("youtube_cookies.txt")):
+        if path.exists():
+            try:
+                cj = http.cookiejar.MozillaCookieJar(path)
+                cj.load(ignore_discard=True, ignore_expires=True)
+                session.cookies.update(cj)
+                break
+            except Exception:
+                pass
+
+    return session
+
+
 def fetch_raw_captions(video_id: str) -> list[dict]:
-    """Network call. Returns [{'text': str, 'start': float, 'duration': float}, ...]."""
-    return YouTubeTranscriptApi().fetch(video_id, languages=["en"]).to_raw_data()
+    """Network call. Returns [{'text': str, 'start': float, 'duration': float}, ...].
+
+    Prioritizes manually created English captions (en, en-US, en-GB, en-CA) for highest
+    accuracy and professional formatting, gracefully falling back to auto-generated
+    captions when manual transcripts are not provided by the creator.
+    """
+    langs = ("en", "en-US", "en-GB", "en-CA")
+    session = _create_youtube_session()
+    api = YouTubeTranscriptApi(http_client=session)
+
+    try:
+        transcript_list = api.list(video_id)
+        # 1. Prefer creator-uploaded manual captions first
+        try:
+            transcript = transcript_list.find_manually_created_transcript(langs)
+        except Exception:
+            # 2. Fall back to auto-generated speech recognition captions
+            try:
+                transcript = transcript_list.find_generated_transcript(langs)
+            except Exception:
+                # 3. Fall back to any matching language transcript
+                transcript = transcript_list.find_transcript(langs)
+
+        fetched = transcript.fetch()
+        return fetched.to_raw_data()
+    except Exception:
+        # Direct fallback attempt
+        fetched = api.fetch(video_id, languages=langs)
+        return fetched.to_raw_data()
 
 
 def captions_to_segments(

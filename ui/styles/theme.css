@@ -1,12 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 /* ==========================================================================
    PodSeek UI Stylesheet (ui/styles/theme.css)
-   1. Design Tokens: Light (Default) & Dark (.ap-dark) — Overrides Gradio body.dark
+   1. Modern Typography (Inter + JetBrains Mono) & Design Tokens
    2. Responsive Full-Bleed Shell & Surface Primitives
    3. Header Segmented Pill Controls
    4. Option 1 Unified Command Capsule (Absorb & Multiline Distill with Button Inside)
    5. Google AI Overview Inline Citation Pills & Rendered Markdown
    6. Auto-Hiding Modern Scrollbars, Shimmer Progress & 4-Sided SVG Workflow Trace
    ========================================================================== */
+
+:root,
+html,
+body,
+gradio-app,
+.gradio-container,
+button,
+input,
+textarea,
+select,
+.prose,
+.ap-card,
+.ap-subtle,
+p,
+div,
+span,
+label {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+code,
+pre,
+kbd,
+samp,
+.ts-mono,
+.ap-timestamp,
+.gai-pill span,
+.wf-node span:last-child,
+.ap-btn-ghost,
+.ap-brand-badge {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
 
 :root,
 html,
@@ -61,47 +98,78 @@ gradio-app,
   --button-secondary-text-color: var(--text-main) !important;
 }
 
-html.dark,
-body.dark,
-.dark,
 html.ap-dark,
 :root.ap-dark,
 body.ap-dark,
+gradio-app.ap-dark,
+gradio-app[class*="dark"],
 .gradio-container.ap-dark,
+.gradio-container.dark,
 .ap-dark {
-  --bg-canvas: #111113;
-  --bg-card: #18181B;
-  --bg-subtle: #202024;
-  --border-hairline: #27272A;
-  --border-strong: #3F3F46;
-  --text-main: #F4F4F5;
-  --text-muted: #A1A1AA;
-  --accent: #3B82F6;
-  --accent-hover: #2563EB;
-  --gai-pill-bg: #2D3139;
-  --gai-pill-bg-hover: #3B404B;
-  --gai-pill-text: #D1D5DB;
-  --run-stroke: #3B82F6;
-  --retry-stroke: #F59E0B;
-  --done-stroke: #22C55E;
-  --dot-color: #2E2E32;
-  --scroll-thumb: rgba(161, 161, 170, 0.35);
+  --bg-canvas: #111113 !important;
+  --bg-card: #18181B !important;
+  --bg-subtle: #202024 !important;
+  --border-hairline: #27272A !important;
+  --border-strong: #3F3F46 !important;
+  --text-main: #F4F4F5 !important;
+  --text-muted: #A1A1AA !important;
+  --accent: #3B82F6 !important;
+  --accent-hover: #2563EB !important;
+  --gai-pill-bg: #2D3139 !important;
+  --gai-pill-bg-hover: #3B404B !important;
+  --gai-pill-text: #D1D5DB !important;
+  --run-stroke: #3B82F6 !important;
+  --retry-stroke: #F59E0B !important;
+  --done-stroke: #22C55E !important;
+  --dot-color: #2E2E32 !important;
+  --scroll-thumb: rgba(161, 161, 170, 0.35) !important;
 
   /* Oval Slider Tokens (Dark Mode — Recessed Track + Elevated Slate Thumb) */
-  --slider-track-bg: #111113;
-  --slider-track-border: #27272A;
-  --slider-track-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-  --slider-thumb-bg: #2E323B;
-  --slider-thumb-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 1px 3px rgba(0, 0, 0, 0.45);
-  --slider-thumb-x: 28px;
-  --sun-color: #71717A;
-  --sun-opacity: 0.45;
-  --moon-color: #FBBF24;
-  --moon-opacity: 1;
+  --slider-track-bg: #111113 !important;
+  --slider-track-border: #27272A !important;
+  --slider-track-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+  --slider-thumb-bg: #2E323B !important;
+  --slider-thumb-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 1px 3px rgba(0, 0, 0, 0.45) !important;
+  --slider-thumb-x: 28px !important;
+  --sun-color: #71717A !important;
+  --sun-opacity: 0.45 !important;
+  --moon-color: #FBBF24 !important;
+  --moon-opacity: 1 !important;
 
   --body-background-fill: #111113 !important;
+  --body-text-color: #F4F4F5 !important;
+  --body-text-color-subdued: #A1A1AA !important;
   --background-fill-primary: #18181B !important;
   --background-fill-secondary: #202024 !important;
+  --border-color-primary: #27272A !important;
+  --block-background-fill: #18181B !important;
+  --block-border-color: #27272A !important;
+  --input-background-fill: transparent !important;
+  --input-border-color: transparent !important;
+}
+
+body.ap-drawer-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
+/* --- Hide Gradio Default Footer ("Use via API", "Built with Gradio", "Settings") --- */
+footer,
+.gradio-container footer,
+gradio-app footer,
+body footer,
+.footer,
+footer * {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  border: none !important;
 }
 
 
@@ -114,17 +182,25 @@ gradio-app {
   margin: 0 !important;
   padding: 0 !important;
   width: 100% !important;
+  max-width: 100% !important;
   min-height: 100vh !important;
   overflow-x: hidden !important;
 }
 
-.gradio-container {
+.gradio-container,
+.gradio-container.contain,
+.gradio-container.full,
+gradio-app .gradio-container,
+body .gradio-container {
   background-color: var(--bg-canvas) !important;
   color: var(--text-main) !important;
   width: 100% !important;
-  max-width: 1440px !important;
-  margin: 0 auto !important;
-  padding: 14px 20px 28px !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  margin: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 10px 16px 20px !important;
   box-sizing: border-box !important;
 }
 
@@ -166,7 +242,9 @@ gradio-app {
   flex-wrap: nowrap !important;
   gap: 12px !important;
   padding: 10px 16px !important;
-  margin-bottom: 10px !important;
+  margin-bottom: 0px !important;
+  margin-top: 0px !important;
+  box-sizing: border-box !important;
 }
 
 .ap-header-brand {
@@ -174,7 +252,82 @@ gradio-app {
   min-width: 0 !important;
 }
 
-.ap-header-controls {
+.ap-brand-lockup {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.ap-brand-badge {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 8px !important;
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%) !important;
+  color: #FFFFFF !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+  font-weight: 800 !important;
+  font-size: 11.5px !important;
+  letter-spacing: -0.2px !important;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+  flex-shrink: 0 !important;
+}
+
+.ap-brand-meta {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+.ap-brand-title {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.3px !important;
+  color: var(--text-main) !important;
+  line-height: 1.15 !important;
+}
+
+.ap-header-subtitle {
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  color: var(--text-muted) !important;
+  margin-top: 2px !important;
+  line-height: 1.1 !important;
+}
+
+.ap-header-wrap,
+.gradio-container .ap-header-wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.ap-header-wrap .prose {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+.ap-header-inner-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+.ap-header-controls,
+.gradio-container .ap-header-controls {
   display: flex !important;
   flex-direction: row !important;
   align-items: center !important;
@@ -183,6 +336,33 @@ gradio-app {
   width: auto !important;
   margin-left: auto !important;
   gap: 10px !important;
+  overflow: visible !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.ap-header-row,
+.ap-header-row *,
+.ap-header-wrap,
+.ap-header-wrap *,
+.ap-header-inner-row,
+.ap-header-inner-row *,
+.ap-header-controls,
+.ap-header-controls *,
+.ap-slider-wrap,
+.ap-slider-wrap * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.ap-header-row *::-webkit-scrollbar,
+.ap-header-wrap *::-webkit-scrollbar,
+.ap-header-inner-row *::-webkit-scrollbar,
+.ap-header-controls *::-webkit-scrollbar,
+.ap-slider-wrap *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .ap-inline-row {
@@ -205,6 +385,8 @@ gradio-app {
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
+  overflow: visible !important;
+  scrollbar-width: none !important;
 }
 
 button#ap-view-slider {
@@ -236,8 +418,8 @@ button#ap-view-slider .vs-thumb {
   z-index: 1 !important;
   pointer-events: none !important;
   transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-              width 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-              background-color 0.2s ease !important;
+    width 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.2s ease !important;
 }
 
 button#ap-view-slider.is-nerds .vs-thumb {
@@ -358,27 +540,55 @@ button#ap-theme-slider .ts-moon svg {
    - .ap-ingest-capsule: Wrapped URL input with "✦ Absorb" pill centered inside right
    - .ap-distill-capsule: Multiline text box with "Distill →" pill centered inside right
    ========================================================================== */
-.ap-ingest-capsule,
 .ap-distill-capsule {
   position: relative !important;
   display: flex !important;
   align-items: center !important;
   background-color: var(--bg-subtle) !important;
   border: 1px solid var(--border-strong) !important;
-  border-radius: 16px !important;
-  padding: 7px 98px 7px 13px !important;
+  border-radius: 9999px !important;
+  min-height: 54px !important;
+  padding: 8px 120px 8px 20px !important;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
   transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease !important;
+  box-sizing: border-box !important;
 }
 
-.ap-distill-capsule {
-  align-items: center !important;
-  padding: 8px 104px 8px 14px !important;
-  border-radius: 16px !important;
+.ap-dark .ap-distill-capsule,
+.gradio-container.ap-dark .ap-distill-capsule {
+  background-color: #202024 !important;
+  border-color: #3F3F46 !important;
 }
 
-.ap-ingest-capsule:focus-within,
 .ap-distill-capsule:focus-within {
+  background-color: var(--bg-card) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
+}
+
+.ap-ingest-capsule {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  background-color: var(--bg-subtle) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 9999px !important;
+  min-height: 46px !important;
+  height: 46px !important;
+  padding: 0 88px 0 14px !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.ap-dark .ap-ingest-capsule,
+.gradio-container.ap-dark .ap-ingest-capsule {
+  background-color: #202024 !important;
+  border-color: #3F3F46 !important;
+}
+
+.ap-ingest-capsule:focus-within {
   background-color: var(--bg-card) !important;
   border-color: var(--accent) !important;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
@@ -389,24 +599,34 @@ button#ap-theme-slider .ts-moon svg {
 .ap-capsule-input .form,
 .ap-capsule-input label,
 .ap-capsule-input .wrap {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
   box-shadow: none !important;
-  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-/* Hide ugly native textarea scrollbars while allowing clean multiline wrap */
-.ap-capsule-input textarea,
-.ap-capsule-input input {
+/* Distill text input: Clean, large, modern typography (15px) */
+.ap-distill-capsule .ap-capsule-input textarea,
+.ap-distill-capsule .ap-capsule-input input {
   background: transparent !important;
   border: none !important;
   color: var(--text-main) !important;
-  padding: 2px 0 !important;
+  padding: 0 !important;
   margin: 0 !important;
-  font-size: 12.5px !important;
-  line-height: 1.45 !important;
+  font-family: inherit !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  line-height: 24px !important;
+  letter-spacing: -0.01em !important;
+  min-height: 24px !important;
   width: 100% !important;
   resize: none !important;
   box-shadow: none !important;
@@ -415,30 +635,80 @@ button#ap-theme-slider .ts-moon svg {
   word-break: break-word !important;
   overflow-wrap: anywhere !important;
   scrollbar-width: none !important;
+  display: block !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
 }
 
-.ap-capsule-input textarea::-webkit-scrollbar {
+.ap-distill-capsule .ap-capsule-input textarea::-webkit-scrollbar {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
 }
 
-.ap-capsule-input textarea::placeholder,
-.ap-capsule-input input::placeholder {
-  color: var(--text-muted) !important;
-  opacity: 0.45 !important;
+/* Ensure zero native placeholder is ever rendered in Distill input (handled exclusively by .ap-typewriter-wrap) */
+#ap-distill-input textarea::placeholder,
+#ap-distill-input input::placeholder,
+#ap-distill-input textarea::-webkit-input-placeholder,
+#ap-distill-input input::-webkit-input-placeholder,
+#ap-distill-input textarea::-moz-placeholder,
+#ap-distill-input input::-moz-placeholder,
+#ap-distill-input textarea:-ms-input-placeholder,
+#ap-distill-input input:-ms-input-placeholder,
+.ap-distill-capsule textarea::placeholder,
+.ap-distill-capsule input::placeholder,
+.ap-distill-capsule textarea::-webkit-input-placeholder,
+.ap-distill-capsule input::-webkit-input-placeholder,
+.ap-distill-capsule textarea::-moz-placeholder,
+.ap-distill-capsule input::-moz-placeholder,
+.ap-distill-capsule .ap-capsule-input textarea::placeholder,
+.ap-distill-capsule .ap-capsule-input input::placeholder {
+  opacity: 0 !important;
+  color: transparent !important;
+  user-select: none !important;
+  text-shadow: none !important;
+}
+
+/* Ingest text input: 13.5px modern centered input */
+.ap-ingest-capsule .ap-capsule-input textarea,
+.ap-ingest-capsule .ap-capsule-input input {
+  background: transparent !important;
+  border: none !important;
+  color: var(--text-main) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-family: inherit !important;
+  font-size: 13.5px !important;
   font-weight: 400 !important;
+  line-height: 24px !important;
+  letter-spacing: -0.01em !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  width: 100% !important;
+  resize: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  display: block !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+}
+
+.ap-ingest-capsule .ap-capsule-input textarea::placeholder,
+.ap-ingest-capsule .ap-capsule-input input::placeholder {
+  font-family: inherit !important;
+  color: var(--text-muted) !important;
+  opacity: 0.55 !important;
+  font-size: 13.5px !important;
+  font-weight: 400 !important;
+  line-height: 24px !important;
+  letter-spacing: -0.01em !important;
   transition: opacity 0.14s ease !important;
 }
 
-.ap-capsule-input textarea:focus::placeholder,
-.ap-capsule-input input:focus::placeholder {
-  opacity: 0 !important;
-  color: transparent !important;
-}
-
 /* Pill Action Button Vertically Centered Inside the Capsule Container */
-button.ap-capsule-btn {
+button.ap-capsule-btn,
+button#ap-distill-btn {
   position: absolute !important;
   right: 8px !important;
   top: 50% !important;
@@ -446,24 +716,48 @@ button.ap-capsule-btn {
   transform: translateY(-50%) !important;
   width: auto !important;
   min-width: 0 !important;
-  height: 32px !important;
-  padding: 0 13px !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding: 0 18px !important;
   border-radius: 9999px !important;
   background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%) !important;
   color: #FFFFFF !important;
   border: none !important;
-  font-size: 12px !important;
+  font-family: inherit !important;
+  font-size: 13.5px !important;
   font-weight: 600 !important;
   letter-spacing: -0.01em !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 1px 3px rgba(37, 99, 235, 0.28) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 2px 6px rgba(37, 99, 235, 0.32) !important;
   cursor: pointer !important;
   z-index: 3 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
   transition: transform 0.12s ease, filter 0.12s ease !important;
 }
 
-button.ap-capsule-btn:hover {
+button.ap-capsule-btn:hover,
+button#ap-distill-btn:hover {
   filter: brightness(1.07) !important;
   transform: translateY(-50%) scale(1.02) !important;
+}
+
+button#ap-ingest-btn {
+  position: absolute !important;
+  right: 6px !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  padding: 0 15px !important;
+  border-radius: 9999px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  box-sizing: border-box !important;
 }
 
 button.ap-btn-ghost {
@@ -473,9 +767,9 @@ button.ap-btn-ghost {
   background-color: transparent !important;
   border: 1px solid var(--border-hairline) !important;
   border-radius: 9999px !important;
-  padding: 3px 11px !important;
-  font-size: 11.5px !important;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
+  padding: 4px 12px !important;
+  font-size: 12px !important;
+  font-family: inherit !important;
   color: var(--text-muted) !important;
   box-shadow: none !important;
 }
@@ -487,40 +781,65 @@ button.ap-btn-ghost:hover {
 
 .ap-presets-row {
   display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 6px !important;
-  margin: 8px 0 6px !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 12px auto 16px !important;
+  width: 100% !important;
+  max-width: 760px !important;
 }
 
 button.ap-preset-pill {
-  flex: 0 1 auto !important;
-  width: auto !important;
-  min-width: 0 !important;
-  background-color: var(--bg-subtle) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  width: fit-content !important;
+  max-width: 90% !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height: 1.4 !important;
+  background-color: var(--bg-card) !important;
   border: 1px solid var(--border-hairline) !important;
   border-radius: 9999px !important;
-  padding: 5px 11px !important;
-  font-size: 11.5px !important;
+  padding: 9px 18px !important;
+  font-size: 13.5px !important;
   font-weight: 500 !important;
-  color: var(--text-muted) !important;
-  box-shadow: none !important;
-  transition: all 0.14s ease !important;
+  letter-spacing: -0.01em !important;
+  font-weight: 500 !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  transition: all 0.16s ease !important;
+  cursor: pointer !important;
+  align-self: center !important;
 }
 
 button.ap-preset-pill:hover {
   border-color: var(--accent) !important;
-  color: var(--text-main) !important;
+  background-color: var(--bg-subtle) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12) !important;
 }
 
 /* --- Custom Ingest Shimmer Progress & Wrapped Status Banner --- */
 @keyframes apShimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(200%);
+  }
 }
 
 @keyframes apSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .ap-spin {
@@ -528,8 +847,34 @@ button.ap-preset-pill:hover {
   animation: apSpin 0.85s linear infinite !important;
 }
 
+@keyframes apStatusSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+div#ap-ingest-status-wrap {
+  display: block !important;
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+div#ap-ingest-status-wrap:empty,
+div#ap-ingest-status-wrap:not(:has(.ap-status-card)) {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+}
+
 .ap-status-card {
-  margin-top: 8px !important;
+  margin: 6px 0 !important;
   padding: 8px 10px !important;
   border-radius: 10px !important;
   font-size: 11.5px !important;
@@ -537,6 +882,8 @@ button.ap-preset-pill:hover {
   white-space: normal !important;
   word-break: break-word !important;
   overflow-wrap: anywhere !important;
+  animation: apStatusSlide 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: all 0.28s ease !important;
 }
 
 .ap-shimmer-track {
@@ -561,9 +908,16 @@ button.ap-preset-pill:hover {
 }
 
 /* --- Google AI Overview Inline Citation Pill & Rendered Markdown --- */
-.ap-md p {
-  margin: 0 0 8px 0 !important;
+.ap-md {
+  font-size: 14.5px !important;
+  letter-spacing: -0.005em !important;
   line-height: 1.65 !important;
+}
+
+.ap-md p {
+  margin: 0 0 10px 0 !important;
+  line-height: 1.65 !important;
+  font-size: 14.5px !important;
 }
 
 .ap-md p:last-child {
@@ -572,13 +926,15 @@ button.ap-preset-pill:hover {
 
 .ap-md ul,
 .ap-md ol {
-  margin: 6px 0 10px 18px !important;
+  margin: 6px 0 12px 20px !important;
   padding: 0 !important;
+  font-size: 14.5px !important;
 }
 
 .ap-md li {
   margin-bottom: 6px !important;
   line-height: 1.6 !important;
+  font-size: 14.5px !important;
 }
 
 .ap-md strong {
@@ -587,24 +943,26 @@ button.ap-preset-pill:hover {
 }
 
 .ap-md code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace !important;
-  font-size: 11.5px !important;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace !important;
+  font-size: 12.5px !important;
   background-color: var(--bg-card) !important;
   border: 1px solid var(--border-hairline) !important;
-  padding: 1px 5px !important;
-  border-radius: 4px !important;
+  padding: 2px 6px !important;
+  border-radius: 6px !important;
 }
 
 a.gai-pill {
   display: inline-flex !important;
   align-items: center !important;
   gap: 5px !important;
-  height: 20px !important;
-  padding: 0 8px 0 3px !important;
+  height: 22px !important;
+  padding: 0 9px 0 4px !important;
   border-radius: 9999px !important;
   background-color: var(--gai-pill-bg) !important;
   color: var(--gai-pill-text) !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", sans-serif !important;
+  font-family: inherit !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
   font-size: 11.5px !important;
   font-weight: 500 !important;
   line-height: 1 !important;
@@ -671,7 +1029,7 @@ a.gai-pill:hover {
   background-size: 14px 14px !important;
   border: 1px solid var(--border-hairline) !important;
   border-radius: 12px !important;
-  padding: 12px !important;
+  padding: 12px 16px !important;
   height: 505px !important;
   display: flex !important;
   flex-direction: column !important;
@@ -686,13 +1044,23 @@ a.gai-pill:hover {
 }
 
 @keyframes traceFullPerimeter {
-  0% { stroke-dashoffset: 100; }
-  100% { stroke-dashoffset: 0; }
+  0% {
+    stroke-dashoffset: 100;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
 
 @keyframes edgeMarch {
-  0% { stroke-dashoffset: 20; }
-  100% { stroke-dashoffset: 0; }
+  0% {
+    stroke-dashoffset: 20;
+  }
+
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
 
 .wf-node {
@@ -700,9 +1068,15 @@ a.gai-pill:hover {
   background-color: var(--bg-card) !important;
   border: 1px solid var(--border-strong);
   border-radius: 10px;
-  padding: 8px 10px;
-  box-sizing: border-box;
+  padding: 6px 8px !important;
+  box-sizing: border-box !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.wf-node span:last-child {
+  font-size: 10px !important;
+  letter-spacing: -0.015em !important;
+  flex-shrink: 0 !important;
 }
 
 .node-trace-svg {
@@ -832,16 +1206,18 @@ button#ap-mode-slider .ms-thumb {
   z-index: 1 !important;
   pointer-events: none !important;
   transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-              background-color 0.2s ease !important;
+    background-color 0.2s ease !important;
 }
 
 /* 3 Positions of the Thumb */
 button#ap-mode-slider.is-turbo .ms-thumb {
   transform: translateX(0%) !important;
 }
+
 button#ap-mode-slider.is-balanced .ms-thumb {
   transform: translateX(100%) !important;
 }
+
 button#ap-mode-slider.is-rigorous .ms-thumb {
   transform: translateX(200%) !important;
 }
@@ -881,37 +1257,545 @@ button#ap-mode-slider.is-rigorous .slot-rigorous {
 
 /* ==========================================================================
    MOBILE RESPONSIVE ARCHITECTURE (< 768px Viewports)
-   1. Column Reordering: Center Column (Chat & Distill) -> order: 1 (Immediately in view)
-   2. Left Column (Episodes & Ingest) -> order: 2
-   3. Desktop Workflow Column -> Hidden on mobile (preventing 600px redundant scroll)
-   4. Inline Spotlight Reasoning Card & Collapsible Trace Badges
+   1. Full-Screen Native Chat: Zero artificial scroll clamping, chat flows freely
+   2. Floating Frosted Capsule: Pinned at bottom with 16px blur + safe area insets
+   3. Floating Mode Bar: Positioned discreetly above floating capsule
+   4. Episode Library Slide-Over Drawer: Slides up from bottom on Library button tap
+   5. Desktop Workflow Column: Hidden on mobile, replaced by inline reasoning card
    ========================================================================== */
 @media (max-width: 768px) {
-  .gradio-container {
-    padding: 8px 8px 16px !important;
+  html,
+  body {
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    position: fixed !important;
+    width: 100% !important;
+    overscroll-behavior: none !important;
+  }
+
+  gradio-app,
+  .gradio-container,
+  .gradio-container.contain,
+  .gradio-container.full {
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100vw !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
   }
 
   .ap-header-row {
-    padding: 8px 10px !important;
-    margin-bottom: 8px !important;
+    flex-shrink: 0 !important;
+    margin: 8px 10px 4px !important;
+    padding: 7px 12px !important;
+    border-radius: 18px !important;
+    border: 1px solid var(--border-hairline) !important;
+    background-color: var(--bg-card) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+    z-index: 40 !important;
+    position: relative !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    overflow: visible !important;
+  }
+
+  .ap-header-wrap,
+  .gradio-container .ap-header-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .ap-header-inner-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .ap-brand-lockup {
+    gap: 8px !important;
+  }
+
+  .ap-brand-badge {
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 7px !important;
+    font-size: 11px !important;
+  }
+
+  .ap-brand-title {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.25px !important;
+  }
+
+  .ap-header-subtitle {
+    display: none !important;
+  }
+
+  .ap-header-controls,
+  .gradio-container .ap-header-controls {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 8px !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    max-height: 32px !important;
+    overflow: visible !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .ap-slider-wrap {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    max-height: 32px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
   }
 
   #ap-studio-view {
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 10px !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+    position: relative !important;
   }
 
-  /* Center Column: Session Chat & Distill takes primary viewport focus */
+  /* Center Column: Native Full-Screen Chat Viewport */
   .ap-col-center {
     order: 1 !important;
     width: 100% !important;
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    position: relative !important;
   }
 
-  /* Left Column: Episode Library & Ingest follows below chat */
-  .ap-col-left {
-    order: 2 !important;
+  /* Ensure the Gradio HTML wrapper and viewport fill the available height */
+  .ap-col-center > div.gradio-html,
+  .ap-col-center > .block:has(#ap-chat-scroll),
+  .ap-col-center > div:has(.ap-chat-viewport-wrap),
+  .ap-chat-viewport-wrap {
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    position: relative !important;
     width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Chat list scrolls inside center column */
+  #ap-chat-scroll {
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: auto !important;
+    padding-bottom: 140px !important;
+    box-sizing: border-box !important;
+  }
+
+  #ap-chat-scroll.ap-chat-empty,
+  .ap-chat-empty {
+    height: 100% !important;
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    padding: 8px 8px 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+  }
+
+  .ap-presets-row {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin: 4px auto 8px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 4px !important;
+    box-sizing: border-box !important;
+  }
+
+  button.ap-preset-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: fit-content !important;
+    max-width: 94% !important;
+    text-align: center !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    line-height: 1.35 !important;
+    padding: 7px 15px !important;
+    border-radius: 9999px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-hairline) !important;
+    color: var(--text-main) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    align-self: center !important;
+  }
+
+  /* Prevent browser pull-to-refresh on downward swipe */
+  html,
+  body {
+    overscroll-behavior-y: contain !important;
+  }
+
+  /* Floating Frosted Glass Distill Capsule Pinned at Bottom */
+  .ap-distill-capsule {
+    position: fixed !important;
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 12px !important;
+    right: 12px !important;
+    z-index: 50 !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-strong) !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.16) !important;
+    padding: 8px 105px 8px 18px !important;
+    margin: 0 !important;
+    min-height: 52px !important;
+    max-width: calc(100vw - 24px) !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .ap-dark .ap-distill-capsule,
+  .gradio-container.ap-dark .ap-distill-capsule {
+    background-color: #18181B !important;
+    border-color: #3F3F46 !important;
+  }
+
+  .ap-distill-capsule,
+  .ap-distill-capsule .block,
+  .ap-distill-capsule .form,
+  .ap-distill-capsule .wrap,
+  .ap-distill-capsule label,
+  .ap-distill-capsule textarea,
+  .ap-distill-capsule input {
+    background-color: transparent !important;
+    color: var(--text-main) !important;
+  }
+
+  .ap-distill-capsule .ap-capsule-input textarea,
+  .ap-distill-capsule .ap-capsule-input input {
+    font-size: 13.5px !important;
+  }
+
+  .ap-distill-capsule .ap-capsule-input textarea::placeholder,
+  .ap-distill-capsule .ap-capsule-input input::placeholder {
+    opacity: 0 !important;
+    color: transparent !important;
+  }
+
+  .ap-dark .ap-distill-capsule textarea,
+  .ap-dark .ap-distill-capsule input {
+    color: #F4F4F5 !important;
+    background-color: transparent !important;
+  }
+
+  /* Floating Compact Mode Selector Bar: Container is transparent, only button is styled */
+  .ap-mode-row {
+    position: fixed !important;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 49 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+  }
+
+  #ap-chat-scroll {
+    padding-bottom: calc(130px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .ap-mode-bar {
+    position: static !important;
+    transform: none !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+  }
+
+  /* Complete Concealment of Hidden Radio Bridges to Eliminate Rogue Artifact Pills */
+  #ap-mode-radio,
+  #ap-mode-radio *,
+  #ap-mode-radio-wrap,
+  .ap-hidden-bridge,
+  .ap-hidden-bridge *,
+  .ap-view-hidden {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    clip: rect(0, 0, 0, 0) !important;
+    overflow: hidden !important;
+  }
+
+  button#ap-mode-slider {
+    width: min(324px, calc(100vw - 32px)) !important;
+    height: 34px !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    background-color: var(--slider-track-bg) !important;
+    border: 1px solid var(--slider-track-border) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14) !important;
+  }
+
+  button#ap-mode-slider .ms-thumb {
+    height: 28px !important;
+    background-color: var(--slider-thumb-bg) !important;
+    box-shadow: var(--slider-thumb-shadow) !important;
+  }
+
+  button#ap-mode-slider .ms-slot {
+    font-size: 11.5px !important;
+    letter-spacing: -0.1px !important;
+    padding: 0 4px !important;
+  }
+
+  button.ap-capsule-btn {
+    height: 32px !important;
+    padding: 0 13px !important;
+    font-size: 12px !important;
+  }
+
+  /* Left Column: Slide-Over Bottom Sheet Drawer on Mobile */
+  .ap-col-left {
+    position: fixed !important;
+    top: 56px !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    z-index: 100 !important;
+    background-color: var(--bg-card) !important;
+    border-top: 1px solid var(--border-strong) !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    border-radius: 20px 20px 0 0 !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3) !important;
+    padding: 12px 16px 36px !important;
+    transform: translateY(105%) !important;
+    transition: transform 0.28s cubic-bezier(0.32, 0.72, 0, 1) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior-y: contain !important;
+    touch-action: pan-y !important;
+  }
+
+  .ap-col-left.mobile-drawer-open {
+    transform: translateY(0%) !important;
+  }
+
+  /* Unfold Episode Library Inside Slide-Over Drawer */
+  .ap-col-left #ap-bento-accordion,
+  .ap-col-left .ap-bento-accordion {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  .ap-col-left #ap-bento-accordion>summary,
+  .ap-col-left #ap-bento-accordion>.label-wrap,
+  .ap-col-left #ap-bento-accordion>button {
+    display: none !important;
+  }
+
+  .ap-col-left #ap-bento-accordion>.wrap,
+  .ap-col-left #ap-bento-accordion>div:not(.label-wrap):not(.ap-ingest-capsule),
+  .ap-col-left .ap-bento-accordion>div:not(.ap-ingest-capsule) {
+    display: block !important;
+    padding: 0 !important;
+  }
+
+  /* Ingest Capsule Protection inside Drawer */
+  .ap-col-left .ap-ingest-capsule,
+  #ap-bento-accordion .ap-ingest-capsule,
+  .ap-ingest-capsule {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 44px !important;
+    height: 44px !important;
+    padding: 0 96px 0 16px !important;
+    margin: 0 0 8px 0 !important;
+    box-sizing: border-box !important;
+    background-color: var(--bg-subtle) !important;
+    border: 1px solid var(--border-strong) !important;
+    border-radius: 9999px !important;
+    overflow: hidden !important;
+  }
+
+  .ap-dark .ap-col-left .ap-ingest-capsule,
+  .ap-dark #ap-bento-accordion .ap-ingest-capsule,
+  .gradio-container.ap-dark .ap-ingest-capsule {
+    background-color: #18181B !important;
+    border-color: #3F3F46 !important;
+  }
+
+  .ap-col-left .ap-ingest-capsule:focus-within,
+  #ap-bento-accordion .ap-ingest-capsule:focus-within,
+  .ap-ingest-capsule:focus-within {
+    background-color: var(--bg-card) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
+  }
+
+  .ap-col-left .ap-ingest-capsule .ap-capsule-input,
+  .ap-col-left .ap-ingest-capsule .ap-capsule-input .block,
+  .ap-col-left .ap-ingest-capsule .ap-capsule-input label,
+  .ap-col-left .ap-ingest-capsule .ap-capsule-input .wrap,
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input,
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input .block,
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input label,
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input .wrap,
+  .ap-ingest-capsule .ap-capsule-input,
+  .ap-ingest-capsule .ap-capsule-input .block,
+  .ap-ingest-capsule .ap-capsule-input label,
+  .ap-ingest-capsule .ap-capsule-input .wrap {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .ap-col-left .ap-ingest-capsule .ap-capsule-input input,
+  .ap-col-left .ap-ingest-capsule .ap-capsule-input textarea,
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input input,
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input textarea,
+  .ap-ingest-capsule .ap-capsule-input input,
+  .ap-ingest-capsule .ap-capsule-input textarea {
+    width: 100% !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
+    line-height: 24px !important;
+    font-size: 13px !important;
+    color: var(--text-main) !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    padding: 0 4px !important;
+    margin: 0 !important;
+    display: block !important;
+    vertical-align: middle !important;
+    box-sizing: border-box !important;
+  }
+
+  .ap-col-left .ap-ingest-capsule button.ap-capsule-btn,
+  #ap-bento-accordion .ap-ingest-capsule button.ap-capsule-btn,
+  .ap-ingest-capsule button.ap-capsule-btn {
+    position: absolute !important;
+    right: 6px !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 13px !important;
+    border-radius: 9999px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    background: #2563EB !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    cursor: pointer !important;
+    z-index: 5 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+  }
+
+  .ap-episodes-list {
+    max-height: calc(100vh - 240px) !important;
   }
 
   /* Right Column: Desktop-only graph hidden on mobile; replaced by inline Spotlight */
@@ -919,32 +1803,551 @@ button#ap-mode-slider.is-rigorous .slot-rigorous {
     display: none !important;
   }
 
-  /* Mobile chat height tuning */
-  #ap-chat-scroll,
-  .ap-chat-empty {
-    height: clamp(140px, calc(100vh - 440px), 320px) !important;
-    min-height: 140px !important;
+  .ap-sidebar-header-wrap,
+  .gradio-container .ap-sidebar-header-wrap,
+  .ap-mobile-drawer-header-wrap {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
   }
 
-  .ap-distill-capsule {
-    padding: 8px 88px 8px 12px !important;
+  .ap-sidebar-header-wrap .prose {
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  button.ap-capsule-btn {
-    height: 30px !important;
-    padding: 0 11px !important;
+  .ap-mobile-drawer-header {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 0 8px 0 !important;
+    margin: 0 0 8px 0 !important;
+    border-bottom: 1px solid var(--border-hairline) !important;
+  }
+
+  .ap-drawer-close-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    background: var(--bg-subtle) !important;
+    color: var(--text-muted) !important;
+    border: 1px solid var(--border-hairline) !important;
+    padding: 3px 10px !important;
+    border-radius: 9999px !important;
     font-size: 11.5px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
   }
 
-  .ap-episodes-list {
-    max-height: 240px !important;
+  .ap-drawer-close-btn:hover {
+    background: var(--border-hairline) !important;
+    color: var(--text-main) !important;
   }
+
+  .ap-dark .ap-drawer-close-btn {
+    background: #27272A !important;
+    border-color: #3F3F46 !important;
+    color: #A1A1AA !important;
+  }
+
+  .ap-dark .ap-drawer-close-btn:hover {
+    background: #3F3F46 !important;
+    color: #F4F4F5 !important;
+  }
+
+  /* Neutralize extra spacing between drawer header divider and Ingest title */
+  .ap-col-left .block,
+  .ap-col-left .gradio-html,
+  .ap-col-left .ap-bento-accordion,
+  .ap-col-left #ap-bento-accordion {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .ap-col-left .ap-ingest-title,
+  .ap-ingest-title {
+    margin: 0 0 8px 0 !important;
+    padding: 0 !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+  }
+
+  /* Backdrop for Mobile Drawer */
+  #ap-mobile-drawer-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.45) !important;
+    z-index: 99 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.25s ease !important;
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+  }
+
+  #ap-mobile-drawer-backdrop.is-open {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  /* Buttons on Mobile */
+  button#ap-sidebar-toggle-btn {
+    display: none !important;
+  }
+
+  button#ap-mobile-library-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    box-sizing: border-box !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    padding: 0 11px !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
+    align-self: center !important;
+    flex-shrink: 0 !important;
+    border-radius: 9999px !important;
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    background: var(--bg-subtle) !important;
+    border: 1px solid var(--border-strong) !important;
+    color: var(--text-main) !important;
+    cursor: pointer !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+    transition: all 0.15s ease !important;
+  }
+
+  button#ap-mobile-library-btn:hover,
+  button#ap-mobile-library-btn:active {
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+    transform: scale(0.98) !important;
+  }
+
+  .ap-dark button#ap-mobile-library-btn {
+    background: #202024 !important;
+    border-color: #3F3F46 !important;
+    color: #F4F4F5 !important;
+  }
+}
+
+@media (min-width: 769px) {
+  button#ap-mobile-library-btn {
+    display: none !important;
+  }
+
+  .ap-mobile-drawer-header-wrap {
+    display: none !important;
+  }
+
+  #ap-mobile-drawer-backdrop,
+  .ap-mobile-drawer-backdrop-wrap {
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  /* Workflow flowchart animation inside chat is mobile-only; on web/desktop it belongs strictly in the right sidebar */
+  .ap-spotlight-card,
+  details.ap-trace-details {
+    display: none !important;
+  }
+
+  /* Desktop Spacing: Equalize horizontal gap between header bar & 3 boxes to exactly match vertical gap between boxes (12px) */
+  .gradio-container,
+  .gradio-container > .main,
+  .gradio-container > .main > .wrap {
+    gap: 12px !important;
+  }
+
+  .ap-header-row {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  #ap-studio-view {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+  }
+
+  .ap-col-left,
+  .ap-col-center,
+  .ap-col-right {
+    margin-top: 0 !important;
+  }
+
+  /* Left Column: Collapsible Sidebar */
+  .ap-col-left {
+    flex: 0 0 280px !important;
+    width: 280px !important;
+    min-width: 280px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow: hidden !important;
+  }
+
+  .ap-col-left.is-collapsed {
+    flex: 0 0 0px !important;
+    width: 0px !important;
+    min-width: 0px !important;
+    max-width: 0px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  /* Center Column: Expands dynamically when left collapses */
+  .ap-col-center {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    width: auto !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  /* Right Column: Sized to fit the 330px workflow diagram + badges without text wrapping */
+  .ap-col-right {
+    flex: 0 0 380px !important;
+    width: 380px !important;
+    min-width: 380px !important;
+    max-width: 380px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .ap-col-right .wf-canvas-wrap {
+    transform: none !important;
+    margin-bottom: 0 !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Bulletproof top-edge alignment: remove all top margins/paddings above the workflow dot grid */
+  .gradio-container .ap-col-right,
+  .gradio-container div.ap-col-right,
+  .ap-col-right,
+  .ap-col-right .ap-workflow-block,
+  .gradio-container .ap-col-right .ap-workflow-block,
+  .ap-col-right > div:first-child,
+  .ap-col-right .block:first-child {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    border-top: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .ap-col-right .ap-workflow-block .prose {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .gradio-container .ap-col-right *,
+  .gradio-container .ap-col-right > div,
+  .gradio-container .ap-col-right .gap,
+  .gradio-container .ap-col-right .block,
+  .gradio-container .ap-col-right .gradio-html,
+  .gradio-container .ap-col-right .prose,
+  .gradio-container .ap-col-right .wrap,
+  .gradio-container .ap-col-right .form {
+    border-top-width: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .gradio-container .ap-col-right .wf-dot-grid {
+    margin-top: 0 !important;
+    padding-top: 12px !important;
+    border: 1px solid var(--border-hairline) !important;
+    border-top: 1px solid var(--border-hairline) !important;
+    border-top-width: 1px !important;
+    border-radius: 12px !important;
+    background-color: var(--bg-card) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .ap-mobile-drawer-header {
+    display: none !important;
+  }
+
+  #ap-bento-accordion {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #ap-bento-accordion>summary,
+  #ap-bento-accordion>.label-wrap,
+  #ap-bento-accordion>button {
+    display: none !important;
+  }
+
+  #ap-bento-accordion>.wrap,
+  #ap-bento-accordion>div:not(.label-wrap):not(.ap-ingest-capsule) {
+    display: block !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  /* Desktop Ingest Capsule: Identical styling to Distill Capsule */
+  #ap-bento-accordion .ap-ingest-capsule,
+  .ap-col-left .ap-ingest-capsule,
+  .gradio-container #ap-bento-accordion .ap-ingest-capsule,
+  .gradio-container .ap-ingest-capsule {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 46px !important;
+    height: 46px !important;
+    padding: 0 88px 0 14px !important;
+    margin: 0 0 10px 0 !important;
+    box-sizing: border-box !important;
+    background-color: var(--bg-subtle) !important;
+    border: 1px solid var(--border-strong) !important;
+    border-radius: 9999px !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    overflow: hidden !important;
+  }
+
+  .ap-dark #ap-bento-accordion .ap-ingest-capsule,
+  .ap-dark .ap-col-left .ap-ingest-capsule,
+  .gradio-container.ap-dark .ap-ingest-capsule {
+    background-color: #202024 !important;
+    border: 1px solid #3F3F46 !important;
+  }
+
+  #ap-bento-accordion .ap-ingest-capsule:focus-within,
+  .ap-col-left .ap-ingest-capsule:focus-within,
+  .ap-ingest-capsule:focus-within {
+    background-color: var(--bg-card) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
+  }
+
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input,
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input .block,
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input label,
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input .wrap {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+  }
+
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input textarea,
+  #ap-bento-accordion .ap-ingest-capsule .ap-capsule-input input {
+    width: 100% !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
+    line-height: 24px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 13px !important;
+    color: var(--text-main) !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    display: block !important;
+    vertical-align: middle !important;
+    box-sizing: border-box !important;
+  }
+
+  #ap-bento-accordion .ap-ingest-capsule button.ap-capsule-btn {
+    position: absolute !important;
+    right: 6px !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    max-height: 34px !important;
+    padding: 0 15px !important;
+    border-radius: 9999px !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    background: #2563EB !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    cursor: pointer !important;
+    z-index: 5 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+  }
+
+  .ap-episodes-heading {
+    border-top: 1px solid var(--border-hairline) !important;
+    margin: 8px 0 6px !important;
+    padding-top: 8px !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+  }
+
+  .ap-episodes-list a.ap-subtle {
+    margin-bottom: 6px !important;
+    padding: 7px 8px !important;
+  }
+}
+
+/* Grok-style Sidebar Toggle Button in Header */
+button#ap-sidebar-toggle-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  background-color: var(--bg-subtle) !important;
+  border: 1px solid var(--border-hairline) !important;
+  color: var(--accent) !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  margin-right: 8px !important;
+  transition: all 0.16s ease !important;
+}
+
+button#ap-sidebar-toggle-btn:hover {
+  background-color: var(--border-hairline) !important;
+  color: var(--text-main) !important;
+  transform: scale(1.02) !important;
+}
+
+@media (max-width: 768px) {
+  button#ap-sidebar-toggle-btn {
+    display: none !important;
+  }
+
+  .ap-spotlight-card+.ap-desktop-streaming,
+  .ap-spotlight-card~.ap-desktop-streaming {
+    display: none !important;
+  }
+
+  /* Spotlight Workflow Scaling on Mobile Viewports */
+  .ap-spotlight-card,
+  details.ap-trace-details {
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    max-width: 100% !important;
+    padding: 6px 4px !important;
+    box-sizing: border-box !important;
+  }
+
+  .ap-spotlight-card .wf-dot-grid,
+  details.ap-trace-details .wf-dot-grid {
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 10px 4px 6px !important;
+    border: none !important;
+    background-color: transparent !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .wf-canvas-wrap {
+    transform-origin: top center !important;
+    transition: transform 0.12s ease-out, margin-bottom 0.12s ease-out !important;
+  }
+
+  @media (max-width: 500px) {
+    .ap-spotlight-card .wf-canvas-wrap,
+    details.ap-trace-details .wf-canvas-wrap {
+      transform: scale(0.88);
+      transform-origin: top center;
+      margin-bottom: -50px;
+    }
+  }
+
+  @media (max-width: 410px) {
+    .ap-spotlight-card .wf-canvas-wrap,
+    details.ap-trace-details .wf-canvas-wrap {
+      transform: scale(0.80);
+      transform-origin: top center;
+      margin-bottom: -88px;
+    }
+  }
+
+  @media (max-width: 365px) {
+    .ap-spotlight-card .wf-canvas-wrap,
+    details.ap-trace-details .wf-canvas-wrap {
+      transform: scale(0.72);
+      transform-origin: top center;
+      margin-bottom: -120px;
+    }
+  }
+}
+
+/* Base Viewport Wrap for Ephemeral Chat Scroll Container */
+.ap-chat-viewport-wrap {
+  position: relative !important;
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
 }
 
 /* --- Inline Spotlight Reasoning Card & Dynamic Trace Badge --- */
 @keyframes apSpotlightFade {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ap-spotlight-card {
@@ -954,7 +2357,7 @@ button#ap-mode-slider.is-rigorous .slot-rigorous {
   padding: 11px 13px !important;
   margin-bottom: 10px !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
-  animation: apSpotlightFade 0.22s ease-out !important;
+  animation: none !important;
 }
 
 .ap-spotlight-step {
@@ -1020,4 +2423,210 @@ details.ap-trace-details summary::-webkit-details-marker {
 details.ap-trace-details summary:hover {
   color: var(--text-main) !important;
   border-color: var(--accent) !important;
+}
+
+/* Knowledge Base dynamic count link in Chat Hero */
+button.ap-kb-count-link,
+a.ap-kb-count-link {
+  display: inline !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  color: var(--accent) !important;
+  text-decoration: underline !important;
+  text-decoration-color: var(--accent) !important;
+  text-underline-offset: 3px !important;
+  text-decoration-thickness: 1.5px !important;
+  font-family: inherit !important;
+  font-size: inherit !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  line-height: inherit !important;
+  transition: all 0.15s ease !important;
+}
+
+button.ap-kb-count-link:hover,
+a.ap-kb-count-link:hover {
+  opacity: 0.8 !important;
+  text-decoration-thickness: 2.2px !important;
+}
+
+.ap-drawer-pulse {
+  animation: ap-drawer-glow 1.4s ease-out !important;
+}
+
+@keyframes ap-drawer-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45);
+    border-color: var(--accent) !important;
+  }
+  40% {
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.28);
+    border-color: var(--accent) !important;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+
+/* --- Animated Typewriter Effect in Distill Capsule --- */
+.ap-typewriter-wrap {
+  position: absolute !important;
+  left: 20px !important;
+  right: 120px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  pointer-events: none !important;
+  display: flex !important;
+  align-items: center !important;
+  font-family: inherit !important;
+  font-size: 15px !important;
+  font-weight: 400 !important;
+  line-height: 24px !important;
+  letter-spacing: -0.01em !important;
+  color: var(--text-muted) !important;
+  opacity: 0.35 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  z-index: 2 !important;
+  transition: opacity 0.15s ease !important;
+}
+
+.ap-distill-capsule:focus-within .ap-typewriter-wrap {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.ap-typewriter-text {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.ap-typewriter-cursor {
+  display: inline-block !important;
+  width: 2px !important;
+  height: 16px !important;
+  background-color: var(--accent) !important;
+  margin-left: 2px !important;
+  border-radius: 1px !important;
+  opacity: 0.45 !important;
+  animation: apTypewriterBlink 0.85s infinite !important;
+  flex-shrink: 0 !important;
+  vertical-align: middle !important;
+}
+
+@keyframes apTypewriterBlink {
+  0%, 100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .ap-typewriter-wrap {
+    left: 18px !important;
+    right: 105px !important;
+    font-size: 13.5px !important;
+  }
+
+  .ap-typewriter-cursor {
+    height: 14px !important;
+  }
+}
+
+/* Chat Viewport Wrap & Floating Scroll Navigation */
+.ap-chat-viewport-wrap {
+  position: relative !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 768px) {
+  .ap-chat-viewport-wrap {
+    flex: 1 1 0% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+  }
+}
+
+.ap-chat-scroll-nav {
+  position: absolute !important;
+  right: 14px !important;
+  bottom: 12px !important;
+  left: auto !important;
+  top: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  z-index: 50 !important;
+  pointer-events: none !important;
+}
+
+.ap-chat-nav-btn {
+  pointer-events: auto !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 9999px !important;
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-hairline) !important;
+  color: var(--text-muted) !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  opacity: 0;
+  transform: scale(0.85);
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.ap-chat-nav-btn.is-visible {
+  display: flex !important;
+  opacity: 0.92 !important;
+  transform: scale(1) !important;
+}
+
+.ap-chat-nav-btn:hover {
+  opacity: 1 !important;
+  background: var(--bg-subtle) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.24) !important;
+}
+
+.ap-chat-nav-btn:active {
+  transform: scale(0.95) !important;
+}
+
+@media (max-width: 768px) {
+  .ap-chat-scroll-nav {
+    position: fixed !important;
+    right: 16px !important;
+    bottom: calc(122px + env(safe-area-inset-bottom, 0px)) !important;
+    left: auto !important;
+    top: auto !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    pointer-events: none !important;
+  }
+  .ap-chat-nav-btn {
+    width: 36px !important;
+    height: 36px !important;
+  }
 }

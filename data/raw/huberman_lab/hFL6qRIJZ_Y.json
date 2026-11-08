@@ -16019,5 +16019,9 @@
     "Visual Fixation Training",
     "Transcranial Magnetic Stimulation",
     "Acetylcholine"
+  ],
+  "chunks_indexed": 147,
+  "indexed_collections": [
+    "podcast_chunks_gemini-embedding-2"
   ]
 }

@@ -30700,5 +30700,9 @@
     "Zone 2 training",
     "Respiratory exchange ratio",
     "Phosphocreatine"
+  ],
+  "chunks_indexed": 273,
+  "indexed_collections": [
+    "podcast_chunks_gemini-embedding-2"
   ]
 }

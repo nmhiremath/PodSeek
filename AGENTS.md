@@ -5,7 +5,7 @@ This document is the single source of truth for AI assistants and engineers work
 ---
 
 ## 0. Streamlined Pair Programming & Tutoring Protocol
-1. **One File at a Time:** Never create or edit more than ONE file in a single turn.
+1. **One File at a Time (Backend Only):** For backend code changes (`app/`, `scripts/`, etc.), never create or edit more than ONE file in a single turn. For UI changes (`ui/`, `huggingface/`, styles, components, templates), this restriction does not apply—coordinate and apply all necessary UI changes across multiple files in a single turn without waiting.
 2. **Direct Action with Transparent Rationale:** Apply file edits directly in the turn while clearly explaining "the why" and the architectural rationale. Do not interrupt with unnecessary intermediate confirmation prompts ("Ready for me to edit?").
 3. **Question Isolation:** If the user asks a question, answer the question ONLY. Do not write, modify, or run code in the same turn.
 4. **No Speculative Tool Execution:** Do not run test runners, build tools, or terminal commands unless the user explicitly requested them in their prompt.
@@ -313,3 +313,11 @@ An initial pass on `2026-11-02` created the foundational files for the four requ
    - Implemented real-time token streaming using LangGraph 1.2+ `get_stream_writer()` in `generate` node (`app/agent/nodes.py`), `stream_mode=["updates", "custom"]` in `iter_agent_events` (`app/api/routes.py`), and progressive token rendering in `ui/app.py`. Words now type live into the chat bubble before being converted to finalized markdown with Google AI Overview timestamp citation pills.
 9. **Mobile-Responsive Layout & In-Focus Spotlight Flowchart (Shipped):**
    - Reordered columns on mobile viewports (≤ 768px) via CSS `order: 1` on `.ap-col-center` so chat and input sit immediately above the keyboard with zero initial scroll. Embedded the full 5-tier desktop SVG flowchart animation directly inside the active chat turn during reasoning, auto-collapsing into a clean verification pill upon stream completion.
+10. **50-Episode Knowledge Base Expansion & Batch Ingestion Pipeline (Shipped):**
+   - Created `scripts/ingest_top_episodes.py` tracking the 50 most-viewed Huberman Lab episodes. Ingested and indexed all 50 episodes into ChromaDB with transcript JSONs cached under `data/raw/huberman_lab/`. Added human-browser session headers and cookiejar support (`cookies.txt`) in `app/ingestion/youtube.py` for resilient fetching.
+11. **Flowchart Stability & Stream Optimization (Shipped):**
+   - Eliminated workflow canvas flickering and zoom-out during token streaming by yielding `gr.skip()` on token updates in `ui/app.py`, removing CSS canvas transitions, and locking the desktop sidebar flowchart to `transform: none`.
+   - Added responsive proportional scaling (`@media (max-width: 500px)` -> `scale(0.88)`, `410px` -> `scale(0.80)`, `365px` -> `scale(0.72)`) for mobile spotlight and trace cards so flowcharts fit edge-to-edge without horizontal clipping.
+12. **Capsule Input Layout & Production Hardening (Shipped):**
+   - Polished `.ap-ingest-capsule` padding (`0 88px 0 14px`) and compact placeholder (`"Paste YouTube link..."`) to guarantee zero truncation on narrow sidebar widths.
+   - Verified full test suite (40/40 tests passing), zero Ruff lint errors, and zero Pyright type check errors.

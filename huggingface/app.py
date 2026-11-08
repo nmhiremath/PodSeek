@@ -31,4 +31,4 @@ from ui.app import build_demo  # noqa: E402
 demo = build_demo()
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(show_api=False)

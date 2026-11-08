@@ -29325,5 +29325,9 @@
     "Muscular Endurance",
     "CO2 Tolerance Test",
     "Eccentric Loading"
+  ],
+  "chunks_indexed": 268,
+  "indexed_collections": [
+    "podcast_chunks_gemini-embedding-2"
   ]
 }
