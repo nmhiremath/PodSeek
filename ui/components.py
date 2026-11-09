@@ -347,7 +347,7 @@ def render_ingest_workflow_graph_html(
         <span style="font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">Workflow · Episode Ingestion</span>
         <span class="ap-subtle" style="font-size:12px;font-family:monospace;padding:2px 8px;white-space:nowrap;flex-shrink:0;">{badge_text}</span>
       </div>
-      <div class="wf-canvas-wrap" data-orig-height="300" style="position:relative;width:330px;height:300px;margin:0 auto;">
+      <div class="wf-canvas-wrap" data-orig-height="300" style="position:relative;width:330px;height:300px;">
         <svg width="330" height="300" viewBox="0 0 330 300" style="position:absolute;inset:0;pointer-events:none;">
           <!-- 0. Verify Right (178,26) -> Cache Left (192,26) -->
           <path d="M 178 26 L 192 26" class="{c_ver_cache}" />
@@ -753,9 +753,7 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23) -> st
     return (
         '<div class="ap-chat-viewport-wrap">'
         '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll" '
-        'style="height:clamp(160px, calc(100vh - 480px), 380px);overflow-y:auto;padding-right:4px;">'
-        + "".join(turns)
-        + "</div>"
+        'style="overflow-y:auto;padding-right:4px;">' + "".join(turns) + "</div>"
         '<div id="ap-chat-scroll-nav" class="ap-chat-scroll-nav">'
         '<button type="button" id="ap-scroll-top-btn" class="ap-chat-nav-btn" title="Scroll to top" aria-label="Scroll to top" onclick="const c = document.getElementById(\'ap-chat-scroll\'); if (c) c.scrollTo({ top: 0, behavior: \'smooth\' });">'
         '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>'
@@ -769,22 +767,27 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23) -> st
 
 
 def render_mode_slider_html(active_mode: str = "balanced") -> str:
-    """Render the full-width equidistant 3-slot mode slider matching #ap-view-slider."""
+    """Render the compact in-capsule tap-to-cycle mode button."""
     clean = (active_mode or "balanced").lower()
     if "turbo" in clean:
         mode_cls = "is-turbo"
+        icon = "⚡"
+        label = "Turbo"
     elif "rigorous" in clean:
         mode_cls = "is-rigorous"
+        icon = "🎯"
+        label = "Rigorous"
     else:
         mode_cls = "is-balanced"
+        icon = "⚖️"
+        label = "Balanced"
 
     return f"""
     <div class="ap-mode-bar">
-      <button id="ap-mode-slider" class="{mode_cls}" type="button" title="Select Execution Mode">
+      <button id="ap-mode-slider" class="ap-mode-cycle-btn {mode_cls}" type="button" title="Execution Mode: {label} (Click to cycle modes)" onclick="window.podSeekCycleMode && window.podSeekCycleMode()">
         <span class="ms-thumb"></span>
-        <span class="ms-slot slot-turbo" onclick="window.podSeekSelectMode && window.podSeekSelectMode('⚡ Turbo')">⚡ Turbo</span>
-        <span class="ms-slot slot-balanced" onclick="window.podSeekSelectMode && window.podSeekSelectMode('⚖️ Balanced')">⚖️ Balanced</span>
-        <span class="ms-slot slot-rigorous" onclick="window.podSeekSelectMode && window.podSeekSelectMode('🎯 Rigorous')">🎯 Rigorous</span>
+        <span class="cycle-icon-badge">{icon}</span>
+        <span class="cycle-label">{label}</span>
       </button>
     </div>
     """
@@ -839,7 +842,7 @@ def _render_turbo_workflow_html(
         <span style="font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">Workflow · Turbo RAG</span>
         {top_badge_html}
       </div>
-      <div class="wf-canvas-wrap" data-orig-height="440" style="position:relative;width:330px;height:440px;margin:0 auto;">
+      <div class="wf-canvas-wrap" data-orig-height="440" style="position:relative;width:330px;height:440px;">
         <svg width="330" height="440" viewBox="0 0 330 440" style="position:absolute;inset:0;pointer-events:none;">
           <!-- 0. Retrieve <-> QA Cache -->
           <path d="M 178 35 L 192 35" class="{c_ret_cache}" stroke-width="1.5" />
@@ -1080,7 +1083,7 @@ def _render_balanced_workflow_html(
         <span style="font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">Workflow · Balanced RAG</span>
         {top_badge_html}
       </div>
-      <div class="wf-canvas-wrap" data-orig-height="440" style="position:relative;width:330px;height:440px;margin:0 auto;">
+      <div class="wf-canvas-wrap" data-orig-height="440" style="position:relative;width:330px;height:440px;">
         <svg width="330" height="440" viewBox="0 0 330 440" style="position:absolute;inset:0;pointer-events:none;">
           <!-- 0. Retrieve <-> QA Cache -->
           <path d="M 178 35 L 192 35" class="{c_ret_cache}" stroke-width="1.5" />
@@ -1366,7 +1369,7 @@ def _render_rigorous_workflow_html(
         <span style="font-size:12px;font-weight:700;white-space:nowrap;flex-shrink:0;">Workflow · Corrective RAG</span>
         {top_badge_html}
       </div>
-      <div class="wf-canvas-wrap" data-orig-height="440" style="position:relative;width:330px;height:440px;margin:0 auto;">
+      <div class="wf-canvas-wrap" data-orig-height="440" style="position:relative;width:330px;height:440px;">
         <svg width="330" height="440" viewBox="0 0 330 440" style="position:absolute;inset:0;pointer-events:none;">
           <!-- 0. Retrieve <-> QA Cache -->
           <path d="M 178 35 L 192 35" class="{c_ret_cache}" stroke-width="1.5" />
@@ -1554,12 +1557,12 @@ def render_sse_log_html(logs: list[tuple[str, str]], endpoint: str = "POST /ask/
         lines_html = "".join(f'<div style="color:{color};">{html.escape(text)}</div>' for text, color in logs)
     safe_ep = html.escape(endpoint)
     return f"""
-    <div class="ap-card" style="font-family:monospace;font-size:12px;">
-      <div style="display:flex;justify-content:space-between;padding-bottom:6px;margin-bottom:6px;border-bottom:1px solid var(--border-hairline);">
+    <div class="ap-card ap-sse-card" style="font-family:monospace;font-size:12px;">
+      <div style="display:flex;justify-content:space-between;padding-bottom:6px;margin-bottom:6px;border-bottom:1px solid var(--border-hairline);flex-shrink:0;">
         <span style="font-family:sans-serif;font-weight:600;">SSE Event Stream</span>
         <span class="ap-muted">{safe_ep}</span>
       </div>
-      <div id="ap-sse-scroll" class="modern-scroll" style="height:clamp(65px, calc(100vh - 630px), 95px);overflow-y:auto;padding-right:4px;display:flex;flex-direction:column;gap:4px;">
+      <div id="ap-sse-scroll" class="modern-scroll" style="overflow-y:auto;padding-right:4px;display:flex;flex-direction:column;gap:4px;">
         {lines_html}
       </div>
     </div>

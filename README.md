@@ -189,10 +189,10 @@ The system abstracts model initialization via `app/factory.py`, making it provid
 ## Public UI (PodSeek Studio)
 
 The Gradio app (`ui/app.py`) is a 3-column Bento Studio client of the FastAPI backend (or standalone in-process):
-- **Left Column (`✦ Absorb`):** Unified command capsule for ingesting Huberman Lab episodes (verifying the YouTube channel via oEmbed), animated ingestion status, and a scrollable indexed episode library (`max-height: calc(100vh - 370px)`).
-- **Center Column (`Distill →`):** Ephemeral Session Chat rendering answers with **Google AI Overview inline stadium citation pills** (`<Episode Title> · <Timestamp>`), collapsible preset questions, an equidistant **3-Slot Mode Slider** (`⚡ Turbo` · `⚖️ Balanced` · `🎯 Rigorous`), and a multiline composer (`Enter` to Distill, `Shift + Enter` for newline).
+- **Left Column (`✦ Absorb`):** Collapsible sidebar on desktop and slide-over bottom sheet on mobile with a unified command capsule for ingesting Huberman Lab episodes (verifying the YouTube channel via oEmbed), animated ingestion status, and a scrollable indexed episode library.
+- **Center Column (`Distill →`):** Full-height Session Chat rendering live token-streamed answers with **Google AI Overview inline stadium citation pills** (`<Episode Title> · <Timestamp>`), floating scroll-navigation buttons (`#ap-chat-scroll-nav`), an always-visible horizontal sliding **Topic Carousel** (`.ap-presets-carousel`) above the composer, and a bottom-pinned multiline command capsule featuring an in-capsule tap-to-cycle **Mode Button** (`⚡ Turbo` · `⚖️ Balanced` · `🎯 Rigorous`) and `Distill →` action (`Enter` to Distill, `Shift + Enter` for newline).
 - **Right Column (Live Flowchart & SSE Stream):** 5-tier standard ISO flowchart with 4-sided perimeter trace animations, dual decision diamonds (`≥1 relevant?` and `Retries < N?`), `🛑 Abort` circuit-breaker node, retry loopbacks, temporary **Episode Ingestion** workflow swap during `✦ Absorb`, and a color-coded `.modern-scroll` SSE Event Stream.
-- **Header Oval Sliders:** Right-aligned single-click oval toggle sliders for switching views (`💬 Studio <-> 🤓 Stats for Nerds`) and themes (`☀️ Light <-> 🌙 Dark`) in-place without moving your mouse. Default theme is cleanly Light mode.
+- **Header Controls:** Collapsible library toggle on the left (`📚 Library` pill on mobile) and a single-click oval theme toggle slider (`☀️ Light <-> 🌙 Dark`) on the right. Default theme is cleanly Light mode.
 
 ### Tri-Mode Execution Strategies
 
@@ -367,6 +367,9 @@ PodSeek/
 │   ├── fetch_episode.py       # Standalone episode downloader & cacher
 │   ├── index_and_search.py    # Standalone vector indexing & retrieval script
 │   └── ingest_top_episodes.py # Batch ingestion pipeline for top 50 Huberman episodes
+├── .agents/
+│   └── skills/
+│       └── ui-ux-consultant/  # Persistent headless UI/UX testing consultant skill & scripts
 ├── ui/
 │   ├── __init__.py
 │   ├── app.py                 # Gradio 3-Column Bento Studio UI (Absorb + Distill + Live Graph)

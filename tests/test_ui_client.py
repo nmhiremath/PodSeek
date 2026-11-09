@@ -66,12 +66,18 @@ def test_theme_css_and_components_render_without_gradio():
     slider_turbo = render_mode_slider_html("turbo")
     assert "is-turbo" in slider_turbo
     assert "ms-thumb" in slider_turbo
+    assert "Turbo" in slider_turbo
 
     slider_bal = render_mode_slider_html("balanced")
     assert "is-balanced" in slider_bal
+    assert "Balanced" in slider_bal
+    assert "cycle-icon-badge" in slider_bal
+    assert "podSeekCycleMode" in slider_bal
+    assert "cycle-chevron" not in slider_bal
 
     slider_rig = render_mode_slider_html("rigorous")
     assert "is-rigorous" in slider_rig
+    assert "Rigorous" in slider_rig
 
     aborted_graph = render_workflow_graph_html(
         active_node="abort", chunks=4, relevant=0, rewrites=2, done=True, aborted=True, mode="rigorous"
@@ -190,3 +196,9 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert "scale(0.72)" in css
     assert ".ap-ingest-capsule" in css
     assert ".ap-distill-capsule" in css
+    assert ".ap-presets-carousel" in css
+    assert "button.ap-mode-cycle-btn" in css
+    assert "--ap-chat-h" in css
+    assert "--ap-studio-h" in css
+    assert "--ap-mobile-nav-bottom" in css
+    assert "#ap-studio-view .pending" in css

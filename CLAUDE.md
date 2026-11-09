@@ -78,6 +78,9 @@ PodSeek/
 │   ├── ask_agent.py           # Interactive CLI runner for Corrective RAG agent
 │   ├── evaluate.py            # Offline or live eval of evals/questions.json
 │   └── ingest_top_episodes.py # Batch ingestion pipeline for top 50 Huberman episodes
+├── .agents/
+│   └── skills/
+│       └── ui-ux-consultant/  # Persistent headless UI/UX testing consultant skill & scripts
 ├── evals/
 │   └── questions.json         # Fixed questions for episode QmOF0crdyRU
 ├── ui/                        # Gradio 3-Column Bento Studio UI (HTTP/SSE by default)
@@ -138,6 +141,8 @@ python -m scripts.evaluate
 ---
 
 ## 6. Recent Work & Change Log
+- **In-Capsule Cycle Switcher & Always-Visible Question Carousel (Concept C):** Embedded the mode selector directly inside the left edge of `.ap-distill-capsule` as a compact tap-to-cycle button (`[ ⚖️ Balanced ]`, 32px height, no chevron) cycling Balanced -> Rigorous -> Turbo -> Balanced with instant icon micro-animations and generous prompt spacing (`120px` desktop, `112px` mobile). Collapsed stacked sample questions into an always-visible horizontal sliding carousel displaying concise topic pills (`☀️ Morning sunlight protocol`, `🧘 NSDR & neuroplasticity`, etc.) while dispatching the full research query on click. Removed the `"Session Chat · Ephemeral session history"` header bar and `Clear` button to maximize vertical chat viewport height.
+- **Viewport-Pinned Ask Capsule, Floating Scroll Nav & Page-Load Hardening:** Pinned the ask capsule, preset carousel, and floating scroll-navigation buttons (`#ap-chat-scroll-nav`) to the bottom of the browser viewport across desktop and mobile via `:root` CSS custom properties (`--ap-chat-h`, `--ap-studio-h`, `--ap-mobile-nav-bottom`) and high-specificity `position: fixed !important` mobile rules. Neutralized Gradio `.pending` / `.generating` opacity dimming on initial page load and added `.agents/skills/ui-ux-consultant/` for autonomous multi-viewport UI/UX auditing.
 - **50-Episode Knowledge Base & Ingestion Pipeline:** Added `scripts/ingest_top_episodes.py` tracking the 50 most-watched Huberman Lab episodes, indexing them into ChromaDB with transcript JSONs cached under `data/raw/huberman_lab/`. Added human-browser session headers and cookiejar support (`cookies.txt`) in `app/ingestion/youtube.py`.
 - **Flowchart Stability & Stream Optimization:** Eliminated workflow canvas flickering and zoom-out during live token streaming by skipping graph yields on token deltas, removing CSS canvas transitions, and locking the desktop sidebar flowchart to `transform: none`.
 - **Mobile Responsive Proportional Scaling:** Added responsive media queries (`@media (max-width: 500px)` -> `scale(0.88)`, `410px` -> `scale(0.80)`, `365px` -> `scale(0.72)`) for mobile spotlight and trace cards so SVG flowcharts fit edge-to-edge without horizontal clipping.

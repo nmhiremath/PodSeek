@@ -4,6 +4,7 @@ The widgets call AskPodcastClient. View rendering lives in `ui/components.py`
 and stylesheets live in `ui/styles/theme.css`.
 """
 
+import importlib
 import json
 import os
 import random
@@ -20,7 +21,10 @@ if _REPO_ROOT not in sys.path:
 
 import gradio as gr  # noqa: E402 # pyright: ignore[reportMissingImports]
 
+import ui.components as _ui_components  # noqa: E402
 from ui.client import AskPodcastClient, make_client  # noqa: E402
+
+importlib.reload(_ui_components)
 from ui.components import (  # noqa: E402
     format_citations,
     format_event,
@@ -40,33 +44,93 @@ from ui.components import (  # noqa: E402
 DEFAULT_SHOW = "huberman_lab"
 DEFAULT_SPEAKER = "Andrew Huberman"
 
-SAMPLE_QUESTIONS: list[str] = [
-    "☀️ What is the optimal morning sunlight viewing protocol for circadian health?",
-    "⚡ How do I prevent a severe dopamine crash and manage baseline motivation?",
-    "🧊 How does deliberate cold exposure trigger sustained dopamine release?",
-    "☕ How long should I delay morning caffeine intake to avoid an afternoon crash?",
-    "😴 What is the optimal sleep cocktail: magnesium L-threonate, theanine & apigenin?",
-    "🫁 How does the physiological sigh rapidly reduce acute stress and heart rate?",
-    "🧠 What neurochemistry protocols help improve focus and manage ADHD?",
-    "🏋️ What is the mind-muscle connection and how does it drive hypertrophy?",
-    "🔥 What are the optimal sauna heat protocols for growth hormone release?",
-    "🏃 How much Zone 2 cardio is recommended for mitochondrial health?",
-    "🍽️ How does intermittent fasting impact mental clarity, autophagy, and insulin?",
-    "💊 What is the ideal creatine monohydrate dosage for cognitive and brain function?",
-    "🍷 How does alcohol consumption disrupt sleep architecture and REM stages?",
-    "💧 Why are sodium, potassium, and magnesium critical for brain electrical firing?",
-    "💪 What natural behavioral protocols help optimize testosterone and hormone health?",
-    "🧘 How does Non-Sleep Deep Rest (NSDR) accelerate neuroplasticity and recovery?",
-    "👁️ How does panoramic vision down-regulate autonomic stress circuits?",
-    "🦠 How does the gut microbiome communicate with the brain to regulate mood?",
-    "🎯 How can visual focus and gaze fixation increase mental alertness?",
-    "🛡️ How do you prevent burnout by distinguishing acute vs chronic cortisol spikes?",
+SAMPLE_PRESETS: list[dict[str, str]] = [
+    {
+        "topic": "☀️ Morning sunlight protocol",
+        "question": "What is the optimal morning sunlight viewing protocol for circadian health?",
+    },
+    {
+        "topic": "⚡ Prevent dopamine crash",
+        "question": "How do I prevent a severe dopamine crash and manage baseline motivation?",
+    },
+    {
+        "topic": "🧊 Cold exposure dopamine",
+        "question": "How does deliberate cold exposure trigger sustained dopamine release?",
+    },
+    {
+        "topic": "☕ 90-min caffeine delay",
+        "question": "How long should I delay morning caffeine intake to avoid an afternoon crash?",
+    },
+    {
+        "topic": "😴 Optimal sleep cocktail",
+        "question": "What is the optimal sleep cocktail: magnesium L-threonate, theanine & apigenin?",
+    },
+    {
+        "topic": "🫁 Physiological sigh",
+        "question": "How does the physiological sigh rapidly reduce acute stress and heart rate?",
+    },
+    {
+        "topic": "🧠 Focus & ADHD protocols",
+        "question": "What neurochemistry protocols help improve focus and manage ADHD?",
+    },
+    {
+        "topic": "🏋️ Hypertrophy & mind-muscle",
+        "question": "What is the mind-muscle connection and how does it drive hypertrophy?",
+    },
+    {
+        "topic": "🔥 Sauna & growth hormone",
+        "question": "What are the optimal sauna heat protocols for growth hormone release?",
+    },
+    {
+        "topic": "🏃 Zone 2 cardio volume",
+        "question": "How much Zone 2 cardio is recommended for mitochondrial health?",
+    },
+    {
+        "topic": "🍽️ Intermittent fasting clarity",
+        "question": "How does intermittent fasting impact mental clarity, autophagy, and insulin?",
+    },
+    {
+        "topic": "💊 Creatine for brain health",
+        "question": "What is the ideal creatine monohydrate dosage for cognitive and brain function?",
+    },
+    {
+        "topic": "🍷 Alcohol & REM sleep",
+        "question": "How does alcohol consumption disrupt sleep architecture and REM stages?",
+    },
+    {
+        "topic": "💧 Electrolytes & neurons",
+        "question": "Why are sodium, potassium, and magnesium critical for brain electrical firing?",
+    },
+    {
+        "topic": "💪 Hormone optimization",
+        "question": "What natural behavioral protocols help optimize testosterone and hormone health?",
+    },
+    {
+        "topic": "🧘 NSDR & neuroplasticity",
+        "question": "How does Non-Sleep Deep Rest (NSDR) accelerate neuroplasticity and recovery?",
+    },
+    {
+        "topic": "👁️ Panoramic vision & calm",
+        "question": "How does panoramic vision down-regulate autonomic stress circuits?",
+    },
+    {
+        "topic": "🦠 Gut-brain axis & mood",
+        "question": "How does the gut microbiome communicate with the brain to regulate mood?",
+    },
+    {
+        "topic": "🎯 Visual gaze & alertness",
+        "question": "How can visual focus and gaze fixation increase mental alertness?",
+    },
+    {
+        "topic": "🛡️ Cortisol & burnout",
+        "question": "How do you prevent burnout by distinguishing acute vs chronic cortisol spikes?",
+    },
 ]
 
 
-def pick_random_presets() -> list[str]:
-    """Pick 3 distinct random questions from the Huberman Lab question bank."""
-    return random.sample(SAMPLE_QUESTIONS, 3)
+def pick_random_presets(count: int = 5) -> list[dict[str, str]]:
+    """Pick distinct random topic/question presets from the Huberman Lab question bank."""
+    return random.sample(SAMPLE_PRESETS, min(count, len(SAMPLE_PRESETS)))
 
 
 QUIRKY_PLACEHOLDERS: list[str] = [
@@ -142,9 +206,21 @@ _INIT_UI_JS_TEMPLATE = """() => {
         const btn = document.getElementById('ap-mode-slider');
         if (btn) {
             btn.classList.remove('is-turbo', 'is-balanced', 'is-rigorous');
-            if (modeVal.includes('Turbo')) btn.classList.add('is-turbo');
-            else if (modeVal.includes('Rigorous')) btn.classList.add('is-rigorous');
-            else btn.classList.add('is-balanced');
+            const iconBadge = btn.querySelector('.cycle-icon-badge');
+            const labelSpan = btn.querySelector('.cycle-label');
+            if (modeVal.includes('Turbo')) {
+                btn.classList.add('is-turbo');
+                if (iconBadge) iconBadge.textContent = '⚡';
+                if (labelSpan) labelSpan.textContent = 'Turbo';
+            } else if (modeVal.includes('Rigorous')) {
+                btn.classList.add('is-rigorous');
+                if (iconBadge) iconBadge.textContent = '🎯';
+                if (labelSpan) labelSpan.textContent = 'Rigorous';
+            } else {
+                btn.classList.add('is-balanced');
+                if (iconBadge) iconBadge.textContent = '⚖️';
+                if (labelSpan) labelSpan.textContent = 'Balanced';
+            }
         }
         const labels = document.querySelectorAll('#ap-mode-radio label');
         for (const lbl of labels) {
@@ -156,6 +232,20 @@ _INIT_UI_JS_TEMPLATE = """() => {
                 break;
             }
         }
+    };
+    window.podSeekCycleMode = () => {
+        const btn = document.getElementById('ap-mode-slider');
+        let current = 'balanced';
+        if (btn) {
+            if (btn.classList.contains('is-turbo')) current = 'turbo';
+            else if (btn.classList.contains('is-rigorous')) current = 'rigorous';
+        }
+        let nextMode = '⚖️ Balanced';
+        if (current === 'balanced') nextMode = '🎯 Rigorous';
+        else if (current === 'rigorous') nextMode = '⚡ Turbo';
+        else nextMode = '⚖️ Balanced';
+
+        window.podSeekSelectMode(nextMode);
     };
     const setupPodSeekUI = () => {
         let isDark = false;
@@ -220,6 +310,130 @@ _INIT_UI_JS_TEMPLATE = """() => {
             }
         }
 
+        const syncDesktopViewport = () => {
+            const studio = document.getElementById('ap-studio-view');
+            if (!studio || studio.classList.contains('ap-view-hidden')) return;
+            const colCenter = document.querySelector('.ap-col-center');
+            const presets = colCenter ? colCenter.querySelector('.ap-presets-carousel') : null;
+            const presetsVisible = Boolean(presets && presets.offsetParent !== null);
+
+            if (window.innerWidth <= 768) {
+                // Mobile: Clear any desktop inline height overrides and compute dynamic chat viewport height
+                studio.style.removeProperty('height');
+                studio.style.removeProperty('min-height');
+                studio.style.removeProperty('max-height');
+                if (colRight) {
+                    colRight.style.removeProperty('height');
+                    colRight.style.removeProperty('min-height');
+                    colRight.style.removeProperty('max-height');
+                }
+                const colLeftEl = document.querySelector('.ap-col-left');
+                if (colLeftEl) {
+                    colLeftEl.style.removeProperty('height');
+                    colLeftEl.style.removeProperty('min-height');
+                    colLeftEl.style.removeProperty('max-height');
+                }
+                if (colCenter) {
+                    colCenter.style.removeProperty('height');
+                    colCenter.style.removeProperty('min-height');
+                    colCenter.style.removeProperty('max-height');
+                    const hRect = headerRow ? headerRow.getBoundingClientRect() : { bottom: 54 };
+                    const vvH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                    const mobileChatH = Math.max(180, Math.floor(vvH - hRect.bottom - 6));
+                    document.documentElement.style.setProperty('--ap-chat-h', `${mobileChatH}px`);
+                }
+                const navBottom = 'calc(108px + env(safe-area-inset-bottom, 0px))';
+                document.documentElement.style.setProperty('--ap-mobile-nav-bottom', navBottom);
+                return;
+            }
+
+            const rect = studio.getBoundingClientRect();
+            const availH = Math.max(460, Math.floor(window.innerHeight - rect.top - 14));
+            document.documentElement.style.setProperty('--ap-studio-h', `${availH}px`);
+            studio.style.setProperty('height', `${availH}px`, 'important');
+            studio.style.setProperty('min-height', `${availH}px`, 'important');
+            studio.style.setProperty('max-height', `${availH}px`, 'important');
+
+            if (colCenter) {
+                colCenter.style.setProperty('height', `${availH}px`, 'important');
+                colCenter.style.setProperty('min-height', `${availH}px`, 'important');
+                colCenter.style.setProperty('max-height', `${availH}px`, 'important');
+                colCenter.style.setProperty('display', 'flex', 'important');
+                colCenter.style.setProperty('flex-direction', 'column', 'important');
+
+                const presetsH = presets ? presets.offsetHeight + 10 : 40;
+                const capsuleEl = colCenter.querySelector('.ap-distill-capsule');
+                const capsuleH = capsuleEl ? capsuleEl.offsetHeight + 6 : 58;
+                const desktopChatH = Math.max(160, Math.floor(availH - presetsH - capsuleH - 24));
+                document.documentElement.style.setProperty('--ap-chat-h', `${desktopChatH}px`);
+
+                const chatScroll = document.getElementById('ap-chat-scroll');
+                if (chatScroll) {
+                    chatScroll.style.setProperty('flex', '1 1 0%', 'important');
+                    chatScroll.style.setProperty('min-height', '0px', 'important');
+                    chatScroll.style.setProperty('height', `${desktopChatH}px`, 'important');
+                    chatScroll.style.setProperty('max-height', `${desktopChatH}px`, 'important');
+                    let p = chatScroll.parentElement;
+                    while (p && p !== colCenter) {
+                        p.style.setProperty('display', 'flex', 'important');
+                        p.style.setProperty('flex-direction', 'column', 'important');
+                        p.style.setProperty('flex', '1 1 0%', 'important');
+                        p.style.setProperty('min-height', '0px', 'important');
+                        p.style.setProperty('height', `${desktopChatH}px`, 'important');
+                        p.style.setProperty('max-height', `${desktopChatH}px`, 'important');
+                        p.style.setProperty('overflow', 'hidden', 'important');
+                        p = p.parentElement;
+                    }
+                }
+                if (presets) {
+                    presets.style.setProperty('flex', '0 0 auto', 'important');
+                    presets.style.setProperty('margin-top', 'auto', 'important');
+                }
+                if (capsuleEl) {
+                    capsuleEl.style.setProperty('flex', '0 0 auto', 'important');
+                    if (!presetsVisible) {
+                        capsuleEl.style.setProperty('margin-top', 'auto', 'important');
+                    } else {
+                        capsuleEl.style.setProperty('margin-top', '2px', 'important');
+                    }
+                }
+            }
+
+            if (colRight) {
+                colRight.style.setProperty('height', `${availH}px`, 'important');
+                colRight.style.setProperty('min-height', `${availH}px`, 'important');
+                colRight.style.setProperty('max-height', `${availH}px`, 'important');
+                const sseScroll = document.getElementById('ap-sse-scroll');
+                if (sseScroll) {
+                    sseScroll.style.setProperty('flex', '1 1 0%', 'important');
+                    sseScroll.style.setProperty('min-height', '0px', 'important');
+                    sseScroll.style.setProperty('height', '100%', 'important');
+                    sseScroll.style.setProperty('max-height', 'none', 'important');
+                    let p = sseScroll.parentElement;
+                    while (p && p !== colRight) {
+                        p.style.setProperty('display', 'flex', 'important');
+                        p.style.setProperty('flex-direction', 'column', 'important');
+                        p.style.setProperty('flex', '1 1 0%', 'important');
+                        p.style.setProperty('min-height', '0px', 'important');
+                        p.style.setProperty('height', '100%', 'important');
+                        p = p.parentElement;
+                    }
+                }
+            }
+
+            const colLeftEl = document.querySelector('.ap-col-left');
+            if (colLeftEl && !colLeftEl.classList.contains('is-collapsed')) {
+                colLeftEl.style.setProperty('height', `${availH}px`, 'important');
+                colLeftEl.style.setProperty('min-height', `${availH}px`, 'important');
+                colLeftEl.style.setProperty('max-height', `${availH}px`, 'important');
+            }
+        };
+        syncDesktopViewport();
+        if (!window.__podseekResizeBound) {
+            window.__podseekResizeBound = true;
+            window.addEventListener('resize', syncDesktopViewport);
+        }
+
         window.togglePodSeekDrawer = (openOnly = false) => {
             const col = document.querySelector('.ap-col-left');
             const bd = document.getElementById('ap-mobile-drawer-backdrop');
@@ -240,6 +454,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
                     col.classList.add('is-collapsed');
                     try { localStorage.setItem('podseek_sidebar_collapsed', '1'); } catch(e){}
                 }
+                syncDesktopViewport();
             }
         };
 
@@ -341,6 +556,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
                     if (capsule) {
                         capsule.style.setProperty('bottom', `${keyboardHeight + 8}px`, 'important');
                     }
+                    document.documentElement.style.setProperty('--ap-mobile-nav-bottom', `${keyboardHeight + 68}px`);
                     if (modeRow) {
                         modeRow.style.setProperty('display', 'none', 'important');
                     }
@@ -348,6 +564,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
                     if (capsule) {
                         capsule.style.removeProperty('bottom');
                     }
+                    syncDesktopViewport();
                     if (modeRow) {
                         modeRow.style.removeProperty('display');
                     }
@@ -386,7 +603,13 @@ _INIT_UI_JS_TEMPLATE = """() => {
             if (!capsule.dataset.psClickBound) {
                 capsule.dataset.psClickBound = '1';
                 capsule.addEventListener('click', (e) => {
-                    if (e.target && (e.target.id === 'ap-distill-btn' || e.target.closest('#ap-distill-btn'))) return;
+                    if (e.target && (
+                        e.target.id === 'ap-distill-btn' ||
+                        e.target.closest('#ap-distill-btn') ||
+                        e.target.id === 'ap-mode-slider' ||
+                        e.target.closest('#ap-mode-slider') ||
+                        e.target.closest('.ap-mode-capsule-slot')
+                    )) return;
                     const taInput = capsule.querySelector('textarea, input');
                     if (taInput && document.activeElement !== taInput) {
                         taInput.focus();
@@ -432,6 +655,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
                             const modeRow = document.querySelector('.ap-mode-row');
                             if (capsule && keyboardHeight > 50) {
                                 capsule.style.setProperty('bottom', `${keyboardHeight + 8}px`, 'important');
+                                document.documentElement.style.setProperty('--ap-mobile-nav-bottom', `${keyboardHeight + 68}px`);
                             }
                             if (modeRow) {
                                 modeRow.style.setProperty('display', 'none', 'important');
@@ -455,6 +679,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
                         const capsule = document.querySelector('.ap-distill-capsule');
                         const modeRow = document.querySelector('.ap-mode-row');
                         if (capsule) capsule.style.removeProperty('bottom');
+                        syncDesktopViewport();
                         if (modeRow) modeRow.style.removeProperty('display');
                     }, 120);
                 }
@@ -575,37 +800,11 @@ _INIT_UI_JS_TEMPLATE = """() => {
             centerCol.addEventListener('wheel', handleWheel, { passive: true });
         }
 
-        const fitWorkflowCanvas = () => {
-            // Desktop right column is 380px wide and fits the 330px workflow canvas natively with zero transform
-            // Mobile spotlight cards scale instantly via pure CSS media queries with zero latency
-            document.querySelectorAll('.ap-spotlight-card .wf-canvas-wrap').forEach(wrap => {
-                if (window.innerWidth <= 440) return;
-                const grid = wrap.closest('.wf-dot-grid') || wrap.parentElement;
-                if (!grid) return;
-                const containerWidth = grid.clientWidth;
-                if (containerWidth > 0 && containerWidth < 325) {
-                    const scale = Math.min(1, Math.max(0.55, (containerWidth - 14) / 330));
-                    wrap.style.transform = `scale(${scale.toFixed(4)})`;
-                    wrap.style.transformOrigin = 'top center';
-                    const origH = parseFloat(wrap.getAttribute('data-orig-height') || '440');
-                    const diff = origH * (1 - scale);
-                    wrap.style.marginBottom = `-${diff.toFixed(1)}px`;
-                } else {
-                    wrap.style.transform = '';
-                    wrap.style.transformOrigin = '';
-                    wrap.style.marginBottom = '';
-                }
-            });
-        };
-        window.fitWorkflowCanvas = fitWorkflowCanvas;
-        fitWorkflowCanvas();
-
         if (!window.__podseekScrollBound) {
             window.__podseekScrollBound = true;
             window.addEventListener('scroll', updateScrollNav, { passive: true });
             window.addEventListener('resize', () => {
                 updateScrollNav();
-                fitWorkflowCanvas();
             }, { passive: true });
             document.querySelector('.ap-col-center')?.addEventListener('scroll', updateScrollNav, { passive: true });
         }
@@ -724,9 +923,6 @@ _INIT_UI_JS_TEMPLATE = """() => {
             }
             if (window.updateChatScrollNav) {
                 window.updateChatScrollNav();
-            }
-            if (window.fitWorkflowCanvas) {
-                setTimeout(window.fitWorkflowCanvas, 20);
             }
         }
 
@@ -932,7 +1128,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 render_workflow_graph_html(mode=mode_val),
                 render_sse_log_html([("Enter a question of at least 3 characters.", "var(--retry-stroke)")]),
                 question,
-                gr.update(visible=(len(current_history) == 0)),
+                gr.update(visible=True),
             )
             return
 
@@ -947,7 +1143,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
         citations: list[dict] = []
         top_dist: float | None = None
 
-        # Clear input immediately and hide sample questions once first question is asked
+        # Clear input immediately while keeping preset questions always visible
         wf_state = {
             "active_node": "retrieve",
             "chunks": 0,
@@ -966,7 +1162,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             render_workflow_graph_html(active_node="retrieve", mode=mode_val),
             render_sse_log_html(logs),
             "",
-            gr.update(visible=False),
+            gr.update(visible=True),
         )
 
         try:
@@ -1000,7 +1196,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                         no_change,
                         no_change,
                         "",
-                        gr.update(visible=False),
+                        gr.update(visible=True),
                     )
                     continue
 
@@ -1098,7 +1294,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     ),
                     render_sse_log_html(logs),
                     "",
-                    gr.update(visible=False),
+                    gr.update(visible=True),
                 )
         except Exception as exc:
             if _demo_fallback_enabled():
@@ -1126,7 +1322,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     ),
                     render_sse_log_html(logs),
                     "",
-                    gr.update(visible=False),
+                    gr.update(visible=True),
                 )
                 return
             logs.append((f"✕ Error: {exc}", "var(--retry-stroke)"))
@@ -1138,7 +1334,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 ),
                 render_sse_log_html(logs),
                 "",
-                gr.update(visible=(len(current_history) == 0)),
+                gr.update(visible=True),
             )
             return
 
@@ -1186,22 +1382,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             ),
             render_sse_log_html(logs),
             "",
-            gr.update(visible=False),
-        )
-
-    def on_clear():
-        q1, q2, q3 = pick_random_presets()
-        return (
-            render_chat_session_html([], episode_count=get_episode_count()),
-            [],
             gr.update(visible=True),
-            "",
-            gr.update(value=q1),
-            gr.update(value=q2),
-            gr.update(value=q3),
-            q1,
-            q2,
-            q3,
         )
 
     viewport_meta = (
@@ -1212,10 +1393,12 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
     )
     with gr.Blocks(title="PodSeek", fill_width=True, css=load_theme_css(stylesheet), head=viewport_meta) as demo:
         chat_state = gr.State([])
-        init_q1, init_q2, init_q3 = pick_random_presets()
-        preset_1_state = gr.State(init_q1)
-        preset_2_state = gr.State(init_q2)
-        preset_3_state = gr.State(init_q3)
+        p1, p2, p3, p4, p5 = pick_random_presets(5)
+        preset_1_state = gr.State(p1["question"])
+        preset_2_state = gr.State(p2["question"])
+        preset_3_state = gr.State(p3["question"])
+        preset_4_state = gr.State(p4["question"])
+        preset_5_state = gr.State(p5["question"])
 
         # Top Header Bar: Brand on Left + Controls (Library Drawer on Mobile + Theme Toggle) Flush Right
         with gr.Row(elem_classes=["ap-card", "ap-header-row"]):
@@ -1285,26 +1468,18 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                             elem_classes=["ap-capsule-btn"],
                         )
                     ingest_status = gr.HTML("", visible=False, elem_id="ap-ingest-status-wrap")
-                    episodes_html = gr.HTML(load_episodes_html, elem_classes=["ap-episodes-list-block"])
+                    episodes_html = gr.HTML(load_episodes_html(), elem_classes=["ap-episodes-list-block"])
 
-            # ENTITY 2 (Center): Hero Session Chat + Collapsible Presets + Multiline Capsule ("Distill ->")
+            # ENTITY 2 (Center): Hero Session Chat + Always-Visible Presets + Multiline Capsule ("Distill ->")
             with gr.Column(scale=8, elem_classes=["ap-card", "ap-col-center"]):
-                with gr.Row(elem_classes=["ap-inline-row"]):
-                    gr.HTML(
-                        '<div style="flex:1;"><span style="font-size:13px;font-weight:700;">Session Chat</span> '
-                        '<span class="ap-muted" style="font-size:12px;">· Ephemeral session history</span></div>'
-                    )
-                    clear_btn = gr.Button("Clear", size="sm", elem_classes=["ap-btn-ghost"])
-
                 chat_html = gr.HTML(render_chat_session_html([], episode_count=init_ep_count))
 
-                with gr.Row(elem_classes=["ap-presets-row"], visible=True) as presets_row:
-                    preset_1 = gr.Button(init_q1, size="sm", elem_classes=["ap-preset-pill"])
-                    preset_2 = gr.Button(init_q2, size="sm", elem_classes=["ap-preset-pill"])
-                    preset_3 = gr.Button(init_q3, size="sm", elem_classes=["ap-preset-pill"])
-
-                with gr.Row(elem_classes=["ap-mode-row"]):
-                    mode_slider_html = gr.HTML(render_mode_slider_html("balanced"))
+                with gr.Row(elem_classes=["ap-presets-carousel"], visible=True) as presets_row:
+                    preset_1 = gr.Button(p1["topic"], size="sm", elem_classes=["ap-preset-pill"])
+                    preset_2 = gr.Button(p2["topic"], size="sm", elem_classes=["ap-preset-pill"])
+                    preset_3 = gr.Button(p3["topic"], size="sm", elem_classes=["ap-preset-pill"])
+                    preset_4 = gr.Button(p4["topic"], size="sm", elem_classes=["ap-preset-pill"])
+                    preset_5 = gr.Button(p5["topic"], size="sm", elem_classes=["ap-preset-pill"])
 
                 with gr.Group(elem_id="ap-mode-radio-wrap", elem_classes=["ap-hidden-bridge"]):
                     mode_radio = gr.Radio(
@@ -1317,6 +1492,9 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                     )
 
                 with gr.Row(elem_classes=["ap-distill-capsule"]):
+                    mode_slider_html = gr.HTML(
+                        render_mode_slider_html("balanced"), elem_classes=["ap-mode-capsule-slot"]
+                    )
                     question_input = gr.Textbox(
                         label="",
                         show_label=False,
@@ -1345,20 +1523,28 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             with gr.Column(scale=12):
                 gr.HTML(render_stats_for_nerds_html())
 
-        def load_initial_view() -> tuple[str, str, str, Any, Any, Any, Any, str, str, str]:
-            q1, q2, q3 = pick_random_presets()
-            count = get_episode_count()
+        def load_initial_view() -> tuple[str, str, str, Any, Any, Any, Any, Any, Any, str, str, str, str, str]:
+            p1_n, p2_n, p3_n, p4_n, p5_n = pick_random_presets(5)
+            try:
+                ep_items = client.episodes()
+            except Exception:
+                ep_items = []
+            count = len(ep_items) if ep_items else 23
             return (
-                load_episodes_html(),
+                render_episodes_html(ep_items),
                 render_workflow_graph_html(mode="balanced"),
                 render_chat_session_html([], episode_count=count),
                 "",
-                gr.update(value=q1),
-                gr.update(value=q2),
-                gr.update(value=q3),
-                q1,
-                q2,
-                q3,
+                gr.update(value=p1_n["topic"]),
+                gr.update(value=p2_n["topic"]),
+                gr.update(value=p3_n["topic"]),
+                gr.update(value=p4_n["topic"]),
+                gr.update(value=p5_n["topic"]),
+                p1_n["question"],
+                p2_n["question"],
+                p3_n["question"],
+                p4_n["question"],
+                p5_n["question"],
             )
 
         demo.load(
@@ -1371,9 +1557,13 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                 preset_1,
                 preset_2,
                 preset_3,
+                preset_4,
+                preset_5,
                 preset_1_state,
                 preset_2_state,
                 preset_3_state,
+                preset_4_state,
+                preset_5_state,
             ],
             show_progress="hidden",
             js=_INIT_UI_JS,
@@ -1412,41 +1602,20 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             outputs=ask_outputs,
             show_progress="hidden",
         )
-        clear_btn.click(
-            on_clear,
-            outputs=[
-                chat_html,
-                chat_state,
-                presets_row,
-                question_input,
-                preset_1,
-                preset_2,
-                preset_3,
-                preset_1_state,
-                preset_2_state,
-                preset_3_state,
-            ],
-            show_progress="hidden",
-        )
 
-        preset_1.click(
-            on_ask,
-            inputs=[preset_1_state, chat_state, mode_radio],
-            outputs=ask_outputs,
-            show_progress="hidden",
-        )
-        preset_2.click(
-            on_ask,
-            inputs=[preset_2_state, chat_state, mode_radio],
-            outputs=ask_outputs,
-            show_progress="hidden",
-        )
-        preset_3.click(
-            on_ask,
-            inputs=[preset_3_state, chat_state, mode_radio],
-            outputs=ask_outputs,
-            show_progress="hidden",
-        )
+        for p_btn, p_st in [
+            (preset_1, preset_1_state),
+            (preset_2, preset_2_state),
+            (preset_3, preset_3_state),
+            (preset_4, preset_4_state),
+            (preset_5, preset_5_state),
+        ]:
+            p_btn.click(
+                on_ask,
+                inputs=[p_st, chat_state, mode_radio],
+                outputs=ask_outputs,
+                show_progress="hidden",
+            )
 
     return demo
 

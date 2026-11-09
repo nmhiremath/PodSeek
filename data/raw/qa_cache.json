@@ -4468,5 +4468,1447 @@
         "mode": "rigorous"
       }
     ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::balanced::what is the optimal morning sunlight viewing protocol for circadian health": {
+    "answer": "Based on the provided excerpts, the optimal morning sunlight viewing protocol involves the following:\n\n### 1. Timing and Solar Angle\n* **View early in the day at a low solar angle:** The nervous system and eyes respond to sunlight when the sun is low in the sky, which produces a specific contrast between yellow and blue light that triggers retinal cells (*Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials* `[00:08:49]`).\n* **Within an hour or two of sunrise:** You can view it within an hour or two of sunrise, or even a few hours after waking (*Master Your Sleep & Be More Alert When Awake* `[00:29:00]`; *Essentials* `[00:08:49]`).\n* **Before the sun is overhead:** Once the sun is directly overhead, the quality of light shifts and you miss the window to properly time your morning cortisol pulse (*Master Your Sleep & Be More Alert When Awake* `[00:29:00]`; *Essentials* `[00:09:46]`).\n\n### 2. Location and Eye Conditions\n* **Go outside (no windows):** You must get outdoors. According to Stanford expert Dr. Jamie Zeitzer, viewing light through a window, car windshield, or side car window is **50 times less effective** than getting outside (*Master Your Sleep & Be More Alert When Awake* `[00:29:00]`; *Essentials* `[00:09:46]`).\n* **No sunglasses:** Do not wear sunglasses during this viewing period (*Master Your Sleep & Be More Alert When Awake* `[00:29:00]`; *Essentials* `[00:09:46]`).\n* **No need to stare directly at the sun:** Sunlight does not need to beam directly into your eyes; scattered light energy arriving on your retina is sufficient (*Essentials* `[00:08:49]`).\n\n### 3. Duration\n* **Dependent on environmental brightness:** How long you need to stay outside varies based on conditions (*Essentials* `[00:10:48]`):\n  * **Very bright environments:** On a clear day with high photon reflection (such as over snow cover), it may only take **30 to 60 seconds** to set your central clock (*Essentials* `[00:10:48]`).\n  * **Dim or low-light environments:** In locations with lower light intensity (such as Scandinavia in winter), more time is required to trigger the system (*Essentials* `[00:10:48]`).\n\n### 4. Circadian and Health Benefits\n* **Sets cortisol and melatonin rhythms:** Early light sets the central clock, creating an early cortisol pulse that is separated from your evening melatonin pulse (*Essentials* `[00:10:48]`).\n* **Mental health and blood pressure:** An early cortisol pulse supports blood pressure and mental health, while preventing a late-shifted cortisol pulse (at 8:00 p.m. or 9:00 p.m.), which is a known signature and potential cause/consequence of depression and anxiety disorders (*Master Your Sleep & Be More Alert When Awake* `[00:29:00]`; *Essentials* `[00:09:46]`, `[00:10:48]`).",
+    "citations": [
+      {
+        "episode_title": "Master Your Sleep & Be More Alert When Awake",
+        "episode_id": "nm1TxQj9IsQ",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:29:00",
+        "start_seconds": 1740.51,
+        "url": "https://youtu.be/nm1TxQj9IsQ?t=1740"
+      },
+      {
+        "episode_title": "Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials",
+        "episode_id": "lIo9FcrljDk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:09:46",
+        "start_seconds": 586.35,
+        "url": "https://youtu.be/lIo9FcrljDk?t=586"
+      },
+      {
+        "episode_title": "Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials",
+        "episode_id": "lIo9FcrljDk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:10:48",
+        "start_seconds": 648.44,
+        "url": "https://youtu.be/lIo9FcrljDk?t=648"
+      },
+      {
+        "episode_title": "Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials",
+        "episode_id": "lIo9FcrljDk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:08:49",
+        "start_seconds": 529.5,
+        "url": "https://youtu.be/lIo9FcrljDk?t=529"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 4,
+    "top_distance": 0.4119,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4119,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 4,
+        "citations": [
+          {
+            "episode_title": "Master Your Sleep & Be More Alert When Awake",
+            "episode_id": "nm1TxQj9IsQ",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:29:00",
+            "start_seconds": 1740.51,
+            "url": "https://youtu.be/nm1TxQj9IsQ?t=1740"
+          },
+          {
+            "episode_title": "Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials",
+            "episode_id": "lIo9FcrljDk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:09:46",
+            "start_seconds": 586.35,
+            "url": "https://youtu.be/lIo9FcrljDk?t=586"
+          },
+          {
+            "episode_title": "Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials",
+            "episode_id": "lIo9FcrljDk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:10:48",
+            "start_seconds": 648.44,
+            "url": "https://youtu.be/lIo9FcrljDk?t=648"
+          },
+          {
+            "episode_title": "Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials",
+            "episode_id": "lIo9FcrljDk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:08:49",
+            "start_seconds": 529.5,
+            "url": "https://youtu.be/lIo9FcrljDk?t=529"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, the optimal morning sunlight viewing protocol involves the following:\n\n### 1. Timing and Solar Angle\n* **View early in the day at a low solar angle:** The nervous system and eyes respond to sunlight when the sun is low in the sky, which produces a specific contrast between yellow and blue light that triggers retinal cells (*Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials* `[00:08:49]`).\n* **Within an hour or two of sunrise:** You can view it within an hour or two of sunrise, or even a few hours after waking (*Master Your Sleep & Be More Alert When Awake* `[00:29:00]`; *Essentials* `[00:08:49]`).\n* **Before the sun is overhead:** Once the sun is directly overhead, the quality of light shifts and you miss the window to properly time your morning cortisol pulse (*Master Your Sleep & Be More Alert When Awake* `[00:29:00]`; *Essentials* `[00:09:46]`).\n\n### 2. Location and Eye Conditions\n* **Go outside (no windows):** You must get outdoors. According to Stanford expert Dr. Jamie Zeitzer, viewing light through a window, car windshield, or side car window is **50 times less effective** than getting outside (*Master Your Sleep & Be More Alert When Awake* `[00:29:00]`; *Essentials* `[00:09:46]`).\n* **No sunglasses:** Do not wear sunglasses during this viewing period (*Master Your Sleep & Be More Alert When Awake* `[00:29:00]`; *Essentials* `[00:09:46]`).\n* **No need to stare directly at the sun:** Sunlight does not need to beam directly into your eyes; scattered light energy arriving on your retina is sufficient (*Essentials* `[00:08:49]`).\n\n### 3. Duration\n* **Dependent on environmental brightness:** How long you need to stay outside varies based on conditions (*Essentials* `[00:10:48]`):\n  * **Very bright environments:** On a clear day with high photon reflection (such as over snow cover), it may only take **30 to 60 seconds** to set your central clock (*Essentials* `[00:10:48]`).\n  * **Dim or low-light environments:** In locations with lower light intensity (such as Scandinavia in winter), more time is required to trigger the system (*Essentials* `[00:10:48]`).\n\n### 4. Circadian and Health Benefits\n* **Sets cortisol and melatonin rhythms:** Early light sets the central clock, creating an early cortisol pulse that is separated from your evening melatonin pulse (*Essentials* `[00:10:48]`).\n* **Mental health and blood pressure:** An early cortisol pulse supports blood pressure and mental health, while preventing a late-shifted cortisol pulse (at 8:00 p.m. or 9:00 p.m.), which is a known signature and potential cause/consequence of depression and anxiety disorders (*Master Your Sleep & Be More Alert When Awake* `[00:29:00]`; *Essentials* `[00:09:46]`, `[00:10:48]`).",
+        "citations": [
+          {
+            "episode_title": "Master Your Sleep & Be More Alert When Awake",
+            "episode_id": "nm1TxQj9IsQ",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:29:00",
+            "start_seconds": 1740.51,
+            "url": "https://youtu.be/nm1TxQj9IsQ?t=1740"
+          },
+          {
+            "episode_title": "Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials",
+            "episode_id": "lIo9FcrljDk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:09:46",
+            "start_seconds": 586.35,
+            "url": "https://youtu.be/lIo9FcrljDk?t=586"
+          },
+          {
+            "episode_title": "Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials",
+            "episode_id": "lIo9FcrljDk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:10:48",
+            "start_seconds": 648.44,
+            "url": "https://youtu.be/lIo9FcrljDk?t=648"
+          },
+          {
+            "episode_title": "Master Your Sleep & Be More Alert When Awake | Huberman Lab Essentials",
+            "episode_id": "lIo9FcrljDk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:08:49",
+            "start_seconds": 529.5,
+            "url": "https://youtu.be/lIo9FcrljDk?t=529"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::turbo::what is the ideal creatine monohydrate dosage for cognitive and brain function": {
+    "answer": "Based on the provided transcripts, the ideal dosage for brain and cognitive benefits is higher than the standard 5 grams typically used for muscle:\n\n* **Daily baseline for brain uptake (10 grams):** While muscles consume most of a standard 5 g dose, emerging MRI data shows that taking **10 grams a day** begins to increase creatine levels in certain brain regions beyond what the brain naturally produces [The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman @ 02:12:31].\n* **High-stress states or cognitive impairment (20\u201325 grams):** \n  * In sleep-deprived individuals, a high dose in the **20 to 25 gram range** (or more depending on body weight) allowed them to not only perform normally cognitively, but better than their baseline [The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman @ 02:14:03].\n  * Studies on older adults with mild cognitive impairment or early-stage Alzheimer's disease also used doses in the **20-gram range** to improve cognitive function [The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman @ 02:14:03].",
+    "citations": [
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:14:03",
+        "start_seconds": 8043.24,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=8043"
+      },
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:11:43",
+        "start_seconds": 7903.6,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=7903"
+      },
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:09:22",
+        "start_seconds": 7762.32,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=7762"
+      },
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:12:31",
+        "start_seconds": 7951.88,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=7951"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 0,
+    "top_distance": 0.4251,
+    "mode": "turbo",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4251,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "citations": [
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:14:03",
+            "start_seconds": 8043.24,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=8043"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:11:43",
+            "start_seconds": 7903.6,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7903"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:09:22",
+            "start_seconds": 7762.32,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7762"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:12:31",
+            "start_seconds": 7951.88,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7951"
+          }
+        ],
+        "mode": "turbo"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided transcripts, the ideal dosage for brain and cognitive benefits is higher than the standard 5 grams typically used for muscle:\n\n* **Daily baseline for brain uptake (10 grams):** While muscles consume most of a standard 5 g dose, emerging MRI data shows that taking **10 grams a day** begins to increase creatine levels in certain brain regions beyond what the brain naturally produces [The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman @ 02:12:31].\n* **High-stress states or cognitive impairment (20\u201325 grams):** \n  * In sleep-deprived individuals, a high dose in the **20 to 25 gram range** (or more depending on body weight) allowed them to not only perform normally cognitively, but better than their baseline [The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman @ 02:14:03].\n  * Studies on older adults with mild cognitive impairment or early-stage Alzheimer's disease also used doses in the **20-gram range** to improve cognitive function [The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman @ 02:14:03].",
+        "citations": [
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:14:03",
+            "start_seconds": 8043.24,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=8043"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:11:43",
+            "start_seconds": 7903.6,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7903"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:09:22",
+            "start_seconds": 7762.32,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7762"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:12:31",
+            "start_seconds": 7951.88,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7951"
+          }
+        ],
+        "mode": "turbo"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::turbo::how does creatine work inside the brain": {
+    "answer": "Based on the provided excerpts, creatine operates in the brain in the following ways:\n\n* **Forebrain and Cognitive Function Reliance:** The phosphocreatine system is utilized across many brain areas but shows a frontal bias, particularly toward forebrain structures associated with working memory and strategic planning [02:10:11].\n* **Brain's Endogenous Production and Uptake:** The brain produces its own creatine (estimated around 1 to 3 grams) and can be somewhat resistant to taking up supplemented creatine, partly because muscles are very \"greedy\" for it [02:11:43].\n* **Activation Under Stress:** Similar to how creatine requires physical exercise to impact muscle, creatine does not simply enhance cognitive function on its own. Instead, it appears to \"shine\" when the brain is placed under stress\u2014such as during sleep deprivation, traumatic brain injury, psychological stress, depression, or intense cognitive demand like active learning and thinking [02:11:00], [02:11:43].",
+    "citations": [
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:11:00",
+        "start_seconds": 7860.48,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=7860"
+      },
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:10:11",
+        "start_seconds": 7811.84,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=7811"
+      },
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:11:43",
+        "start_seconds": 7903.6,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=7903"
+      },
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:09:22",
+        "start_seconds": 7762.32,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=7762"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 0,
+    "top_distance": 0.4366,
+    "mode": "turbo",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4366,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "citations": [
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:11:00",
+            "start_seconds": 7860.48,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7860"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:10:11",
+            "start_seconds": 7811.84,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7811"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:11:43",
+            "start_seconds": 7903.6,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7903"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:09:22",
+            "start_seconds": 7762.32,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7762"
+          }
+        ],
+        "mode": "turbo"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, creatine operates in the brain in the following ways:\n\n* **Forebrain and Cognitive Function Reliance:** The phosphocreatine system is utilized across many brain areas but shows a frontal bias, particularly toward forebrain structures associated with working memory and strategic planning [02:10:11].\n* **Brain's Endogenous Production and Uptake:** The brain produces its own creatine (estimated around 1 to 3 grams) and can be somewhat resistant to taking up supplemented creatine, partly because muscles are very \"greedy\" for it [02:11:43].\n* **Activation Under Stress:** Similar to how creatine requires physical exercise to impact muscle, creatine does not simply enhance cognitive function on its own. Instead, it appears to \"shine\" when the brain is placed under stress\u2014such as during sleep deprivation, traumatic brain injury, psychological stress, depression, or intense cognitive demand like active learning and thinking [02:11:00], [02:11:43].",
+        "citations": [
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:11:00",
+            "start_seconds": 7860.48,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7860"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:10:11",
+            "start_seconds": 7811.84,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7811"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:11:43",
+            "start_seconds": 7903.6,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7903"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:09:22",
+            "start_seconds": 7762.32,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7762"
+          }
+        ],
+        "mode": "turbo"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::turbo::how does the physiological sigh rapidly reduce acute stress and heart rate": {
+    "answer": "Based on the provided transcripts, the physiological sigh rapidly reduces acute stress and heart rate through several mechanisms:\n\n* **Slowing Heart Rate via Respiratory Sinus Arrhythmia:** The physiological sigh involves a deep inhale through the nose, a second sharp inhale to maximally inflate the lungs, and a long exhale through the mouth until the lungs are empty. This exhale-emphasized breathing slows the heart rate down through a biological process called **respiratory sinus arrhythmia** (*How to Control Your Cortisol & Overcome Burnout*, [01:23:16]).\n* **Ridding Carbon Dioxide and Engaging the Diaphragm:** Exhale-emphasized breathing engages the diaphragm, which helps balance oxygen and carbon dioxide levels in your brain and bloodstream (*How to Control Your Cortisol & Overcome Burnout*, [01:23:16]). Specifically, the long exhale is very effective at ridding the body and bloodstream of carbon dioxide, which relaxes you very quickly (*Tools for Managing Stress & Anxiety*, [00:32:33]).\n* **Activation of the Parafacial Nucleus:** When you double up your inhales during a physiological sigh, you activate a breathing center in the brain called the **parafacial nucleus** (*Tools for Managing Stress & Anxiety*, [00:38:38]). Because this nucleus is located near the neurons that control the face, activating it also tends to relax the jaw and related facial/tongue musculature (*Tools for Managing Stress & Anxiety*, [00:38:38]).",
+    "citations": [
+      {
+        "episode_title": "Tools for Managing Stress & Anxiety",
+        "episode_id": "ntfcfJ28eiU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:32:33",
+        "start_seconds": 1953.81,
+        "url": "https://youtu.be/ntfcfJ28eiU?t=1953"
+      },
+      {
+        "episode_title": "Tools for Managing Stress & Anxiety",
+        "episode_id": "ntfcfJ28eiU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:24:57",
+        "start_seconds": 1497.54,
+        "url": "https://youtu.be/ntfcfJ28eiU?t=1497"
+      },
+      {
+        "episode_title": "How to Control Your Cortisol & Overcome Burnout",
+        "episode_id": "Ibj1k3IZTNU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:23:16",
+        "start_seconds": 4996.48,
+        "url": "https://youtu.be/Ibj1k3IZTNU?t=4996"
+      },
+      {
+        "episode_title": "Tools for Managing Stress & Anxiety",
+        "episode_id": "ntfcfJ28eiU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:38:38",
+        "start_seconds": 2318.35,
+        "url": "https://youtu.be/ntfcfJ28eiU?t=2318"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 0,
+    "top_distance": 0.3425,
+    "mode": "turbo",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.3425,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "citations": [
+          {
+            "episode_title": "Tools for Managing Stress & Anxiety",
+            "episode_id": "ntfcfJ28eiU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:32:33",
+            "start_seconds": 1953.81,
+            "url": "https://youtu.be/ntfcfJ28eiU?t=1953"
+          },
+          {
+            "episode_title": "Tools for Managing Stress & Anxiety",
+            "episode_id": "ntfcfJ28eiU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:24:57",
+            "start_seconds": 1497.54,
+            "url": "https://youtu.be/ntfcfJ28eiU?t=1497"
+          },
+          {
+            "episode_title": "How to Control Your Cortisol & Overcome Burnout",
+            "episode_id": "Ibj1k3IZTNU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:23:16",
+            "start_seconds": 4996.48,
+            "url": "https://youtu.be/Ibj1k3IZTNU?t=4996"
+          },
+          {
+            "episode_title": "Tools for Managing Stress & Anxiety",
+            "episode_id": "ntfcfJ28eiU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:38:38",
+            "start_seconds": 2318.35,
+            "url": "https://youtu.be/ntfcfJ28eiU?t=2318"
+          }
+        ],
+        "mode": "turbo"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided transcripts, the physiological sigh rapidly reduces acute stress and heart rate through several mechanisms:\n\n* **Slowing Heart Rate via Respiratory Sinus Arrhythmia:** The physiological sigh involves a deep inhale through the nose, a second sharp inhale to maximally inflate the lungs, and a long exhale through the mouth until the lungs are empty. This exhale-emphasized breathing slows the heart rate down through a biological process called **respiratory sinus arrhythmia** (*How to Control Your Cortisol & Overcome Burnout*, [01:23:16]).\n* **Ridding Carbon Dioxide and Engaging the Diaphragm:** Exhale-emphasized breathing engages the diaphragm, which helps balance oxygen and carbon dioxide levels in your brain and bloodstream (*How to Control Your Cortisol & Overcome Burnout*, [01:23:16]). Specifically, the long exhale is very effective at ridding the body and bloodstream of carbon dioxide, which relaxes you very quickly (*Tools for Managing Stress & Anxiety*, [00:32:33]).\n* **Activation of the Parafacial Nucleus:** When you double up your inhales during a physiological sigh, you activate a breathing center in the brain called the **parafacial nucleus** (*Tools for Managing Stress & Anxiety*, [00:38:38]). Because this nucleus is located near the neurons that control the face, activating it also tends to relax the jaw and related facial/tongue musculature (*Tools for Managing Stress & Anxiety*, [00:38:38]).",
+        "citations": [
+          {
+            "episode_title": "Tools for Managing Stress & Anxiety",
+            "episode_id": "ntfcfJ28eiU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:32:33",
+            "start_seconds": 1953.81,
+            "url": "https://youtu.be/ntfcfJ28eiU?t=1953"
+          },
+          {
+            "episode_title": "Tools for Managing Stress & Anxiety",
+            "episode_id": "ntfcfJ28eiU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:24:57",
+            "start_seconds": 1497.54,
+            "url": "https://youtu.be/ntfcfJ28eiU?t=1497"
+          },
+          {
+            "episode_title": "How to Control Your Cortisol & Overcome Burnout",
+            "episode_id": "Ibj1k3IZTNU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:23:16",
+            "start_seconds": 4996.48,
+            "url": "https://youtu.be/Ibj1k3IZTNU?t=4996"
+          },
+          {
+            "episode_title": "Tools for Managing Stress & Anxiety",
+            "episode_id": "ntfcfJ28eiU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:38:38",
+            "start_seconds": 2318.35,
+            "url": "https://youtu.be/ntfcfJ28eiU?t=2318"
+          }
+        ],
+        "mode": "turbo"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::balanced::how much zone 2 cardio is recommended for mitochondrial health": {
+    "answer": "Based on the provided excerpt, there is no mention of Zone 2 cardio specifically for **mitochondrial health**. \n\nThe excerpt only mentions a general baseline of **150 to 180 minutes of Zone 2 cardio**, which Andrew Huberman refers to as the \"kindergarten\" or \"nursery school of endurance that everyone should do\" ([01:50:35] - *Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance | Andrew Huberman*).",
+    "citations": [
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:50:35",
+        "start_seconds": 6635.36,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=6635"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 1,
+    "top_distance": 0.4953,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4953,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 1,
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:50:35",
+            "start_seconds": 6635.36,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=6635"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpt, there is no mention of Zone 2 cardio specifically for **mitochondrial health**. \n\nThe excerpt only mentions a general baseline of **150 to 180 minutes of Zone 2 cardio**, which Andrew Huberman refers to as the \"kindergarten\" or \"nursery school of endurance that everyone should do\" ([01:50:35] - *Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance | Andrew Huberman*).",
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:50:35",
+            "start_seconds": 6635.36,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=6635"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::balanced::what is the mind muscle connection and how does it drive hypertrophy": {
+    "answer": "Based on the provided transcripts, the **mind-muscle connection** and its role in driving hypertrophy are described as follows:\n\n### What the Mind-Muscle Connection Is\n* **Neurological control:** It refers to the ability to connect neurologically with the specific muscle you are training ([00:33:18]). Physiologically, this involves the upper motor neurons in the brain intentionally directing the lower motor neurons that control muscle contractions ([01:10:46]).\n* **Targeted focus:** Unlike strength training\u2014where your mental focus is on moving weight as an entire system\u2014hypertrophy relies on a mental shift toward challenging specific muscles and focusing on their contraction ([01:10:46], [00:46:47]).\n* **Ability to contract and isolate:** Having strong neural control means being able to mentally or physically contract a muscle hard in isolation (an example of this is the \"cramp test,\" where you can flex a muscle to the point of cramping without any external load) ([00:30:24], [00:46:47]).\n\n---\n\n### How It Drives Hypertrophy\n* **Isolates nerve-to-muscle pathways:** Hypertrophy is driven by generating isolated contractions and challenging specific muscles in an unnatural way. Isolating these specific nerve-to-muscle pathways stimulates the chemical and signaling transduction events inside the muscle that cause it to respond by growing larger ([00:46:47]).\n* **Creates movement inefficiency:** When training for strength, the goal is movement efficiency (muscles working together to move a load). In contrast, creating hypertrophy requires seeking movement *inefficiency*\u2014leveraging the movement to place the maximum isolated demand on the targeted muscle ([00:33:18]).\n* **Improves muscularity and resting tone:** Better neurological connection directly increases what Jeff Cavaliere terms \"muscularity\"\u2014the resting tone of the muscle\u2014making the muscle harder, more \"at attention,\" and more responsive ([00:33:18]).\n\n*(Sources: **Optimize Your Exercise Program with Science-Based Tools | Jeff Cavaliere | Andrew Huberman** [00:30:24], [00:33:18]; **Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance | Andrew Huberman** [01:10:46]; **Science of Muscle Growth, Increasing Strength & Muscular Recovery | Andrew Huberman** [00:46:47])*",
+    "citations": [
+      {
+        "episode_title": "Optimize Your Exercise Program with Science-Based Tools | Jeff Cavaliere",
+        "episode_id": "UNCwdFxPtE8",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:33:18",
+        "start_seconds": 1998.18,
+        "url": "https://youtu.be/UNCwdFxPtE8?t=1998"
+      },
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:10:46",
+        "start_seconds": 4246.8,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+      },
+      {
+        "episode_title": "Science of Muscle Growth, Increasing Strength & Muscular Recovery",
+        "episode_id": "XLr2RKoD-oY",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:46:47",
+        "start_seconds": 2807.73,
+        "url": "https://youtu.be/XLr2RKoD-oY?t=2807"
+      },
+      {
+        "episode_title": "Optimize Your Exercise Program with Science-Based Tools | Jeff Cavaliere",
+        "episode_id": "UNCwdFxPtE8",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:30:24",
+        "start_seconds": 1824.417,
+        "url": "https://youtu.be/UNCwdFxPtE8?t=1824"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 4,
+    "top_distance": 0.404,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.404,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 4,
+        "citations": [
+          {
+            "episode_title": "Optimize Your Exercise Program with Science-Based Tools | Jeff Cavaliere",
+            "episode_id": "UNCwdFxPtE8",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:33:18",
+            "start_seconds": 1998.18,
+            "url": "https://youtu.be/UNCwdFxPtE8?t=1998"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:10:46",
+            "start_seconds": 4246.8,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+          },
+          {
+            "episode_title": "Science of Muscle Growth, Increasing Strength & Muscular Recovery",
+            "episode_id": "XLr2RKoD-oY",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:46:47",
+            "start_seconds": 2807.73,
+            "url": "https://youtu.be/XLr2RKoD-oY?t=2807"
+          },
+          {
+            "episode_title": "Optimize Your Exercise Program with Science-Based Tools | Jeff Cavaliere",
+            "episode_id": "UNCwdFxPtE8",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:30:24",
+            "start_seconds": 1824.417,
+            "url": "https://youtu.be/UNCwdFxPtE8?t=1824"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided transcripts, the **mind-muscle connection** and its role in driving hypertrophy are described as follows:\n\n### What the Mind-Muscle Connection Is\n* **Neurological control:** It refers to the ability to connect neurologically with the specific muscle you are training ([00:33:18]). Physiologically, this involves the upper motor neurons in the brain intentionally directing the lower motor neurons that control muscle contractions ([01:10:46]).\n* **Targeted focus:** Unlike strength training\u2014where your mental focus is on moving weight as an entire system\u2014hypertrophy relies on a mental shift toward challenging specific muscles and focusing on their contraction ([01:10:46], [00:46:47]).\n* **Ability to contract and isolate:** Having strong neural control means being able to mentally or physically contract a muscle hard in isolation (an example of this is the \"cramp test,\" where you can flex a muscle to the point of cramping without any external load) ([00:30:24], [00:46:47]).\n\n---\n\n### How It Drives Hypertrophy\n* **Isolates nerve-to-muscle pathways:** Hypertrophy is driven by generating isolated contractions and challenging specific muscles in an unnatural way. Isolating these specific nerve-to-muscle pathways stimulates the chemical and signaling transduction events inside the muscle that cause it to respond by growing larger ([00:46:47]).\n* **Creates movement inefficiency:** When training for strength, the goal is movement efficiency (muscles working together to move a load). In contrast, creating hypertrophy requires seeking movement *inefficiency*\u2014leveraging the movement to place the maximum isolated demand on the targeted muscle ([00:33:18]).\n* **Improves muscularity and resting tone:** Better neurological connection directly increases what Jeff Cavaliere terms \"muscularity\"\u2014the resting tone of the muscle\u2014making the muscle harder, more \"at attention,\" and more responsive ([00:33:18]).\n\n*(Sources: **Optimize Your Exercise Program with Science-Based Tools | Jeff Cavaliere | Andrew Huberman** [00:30:24], [00:33:18]; **Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance | Andrew Huberman** [01:10:46]; **Science of Muscle Growth, Increasing Strength & Muscular Recovery | Andrew Huberman** [00:46:47])*",
+        "citations": [
+          {
+            "episode_title": "Optimize Your Exercise Program with Science-Based Tools | Jeff Cavaliere",
+            "episode_id": "UNCwdFxPtE8",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:33:18",
+            "start_seconds": 1998.18,
+            "url": "https://youtu.be/UNCwdFxPtE8?t=1998"
+          },
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:10:46",
+            "start_seconds": 4246.8,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=4246"
+          },
+          {
+            "episode_title": "Science of Muscle Growth, Increasing Strength & Muscular Recovery",
+            "episode_id": "XLr2RKoD-oY",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:46:47",
+            "start_seconds": 2807.73,
+            "url": "https://youtu.be/XLr2RKoD-oY?t=2807"
+          },
+          {
+            "episode_title": "Optimize Your Exercise Program with Science-Based Tools | Jeff Cavaliere",
+            "episode_id": "UNCwdFxPtE8",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:30:24",
+            "start_seconds": 1824.417,
+            "url": "https://youtu.be/UNCwdFxPtE8?t=1824"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::balanced::what is the ideal creatine monohydrate dosage for cognitive and brain function": {
+    "answer": "Based on the provided transcripts, the ideal dosage of creatine for the brain depends on the context:\n\n* **Baseline Brain Levels (10 grams/day):** Dr. Rhonda Patrick notes that typical 5-gram doses are largely consumed by \"greedy\" muscles. However, emerging research (such as a study out of Germany) shows that at **10 grams per day**, MRI scans reveal creatine levels begin to increase in certain brain regions beyond what the brain naturally produces. Because of this, she uses 10 grams daily as her baseline dose (*The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman* `[02:12:31]`).\n* **Acute Stress or Cognitive Impairment (20\u201325 grams):** Higher doses in the **20 to 25-gram range** have been used in studies where the brain is under severe energetic stress:\n  * In sleep-deprived individuals (e.g., awake for 21 hours), a high dose of 20\u201325 grams allowed participants to cognitively perform at or above their normal baseline (*The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman* `[02:14:03]`).\n  * In older adults with mild cognitive impairment or early-stage Alzheimer's disease, doses in the 20-gram range were shown to improve cognitive function (*The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman* `[02:14:03]`).\n\nDr. Patrick notes that this is early, emerging data that still needs replication, though there is substantial existing safety data (*The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman* `[02:12:31]`, `[02:14:03]`).",
+    "citations": [
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:14:03",
+        "start_seconds": 8043.24,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=8043"
+      },
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:11:43",
+        "start_seconds": 7903.6,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=7903"
+      },
+      {
+        "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+        "episode_id": "C0DMdUqF73Q",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:12:31",
+        "start_seconds": 7951.88,
+        "url": "https://youtu.be/C0DMdUqF73Q?t=7951"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 3,
+    "top_distance": 0.4251,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4251,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 3,
+        "citations": [
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:14:03",
+            "start_seconds": 8043.24,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=8043"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:11:43",
+            "start_seconds": 7903.6,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7903"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:12:31",
+            "start_seconds": 7951.88,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7951"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided transcripts, the ideal dosage of creatine for the brain depends on the context:\n\n* **Baseline Brain Levels (10 grams/day):** Dr. Rhonda Patrick notes that typical 5-gram doses are largely consumed by \"greedy\" muscles. However, emerging research (such as a study out of Germany) shows that at **10 grams per day**, MRI scans reveal creatine levels begin to increase in certain brain regions beyond what the brain naturally produces. Because of this, she uses 10 grams daily as her baseline dose (*The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman* `[02:12:31]`).\n* **Acute Stress or Cognitive Impairment (20\u201325 grams):** Higher doses in the **20 to 25-gram range** have been used in studies where the brain is under severe energetic stress:\n  * In sleep-deprived individuals (e.g., awake for 21 hours), a high dose of 20\u201325 grams allowed participants to cognitively perform at or above their normal baseline (*The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman* `[02:14:03]`).\n  * In older adults with mild cognitive impairment or early-stage Alzheimer's disease, doses in the 20-gram range were shown to improve cognitive function (*The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman* `[02:14:03]`).\n\nDr. Patrick notes that this is early, emerging data that still needs replication, though there is substantial existing safety data (*The Best Vitality & Health Protocols | Dr. Rhonda Patrick | Andrew Huberman* `[02:12:31]`, `[02:14:03]`).",
+        "citations": [
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:14:03",
+            "start_seconds": 8043.24,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=8043"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:11:43",
+            "start_seconds": 7903.6,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7903"
+          },
+          {
+            "episode_title": "The Best Vitality & Health Protocols | Dr. Rhonda Patrick",
+            "episode_id": "C0DMdUqF73Q",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:12:31",
+            "start_seconds": 7951.88,
+            "url": "https://youtu.be/C0DMdUqF73Q?t=7951"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::balanced::what natural behavioral protocols help optimize testosterone and hormone health": {
+    "answer": "Based on the provided excerpts, the following natural behavioral protocols help optimize testosterone and hormone health:\n\n* **Get bright light exposure early in the day:** View bright light (ideally sunlight, or bright artificial light if sunlight isn't available) for 2 to 10 minutes early in the day without sunglasses (prescription lenses or contacts are fine). This properly times cortisol release to the early part of the day and increases dopamine, which promotes the production of testosterone and estrogen to healthy levels ([01:01:51]).\n* **Avoid bright light in the middle of the night:** Do not expose your eyes to bright light in the middle of the circadian night. Doing so suppresses dopamine release, which directly suppresses testosterone (and estrogen) levels ([01:01:51], [01:02:42]).\n* **Optimize sleep and breathing:** Optimizing your sleep and \"getting your breathing right\" are foundational behaviors required before considering supplements or diet to optimize hormones ([01:01:51], [01:02:42]).\n* **Engage in competition:** Competition is a powerful influence on sex steroid hormones and activates the release of testosterone and related derivatives from the adrenal glands ([00:15:04]).\n\n*(All citations from: \"The Science of How to Optimize Testosterone & Estrogen | Andrew Huberman\")*",
+    "citations": [
+      {
+        "episode_title": "The Science of How to Optimize Testosterone & Estrogen",
+        "episode_id": "qJXKhu5UZwk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:02:42",
+        "start_seconds": 3762.32,
+        "url": "https://youtu.be/qJXKhu5UZwk?t=3762"
+      },
+      {
+        "episode_title": "The Science of How to Optimize Testosterone & Estrogen",
+        "episode_id": "qJXKhu5UZwk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:01:51",
+        "start_seconds": 3711.06,
+        "url": "https://youtu.be/qJXKhu5UZwk?t=3711"
+      },
+      {
+        "episode_title": "The Science of How to Optimize Testosterone & Estrogen",
+        "episode_id": "qJXKhu5UZwk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "00:15:04",
+        "start_seconds": 904.45,
+        "url": "https://youtu.be/qJXKhu5UZwk?t=904"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 3,
+    "top_distance": 0.4819,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4819,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 3,
+        "citations": [
+          {
+            "episode_title": "The Science of How to Optimize Testosterone & Estrogen",
+            "episode_id": "qJXKhu5UZwk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:02:42",
+            "start_seconds": 3762.32,
+            "url": "https://youtu.be/qJXKhu5UZwk?t=3762"
+          },
+          {
+            "episode_title": "The Science of How to Optimize Testosterone & Estrogen",
+            "episode_id": "qJXKhu5UZwk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:01:51",
+            "start_seconds": 3711.06,
+            "url": "https://youtu.be/qJXKhu5UZwk?t=3711"
+          },
+          {
+            "episode_title": "The Science of How to Optimize Testosterone & Estrogen",
+            "episode_id": "qJXKhu5UZwk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:15:04",
+            "start_seconds": 904.45,
+            "url": "https://youtu.be/qJXKhu5UZwk?t=904"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, the following natural behavioral protocols help optimize testosterone and hormone health:\n\n* **Get bright light exposure early in the day:** View bright light (ideally sunlight, or bright artificial light if sunlight isn't available) for 2 to 10 minutes early in the day without sunglasses (prescription lenses or contacts are fine). This properly times cortisol release to the early part of the day and increases dopamine, which promotes the production of testosterone and estrogen to healthy levels ([01:01:51]).\n* **Avoid bright light in the middle of the night:** Do not expose your eyes to bright light in the middle of the circadian night. Doing so suppresses dopamine release, which directly suppresses testosterone (and estrogen) levels ([01:01:51], [01:02:42]).\n* **Optimize sleep and breathing:** Optimizing your sleep and \"getting your breathing right\" are foundational behaviors required before considering supplements or diet to optimize hormones ([01:01:51], [01:02:42]).\n* **Engage in competition:** Competition is a powerful influence on sex steroid hormones and activates the release of testosterone and related derivatives from the adrenal glands ([00:15:04]).\n\n*(All citations from: \"The Science of How to Optimize Testosterone & Estrogen | Andrew Huberman\")*",
+        "citations": [
+          {
+            "episode_title": "The Science of How to Optimize Testosterone & Estrogen",
+            "episode_id": "qJXKhu5UZwk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:02:42",
+            "start_seconds": 3762.32,
+            "url": "https://youtu.be/qJXKhu5UZwk?t=3762"
+          },
+          {
+            "episode_title": "The Science of How to Optimize Testosterone & Estrogen",
+            "episode_id": "qJXKhu5UZwk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:01:51",
+            "start_seconds": 3711.06,
+            "url": "https://youtu.be/qJXKhu5UZwk?t=3711"
+          },
+          {
+            "episode_title": "The Science of How to Optimize Testosterone & Estrogen",
+            "episode_id": "qJXKhu5UZwk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "00:15:04",
+            "start_seconds": 904.45,
+            "url": "https://youtu.be/qJXKhu5UZwk?t=904"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::balanced::how do i prevent a severe dopamine crash and manage baseline motivation": {
+    "answer": "Based on the provided excerpts, here is how you can manage baseline motivation and prevent dopamine depletion:\n\n* **Taper or go cold turkey when baseline drops:** If you have experienced a drop in baseline due to overindulgence or addictive behaviors/substances, the path forward is to limit interactions with dopamine-evoking substances or behaviors either by quitting \"cold turkey\" or through a tapering process (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[01:07:19]`).\n* **Avoid layering dopamine sources:** Do not layer multiple sources of dopamine together, as this drives down your baseline dopamine (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[01:19:31]`).\n* **Do not use stimulants every time you perform an activity:** Avoid taking stimulants every time you work out, study, or engage in an activity you want to continue enjoying and staying motivated for (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[01:19:31]`).\n* **Be cautious with energy drinks and pre-workouts:** Many energy drinks and pre-workout supplements contain dopamine precursors that release significant amounts of dopamine independently of the activity, which will deplete your dopamine over time (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[01:19:31]`).\n* **Caffeine can be an exception:** Caffeine can support your dopamine system because it upregulates D2 and D3 receptors, making whatever dopamine is released during an activity more functional and accessible in your brain and body pathways (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[01:19:31]`).",
+    "citations": [
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:07:19",
+        "start_seconds": 4039.34,
+        "url": "https://youtu.be/QmOF0crdyRU?t=4039"
+      },
+      {
+        "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+        "episode_id": "QmOF0crdyRU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:19:31",
+        "start_seconds": 4771.61,
+        "url": "https://youtu.be/QmOF0crdyRU?t=4771"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 2,
+    "top_distance": 0.4363,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4363,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 2,
+        "citations": [
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:07:19",
+            "start_seconds": 4039.34,
+            "url": "https://youtu.be/QmOF0crdyRU?t=4039"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:19:31",
+            "start_seconds": 4771.61,
+            "url": "https://youtu.be/QmOF0crdyRU?t=4771"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, here is how you can manage baseline motivation and prevent dopamine depletion:\n\n* **Taper or go cold turkey when baseline drops:** If you have experienced a drop in baseline due to overindulgence or addictive behaviors/substances, the path forward is to limit interactions with dopamine-evoking substances or behaviors either by quitting \"cold turkey\" or through a tapering process (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[01:07:19]`).\n* **Avoid layering dopamine sources:** Do not layer multiple sources of dopamine together, as this drives down your baseline dopamine (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[01:19:31]`).\n* **Do not use stimulants every time you perform an activity:** Avoid taking stimulants every time you work out, study, or engage in an activity you want to continue enjoying and staying motivated for (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[01:19:31]`).\n* **Be cautious with energy drinks and pre-workouts:** Many energy drinks and pre-workout supplements contain dopamine precursors that release significant amounts of dopamine independently of the activity, which will deplete your dopamine over time (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[01:19:31]`).\n* **Caffeine can be an exception:** Caffeine can support your dopamine system because it upregulates D2 and D3 receptors, making whatever dopamine is released during an activity more functional and accessible in your brain and body pathways (*Controlling Your Dopamine For Motivation, Focus & Satisfaction | Andrew Huberman* `[01:19:31]`).",
+        "citations": [
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:07:19",
+            "start_seconds": 4039.34,
+            "url": "https://youtu.be/QmOF0crdyRU?t=4039"
+          },
+          {
+            "episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction",
+            "episode_id": "QmOF0crdyRU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:19:31",
+            "start_seconds": 4771.61,
+            "url": "https://youtu.be/QmOF0crdyRU?t=4771"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::balanced::what is the optimal sleep cocktail magnesium l threonate theanine apigenin": {
+    "answer": "Based on the excerpts, the combination of **magnesium threonate**, **theanine**, and **apigenin** is referred to as the \"Huberman Lab sleep stack\":\n\n### Components, Dosages, and Timing\n* **The Stack:** Andrew Huberman notes that the stack consists of apigenin, magnesium threonate (which he notes is interchangeable with bisglycinate, though threonate is better for a variety of reasons), and theanine [[01:48:14]].\n* **Apigenin Dosage:** Huberman takes **50 milligrams** of apigenin in capsule form every night [[01:48:14]]. \n* **Timing:** Huberman tends to take apigenin and magnesium threonate about **30 to 60 minutes before wanting to fall asleep** [[01:49:03]]. *(Note: Specific dosages for theanine and magnesium threonate are not detailed in the provided excerpts).*\n\n### Why They Are Used (Mechanisms)\n* **Apigenin:** Acts on GABA pathways and certain chloride channel pathways, and has been shown to reduce cortisol during the key window before and after sleep [[01:48:14], [01:49:03]].\n* **Magnesium Threonate:** There is evidence it indirectly activates pathways that help suppress cortisol [[01:48:14], [01:49:03]]. Dr. Matt Walker also notes that threonate is interesting because of its higher capacity to cross the blood-brain barrier and exert central nervous system effects [[01:55:16]].\n\n### Scientific Perspective & Limitations\n* **Magnesium:** Dr. Matt Walker notes he does not supplement with magnesium. While threonate is interesting due to crossing the blood-brain barrier, Walker points out there is not yet a strong set of studies targeting threonate exclusively, and general sleep data on magnesium is largely uncompelling outside of correcting an existing magnesium deficiency [[01:55:16]].\n* **Apigenin:** Dr. Walker notes he does not take apigenin, pointing out that current sleep data for it relies mostly on subjective reports rather than hard, objective sleep measures, leaving the evidence unclear [[02:05:59]].",
+    "citations": [
+      {
+        "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+        "episode_id": "gbQFSMayJxk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:05:59",
+        "start_seconds": 7559.03,
+        "url": "https://youtu.be/gbQFSMayJxk?t=7559"
+      },
+      {
+        "episode_title": "How to Control Your Cortisol & Overcome Burnout",
+        "episode_id": "Ibj1k3IZTNU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:48:14",
+        "start_seconds": 6494.0,
+        "url": "https://youtu.be/Ibj1k3IZTNU?t=6494"
+      },
+      {
+        "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+        "episode_id": "gbQFSMayJxk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:55:16",
+        "start_seconds": 6916.22,
+        "url": "https://youtu.be/gbQFSMayJxk?t=6916"
+      },
+      {
+        "episode_title": "How to Control Your Cortisol & Overcome Burnout",
+        "episode_id": "Ibj1k3IZTNU",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:49:03",
+        "start_seconds": 6543.199,
+        "url": "https://youtu.be/Ibj1k3IZTNU?t=6543"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 4,
+    "top_distance": 0.4892,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4892,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 4,
+        "citations": [
+          {
+            "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+            "episode_id": "gbQFSMayJxk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:05:59",
+            "start_seconds": 7559.03,
+            "url": "https://youtu.be/gbQFSMayJxk?t=7559"
+          },
+          {
+            "episode_title": "How to Control Your Cortisol & Overcome Burnout",
+            "episode_id": "Ibj1k3IZTNU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:48:14",
+            "start_seconds": 6494.0,
+            "url": "https://youtu.be/Ibj1k3IZTNU?t=6494"
+          },
+          {
+            "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+            "episode_id": "gbQFSMayJxk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:55:16",
+            "start_seconds": 6916.22,
+            "url": "https://youtu.be/gbQFSMayJxk?t=6916"
+          },
+          {
+            "episode_title": "How to Control Your Cortisol & Overcome Burnout",
+            "episode_id": "Ibj1k3IZTNU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:49:03",
+            "start_seconds": 6543.199,
+            "url": "https://youtu.be/Ibj1k3IZTNU?t=6543"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the excerpts, the combination of **magnesium threonate**, **theanine**, and **apigenin** is referred to as the \"Huberman Lab sleep stack\":\n\n### Components, Dosages, and Timing\n* **The Stack:** Andrew Huberman notes that the stack consists of apigenin, magnesium threonate (which he notes is interchangeable with bisglycinate, though threonate is better for a variety of reasons), and theanine [[01:48:14]].\n* **Apigenin Dosage:** Huberman takes **50 milligrams** of apigenin in capsule form every night [[01:48:14]]. \n* **Timing:** Huberman tends to take apigenin and magnesium threonate about **30 to 60 minutes before wanting to fall asleep** [[01:49:03]]. *(Note: Specific dosages for theanine and magnesium threonate are not detailed in the provided excerpts).*\n\n### Why They Are Used (Mechanisms)\n* **Apigenin:** Acts on GABA pathways and certain chloride channel pathways, and has been shown to reduce cortisol during the key window before and after sleep [[01:48:14], [01:49:03]].\n* **Magnesium Threonate:** There is evidence it indirectly activates pathways that help suppress cortisol [[01:48:14], [01:49:03]]. Dr. Matt Walker also notes that threonate is interesting because of its higher capacity to cross the blood-brain barrier and exert central nervous system effects [[01:55:16]].\n\n### Scientific Perspective & Limitations\n* **Magnesium:** Dr. Matt Walker notes he does not supplement with magnesium. While threonate is interesting due to crossing the blood-brain barrier, Walker points out there is not yet a strong set of studies targeting threonate exclusively, and general sleep data on magnesium is largely uncompelling outside of correcting an existing magnesium deficiency [[01:55:16]].\n* **Apigenin:** Dr. Walker notes he does not take apigenin, pointing out that current sleep data for it relies mostly on subjective reports rather than hard, objective sleep measures, leaving the evidence unclear [[02:05:59]].",
+        "citations": [
+          {
+            "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+            "episode_id": "gbQFSMayJxk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:05:59",
+            "start_seconds": 7559.03,
+            "url": "https://youtu.be/gbQFSMayJxk?t=7559"
+          },
+          {
+            "episode_title": "How to Control Your Cortisol & Overcome Burnout",
+            "episode_id": "Ibj1k3IZTNU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:48:14",
+            "start_seconds": 6494.0,
+            "url": "https://youtu.be/Ibj1k3IZTNU?t=6494"
+          },
+          {
+            "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+            "episode_id": "gbQFSMayJxk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:55:16",
+            "start_seconds": 6916.22,
+            "url": "https://youtu.be/gbQFSMayJxk?t=6916"
+          },
+          {
+            "episode_title": "How to Control Your Cortisol & Overcome Burnout",
+            "episode_id": "Ibj1k3IZTNU",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:49:03",
+            "start_seconds": 6543.199,
+            "url": "https://youtu.be/Ibj1k3IZTNU?t=6543"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::balanced::what are the optimal sauna heat protocols for growth hormone release": {
+    "answer": "Based on the provided excerpt, there is no mention of the specific sauna protocol (temperature, duration, or frequency) required to increase growth hormone release. \n\nThe excerpt only briefly mentions growth hormone increases and cautions against overestimating their impact on physical changes like muscle size, noting that the \"same thing with the sauna\" applies regarding exaggerated expectations, but it cuts off before detailing any protocols `[02:46:12]`.",
+    "citations": [
+      {
+        "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+        "episode_id": "IAnhFUUCq6c",
+        "speaker": "Andrew Huberman",
+        "timestamp": "02:46:12",
+        "start_seconds": 9972.15,
+        "url": "https://youtu.be/IAnhFUUCq6c?t=9972"
+      }
+    ],
+    "rewrites": 1,
+    "relevant_chunks": 1,
+    "top_distance": 0.57,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.5094,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 0,
+        "citations": [],
+        "mode": "balanced"
+      },
+      {
+        "node": "rewrite_query",
+        "rewrites": 1,
+        "rewritten_query": "sauna heat protocol temperature duration frequency increase growth hormone release",
+        "mode": "balanced"
+      },
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.57,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 1,
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:46:12",
+            "start_seconds": 9972.15,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=9972"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpt, there is no mention of the specific sauna protocol (temperature, duration, or frequency) required to increase growth hormone release. \n\nThe excerpt only briefly mentions growth hormone increases and cautions against overestimating their impact on physical changes like muscle size, noting that the \"same thing with the sauna\" applies regarding exaggerated expectations, but it cuts off before detailing any protocols `[02:46:12]`.",
+        "citations": [
+          {
+            "episode_title": "Dr. Andy Galpin: How to Build Strength, Muscle Size & Endurance",
+            "episode_id": "IAnhFUUCq6c",
+            "speaker": "Andrew Huberman",
+            "timestamp": "02:46:12",
+            "start_seconds": 9972.15,
+            "url": "https://youtu.be/IAnhFUUCq6c?t=9972"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::balanced::how does alcohol consumption disrupt sleep architecture and rem stages": {
+    "answer": "Based on the provided transcripts, alcohol consumption disrupts sleep architecture and REM stages in the following ways:\n\n### Disruption of Overall Sleep Architecture\n* **Sedation instead of natural sleep:** Alcohol sedates the cortex, which people often mistake for sleep. While it causes people to lose consciousness faster, it does not result in naturalistic sleep (*The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker | Andrew Huberman* [01:10:16]). It is often referred to as \"pseudosleep\" in sleep science (*What Alcohol Does to Your Body, Brain & Health | Andrew Huberman* [01:06:50]).\n* **Disruption of essential sleep stages:** Alcohol disrupts slow-wave sleep, deep sleep, and rapid eye movement (REM) sleep, preventing restorative, high-quality sleep (*What Alcohol Does to Your Body, Brain & Health | Andrew Huberman* [01:06:50]).\n* **Sleep fragmentation:** Alcohol activates the autonomic (fight-or-flight) nervous system, causing people to wake up many times throughout the night. Even if many of these awakenings are not consciously remembered the next day, the sleep is littered with \"punctured awakenings,\" making it non-continuous and leaving the person unrefreshed (*The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker | Andrew Huberman* [01:10:16] \u2013 [01:11:14]).\n\n### Disruption of REM Sleep\n* **Blocking and reducing REM sleep:** Alcohol is potent at blocking REM sleep, leading to a significant reduction in total REM sleep (*The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker | Andrew Huberman* [01:11:14], [01:13:57]). \n* **Loss of emotional and cognitive benefits:** Because REM sleep serves as \"overnight therapy\" or \"emotional first aid\" and is critical for learning, memory, and emotional health, blocking it can impair cognitive function and derail emotional stability (*The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker | Andrew Huberman* [01:11:14]).\n* **Impaired hormonal release:** REM sleep is a time when certain hormonal systems recharge. During alcohol-laced sleep, studies showed well over a 50% drop in growth hormone release, which is vital for tissue repair and metabolism (*The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker | Andrew Huberman* [01:13:57]).",
+    "citations": [
+      {
+        "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+        "episode_id": "gbQFSMayJxk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:11:14",
+        "start_seconds": 4274.39,
+        "url": "https://youtu.be/gbQFSMayJxk?t=4274"
+      },
+      {
+        "episode_title": "What Alcohol Does to Your Body, Brain & Health",
+        "episode_id": "DkS1pkKpILY",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:06:50",
+        "start_seconds": 4010.28,
+        "url": "https://youtu.be/DkS1pkKpILY?t=4010"
+      },
+      {
+        "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+        "episode_id": "gbQFSMayJxk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:10:16",
+        "start_seconds": 4216.79,
+        "url": "https://youtu.be/gbQFSMayJxk?t=4216"
+      },
+      {
+        "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+        "episode_id": "gbQFSMayJxk",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:13:57",
+        "start_seconds": 4437.97,
+        "url": "https://youtu.be/gbQFSMayJxk?t=4437"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 4,
+    "top_distance": 0.4188,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4188,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 4,
+        "citations": [
+          {
+            "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+            "episode_id": "gbQFSMayJxk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:11:14",
+            "start_seconds": 4274.39,
+            "url": "https://youtu.be/gbQFSMayJxk?t=4274"
+          },
+          {
+            "episode_title": "What Alcohol Does to Your Body, Brain & Health",
+            "episode_id": "DkS1pkKpILY",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:06:50",
+            "start_seconds": 4010.28,
+            "url": "https://youtu.be/DkS1pkKpILY?t=4010"
+          },
+          {
+            "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+            "episode_id": "gbQFSMayJxk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:10:16",
+            "start_seconds": 4216.79,
+            "url": "https://youtu.be/gbQFSMayJxk?t=4216"
+          },
+          {
+            "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+            "episode_id": "gbQFSMayJxk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:13:57",
+            "start_seconds": 4437.97,
+            "url": "https://youtu.be/gbQFSMayJxk?t=4437"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided transcripts, alcohol consumption disrupts sleep architecture and REM stages in the following ways:\n\n### Disruption of Overall Sleep Architecture\n* **Sedation instead of natural sleep:** Alcohol sedates the cortex, which people often mistake for sleep. While it causes people to lose consciousness faster, it does not result in naturalistic sleep (*The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker | Andrew Huberman* [01:10:16]). It is often referred to as \"pseudosleep\" in sleep science (*What Alcohol Does to Your Body, Brain & Health | Andrew Huberman* [01:06:50]).\n* **Disruption of essential sleep stages:** Alcohol disrupts slow-wave sleep, deep sleep, and rapid eye movement (REM) sleep, preventing restorative, high-quality sleep (*What Alcohol Does to Your Body, Brain & Health | Andrew Huberman* [01:06:50]).\n* **Sleep fragmentation:** Alcohol activates the autonomic (fight-or-flight) nervous system, causing people to wake up many times throughout the night. Even if many of these awakenings are not consciously remembered the next day, the sleep is littered with \"punctured awakenings,\" making it non-continuous and leaving the person unrefreshed (*The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker | Andrew Huberman* [01:10:16] \u2013 [01:11:14]).\n\n### Disruption of REM Sleep\n* **Blocking and reducing REM sleep:** Alcohol is potent at blocking REM sleep, leading to a significant reduction in total REM sleep (*The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker | Andrew Huberman* [01:11:14], [01:13:57]). \n* **Loss of emotional and cognitive benefits:** Because REM sleep serves as \"overnight therapy\" or \"emotional first aid\" and is critical for learning, memory, and emotional health, blocking it can impair cognitive function and derail emotional stability (*The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker | Andrew Huberman* [01:11:14]).\n* **Impaired hormonal release:** REM sleep is a time when certain hormonal systems recharge. During alcohol-laced sleep, studies showed well over a 50% drop in growth hormone release, which is vital for tissue repair and metabolism (*The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker | Andrew Huberman* [01:13:57]).",
+        "citations": [
+          {
+            "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+            "episode_id": "gbQFSMayJxk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:11:14",
+            "start_seconds": 4274.39,
+            "url": "https://youtu.be/gbQFSMayJxk?t=4274"
+          },
+          {
+            "episode_title": "What Alcohol Does to Your Body, Brain & Health",
+            "episode_id": "DkS1pkKpILY",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:06:50",
+            "start_seconds": 4010.28,
+            "url": "https://youtu.be/DkS1pkKpILY?t=4010"
+          },
+          {
+            "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+            "episode_id": "gbQFSMayJxk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:10:16",
+            "start_seconds": 4216.79,
+            "url": "https://youtu.be/gbQFSMayJxk?t=4216"
+          },
+          {
+            "episode_title": "The Science & Practice of Perfecting Your Sleep | Dr. Matt Walker",
+            "episode_id": "gbQFSMayJxk",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:13:57",
+            "start_seconds": 4437.97,
+            "url": "https://youtu.be/gbQFSMayJxk?t=4437"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
+  },
+  "podcast_chunks_gemini-embedding-2::-OBCwiPPfEU,3gtvNYa3Nd8,4AwyVTHEU3s,50BZQRT1dAg,6ZrlsVx85ek,9tRohh0gErM,C0DMdUqF73Q,CD0bRU1e1ZM,DTCmprPCDqc,DkS1pkKpILY,GqPGXG5TlZw,IAnhFUUCq6c,Ibj1k3IZTNU,K0hkhbGYaGQ,K4Ze-Sp6aUE,LG53Vxum0as,QmOF0crdyRU,STAffeSFBVk,UNCwdFxPtE8,Wcs2PFz5q6g,XLr2RKoD-oY,_ltcLEM-5HU,at37Y8rKDlA,cS7cNaBrkxo,doupx8SAs5Y,eIxVfln02Ss,gMRph_BvHB4,gXvuJu1kt48,gbQFSMayJxk,hFL6qRIJZ_Y,lIo9FcrljDk,n28W4AmvMDE,n9IxomBusuw,nDLb8_wgX50,nm1TxQj9IsQ,ntfcfJ28eiU,oNkDA2F7CjM,ouCWNRvPk20,p3JLaF_4Tz8,pq6WHJzOkno,q37ARYnRDGc,q8CHXefn7B4,qJXKhu5UZwk,tLRCS48Ens4,tkH2-_jMCSk,uXs-zPc63kM,ufsIA5NARIo,wTBSGgbIvsY,xjEFo3a1AnI,ycOBZZeVeAc::balanced::what neurochemistry protocols help improve focus and manage adhd": {
+    "answer": "Based on the provided excerpts, the following neurochemistry protocols and compounds are used to manage ADHD and improve focus:\n\n*   **Prescription Medications (Dopamine and Norepinephrine):** \n    *   Classic prescription drugs such as **methylphenidate (Ritalin)**, **Modafinil (or armodafinil)**, and **Adderall** work by increasing dopamine and norepinephrine levels in the brain (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:41:13]`). \n    *   These are taken orally (as pills or capsules), and dosages must be individualized based on age and the severity of the condition; some individuals layer timed-release Ritalin with smaller doses of Adderall (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:41:13]`).\n\n*   **Omega-3 Fatty Acids (EPA):**\n    *   Dietary supplementation with omega-3 fatty acids is considered for increasing focus and reducing adult ADHD (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:04:19]`).\n    *   The protocol involves consuming **1,000 mg (1 gram) or more, up to 2,000 mg daily, of the EPA component** (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:04:19]`).\n    *   This is typically ingested via liquid fish oil (the most cost-efficient), fish oil capsules, algae, or krill (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:04:19]`).\n\n*   **L-Tyrosine (Dopamine Precursor):**\n    *   **L-Tyrosine** is an over-the-counter amino acid that serves as a precursor to dopamine, producing fairly long-lived increases in dopamine to improve focus and address ADHD (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:58:52]`).\n    *   Dosage ranges from **100 mg up to 1,200 mg**, but it can be tricky to dial in because it may cause people to feel too euphoric, jittery, or overly alert to focus well. It should be approached with caution, particularly for those with underlying mood or psychiatric disorders (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:58:52]`).\n\n*   **Targeting Acetylcholine and Serotonin:**\n    *   Stimulating the release of **acetylcholine** from the PPN (back of the brain) and nucleus basalis (front of the brain) helps make an individual more focused (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:58:52]`). \n    *   Non-prescription supplement-type compounds are also emerging to target and increase dopamine, acetylcholine, and serotonin systems (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:41:13]`).",
+    "citations": [
+      {
+        "episode_title": "ADHD & How Anyone Can Improve Their Focus",
+        "episode_id": "hFL6qRIJZ_Y",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:41:13",
+        "start_seconds": 6073.0,
+        "url": "https://youtu.be/hFL6qRIJZ_Y?t=6073"
+      },
+      {
+        "episode_title": "ADHD & How Anyone Can Improve Their Focus",
+        "episode_id": "hFL6qRIJZ_Y",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:04:19",
+        "start_seconds": 3859.76,
+        "url": "https://youtu.be/hFL6qRIJZ_Y?t=3859"
+      },
+      {
+        "episode_title": "ADHD & How Anyone Can Improve Their Focus",
+        "episode_id": "hFL6qRIJZ_Y",
+        "speaker": "Andrew Huberman",
+        "timestamp": "01:58:52",
+        "start_seconds": 7132.45,
+        "url": "https://youtu.be/hFL6qRIJZ_Y?t=7132"
+      }
+    ],
+    "rewrites": 0,
+    "relevant_chunks": 3,
+    "top_distance": 0.4856,
+    "mode": "balanced",
+    "events": [
+      {
+        "node": "retrieve",
+        "rewrites": 0,
+        "top_distance": 0.4856,
+        "is_exact_match": false,
+        "chunks_retrieved": 4,
+        "mode": "balanced"
+      },
+      {
+        "node": "grade_documents",
+        "rewrites": 0,
+        "relevant_chunks": 3,
+        "citations": [
+          {
+            "episode_title": "ADHD & How Anyone Can Improve Their Focus",
+            "episode_id": "hFL6qRIJZ_Y",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:41:13",
+            "start_seconds": 6073.0,
+            "url": "https://youtu.be/hFL6qRIJZ_Y?t=6073"
+          },
+          {
+            "episode_title": "ADHD & How Anyone Can Improve Their Focus",
+            "episode_id": "hFL6qRIJZ_Y",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:04:19",
+            "start_seconds": 3859.76,
+            "url": "https://youtu.be/hFL6qRIJZ_Y?t=3859"
+          },
+          {
+            "episode_title": "ADHD & How Anyone Can Improve Their Focus",
+            "episode_id": "hFL6qRIJZ_Y",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:58:52",
+            "start_seconds": 7132.45,
+            "url": "https://youtu.be/hFL6qRIJZ_Y?t=7132"
+          }
+        ],
+        "mode": "balanced"
+      },
+      {
+        "node": "generate",
+        "rewrites": 0,
+        "generation": "Based on the provided excerpts, the following neurochemistry protocols and compounds are used to manage ADHD and improve focus:\n\n*   **Prescription Medications (Dopamine and Norepinephrine):** \n    *   Classic prescription drugs such as **methylphenidate (Ritalin)**, **Modafinil (or armodafinil)**, and **Adderall** work by increasing dopamine and norepinephrine levels in the brain (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:41:13]`). \n    *   These are taken orally (as pills or capsules), and dosages must be individualized based on age and the severity of the condition; some individuals layer timed-release Ritalin with smaller doses of Adderall (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:41:13]`).\n\n*   **Omega-3 Fatty Acids (EPA):**\n    *   Dietary supplementation with omega-3 fatty acids is considered for increasing focus and reducing adult ADHD (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:04:19]`).\n    *   The protocol involves consuming **1,000 mg (1 gram) or more, up to 2,000 mg daily, of the EPA component** (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:04:19]`).\n    *   This is typically ingested via liquid fish oil (the most cost-efficient), fish oil capsules, algae, or krill (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:04:19]`).\n\n*   **L-Tyrosine (Dopamine Precursor):**\n    *   **L-Tyrosine** is an over-the-counter amino acid that serves as a precursor to dopamine, producing fairly long-lived increases in dopamine to improve focus and address ADHD (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:58:52]`).\n    *   Dosage ranges from **100 mg up to 1,200 mg**, but it can be tricky to dial in because it may cause people to feel too euphoric, jittery, or overly alert to focus well. It should be approached with caution, particularly for those with underlying mood or psychiatric disorders (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:58:52]`).\n\n*   **Targeting Acetylcholine and Serotonin:**\n    *   Stimulating the release of **acetylcholine** from the PPN (back of the brain) and nucleus basalis (front of the brain) helps make an individual more focused (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:58:52]`). \n    *   Non-prescription supplement-type compounds are also emerging to target and increase dopamine, acetylcholine, and serotonin systems (`[ADHD & How Anyone Can Improve Their Focus | Andrew Huberman @ 01:41:13]`).",
+        "citations": [
+          {
+            "episode_title": "ADHD & How Anyone Can Improve Their Focus",
+            "episode_id": "hFL6qRIJZ_Y",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:41:13",
+            "start_seconds": 6073.0,
+            "url": "https://youtu.be/hFL6qRIJZ_Y?t=6073"
+          },
+          {
+            "episode_title": "ADHD & How Anyone Can Improve Their Focus",
+            "episode_id": "hFL6qRIJZ_Y",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:04:19",
+            "start_seconds": 3859.76,
+            "url": "https://youtu.be/hFL6qRIJZ_Y?t=3859"
+          },
+          {
+            "episode_title": "ADHD & How Anyone Can Improve Their Focus",
+            "episode_id": "hFL6qRIJZ_Y",
+            "speaker": "Andrew Huberman",
+            "timestamp": "01:58:52",
+            "start_seconds": 7132.45,
+            "url": "https://youtu.be/hFL6qRIJZ_Y?t=7132"
+          }
+        ],
+        "mode": "balanced"
+      }
+    ]
   }
 }

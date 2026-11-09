@@ -76,7 +76,11 @@ PodSeek/
 │   ├── fetch_episode.py       # CLI tool to download and cache episode transcript
 │   ├── index_and_search.py    # Ingests cached episode into ChromaDB & searches
 │   ├── ask_agent.py           # Interactive CLI runner for Corrective RAG agent
-│   └── evaluate.py            # Offline or live eval of evals/questions.json
+│   ├── evaluate.py            # Offline or live eval of evals/questions.json
+│   └── ingest_top_episodes.py # Batch ingestion pipeline for top 50 Huberman episodes
+├── .agents/
+│   └── skills/
+│       └── ui-ux-consultant/  # Persistent headless UI/UX testing consultant skill & scripts
 ├── evals/
 │   └── questions.json         # Fixed questions for episode QmOF0crdyRU
 ├── ui/                        # Gradio 3-Column Bento Studio UI (HTTP/SSE by default)
@@ -321,3 +325,12 @@ An initial pass on `2026-11-02` created the foundational files for the four requ
 12. **Capsule Input Layout & Production Hardening (Shipped):**
    - Polished `.ap-ingest-capsule` padding (`0 88px 0 14px`) and compact placeholder (`"Paste YouTube link..."`) to guarantee zero truncation on narrow sidebar widths.
    - Verified full test suite (40/40 tests passing), zero Ruff lint errors, and zero Pyright type check errors.
+13. **In-Capsule Tap-to-Cycle Mode Slider & Always-Visible Question Carousel (Shipped):**
+   - Replaced the bulky 3-button mode row with a sleek tap-to-cycle button (`[ ⚖️ Balanced ]`, 32px height, no chevron) embedded directly inside the left edge of `.ap-distill-capsule` with generous spacing before the animated prompt (`120px` desktop, `112px` mobile). Repeatedly tapping smoothly cycles Balanced -> Rigorous -> Turbo -> Balanced with instant icon micro-animation and LangGraph mode synchronization.
+   - Collapsed the vertically stacked sample questions into an always-visible single horizontal sliding carousel (`.ap-presets-carousel`) with touch momentum scrolling and edge-fade gradient masks directly above the input box.
+   - Converted preset pills to display concise, punchy topic chips (e.g., `☀️ Morning sunlight protocol`, `🧘 NSDR & neuroplasticity`, `🧊 Cold exposure dopamine`) while preserving the full research query in `gr.State` dispatched on click.
+   - Removed the `"Session Chat · Ephemeral session history"` header bar and `Clear` button to maximize vertical chat viewport height.
+14. **Viewport-Pinned Ask Capsule, Floating Scroll Nav & Page-Load Hardening (Shipped):**
+   - Pinned the ask capsule, preset carousel, and floating scroll-navigation buttons (`#ap-chat-scroll-nav`) to the bottom of the browser viewport across desktop and mobile without hardcoded pixel heights using `:root` CSS custom properties (`--ap-chat-h`, `--ap-studio-h`, `--ap-mobile-nav-bottom`) and high-specificity `position: fixed !important` mobile rules.
+   - Neutralized Gradio `.pending` / `.generating` opacity dimming on initial page load and streaming updates, and consolidated initial episode loading to a single backend call.
+   - Added persistent workspace skill `.agents/skills/ui-ux-consultant/` (`SKILL.md`, `references/design_rubric.md`, `scripts/headless_ui_audit.py`) for autonomous multi-viewport headless UI/UX and DOM geometry auditing.
