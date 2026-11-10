@@ -26,6 +26,7 @@ from ui.client import PodSeekClient, make_client  # noqa: E402
 
 importlib.reload(_ui_components)
 from ui.components import (  # noqa: E402
+    _is_submittable_question,
     format_citations,
     format_event,
     load_theme_css,
@@ -575,10 +576,28 @@ _INIT_UI_JS_TEMPLATE = """() => {
         }
 
         const ta = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
+        const distillBtn = document.getElementById('ap-distill-btn');
+        const syncDistillBtnState = () => {
+            const btn = document.getElementById('ap-distill-btn');
+            const inputEl = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
+            const canSubmit = Boolean(inputEl && inputEl.value && inputEl.value.trim().length >= 3);
+            if (btn) {
+                btn.disabled = !canSubmit;
+                btn.setAttribute('aria-disabled', canSubmit ? 'false' : 'true');
+            }
+            if (canSubmit) {
+                document.getElementById('ap-composer-notice')?.remove();
+            }
+        };
+        if (distillBtn && !ta) {
+            distillBtn.disabled = true;
+            distillBtn.setAttribute('aria-disabled', 'true');
+        }
         if (ta) {
             ta.placeholder = '';
             ta.removeAttribute('placeholder');
             ta.setAttribute('data-placeholder-disabled', 'true');
+            syncDistillBtnState();
         }
         const capsule = document.querySelector('.ap-distill-capsule');
         if (capsule) {
@@ -620,6 +639,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
         if (ta && !ta.dataset.psInputBound) {
             ta.dataset.psInputBound = '1';
             ta.addEventListener('input', () => {
+                syncDistillBtnState();
                 const wrap = document.querySelector('.ap-typewriter-wrap');
                 if (wrap) {
                     if (ta.value && ta.value.trim().length > 0) {
@@ -637,7 +657,9 @@ _INIT_UI_JS_TEMPLATE = """() => {
             ta.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    document.getElementById('ap-distill-btn')?.click();
+                    if (ta.value && ta.value.trim().length >= 3) {
+                        document.getElementById('ap-distill-btn')?.click();
+                    }
                 }
             });
             ta.addEventListener('focus', () => {
@@ -1121,12 +1143,13 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
             if "turbo" in (mode_label or "").lower()
             else ("rigorous" if "rigorous" in (mode_label or "").lower() else "balanced")
         )
-        if len(cleaned) < 3:
+        if not _is_submittable_question(cleaned):
+            short_msg = "Enter a question of at least 3 characters."
             yield (
-                render_chat_session_html(current_history),
+                render_chat_session_html(current_history, episode_count=init_ep_count, notice=short_msg),
                 current_history,
                 render_workflow_graph_html(mode=mode_val),
-                render_sse_log_html([("Enter a question of at least 3 characters.", "var(--retry-stroke)")]),
+                render_sse_log_html([(short_msg, "var(--retry-stroke)")]),
                 question,
                 gr.update(visible=True),
             )

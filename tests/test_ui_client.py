@@ -3,6 +3,7 @@
 from app.ingestion.youtube import is_huberman_channel
 from ui.client import InProcessClient, RemoteClient, make_client, parse_sse_chunk
 from ui.components import (
+    _is_submittable_question,
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
@@ -11,6 +12,19 @@ from ui.components import (
     render_mode_slider_html,
     render_workflow_graph_html,
 )
+
+
+def test_is_submittable_question():
+    assert _is_submittable_question("") is False
+    assert _is_submittable_question("   ") is False
+    assert _is_submittable_question("ab") is False
+    assert _is_submittable_question(" ab ") is False
+    assert _is_submittable_question("abc") is True
+    assert _is_submittable_question("  sleep  ") is True
+    assert _is_submittable_question(None) is False
+    notice_chat = render_chat_session_html([], episode_count=23, notice="Enter a question of at least 3 characters.")
+    assert "ap-composer-notice" in notice_chat
+    assert "Enter a question of at least 3 characters." in notice_chat
 
 
 def test_parse_sse_chunk_reads_data_json():

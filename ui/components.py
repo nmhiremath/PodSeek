@@ -20,6 +20,13 @@ _YT_BADGE_SVG = (
 )
 
 
+def _is_submittable_question(text: object) -> bool:
+    """Return True when the stripped question text has at least 3 characters."""
+    if not isinstance(text, str):
+        text = str(getattr(text, "value", text or ""))
+    return len(text.strip()) >= 3
+
+
 def load_theme_css(stylesheet: str = "theme.css") -> str:
     """Load a pluggable CSS stylesheet from ui/styles/."""
     css_path = STYLES_DIR / stylesheet
@@ -706,8 +713,13 @@ def render_spotlight_workflow_html(
     )
 
 
-def render_chat_session_html(history: list[dict], episode_count: int = 23) -> str:
+def render_chat_session_html(history: list[dict], episode_count: int = 23, notice: str = "") -> str:
     """Render the ephemeral session chat thread with rendered Markdown, inline pills, and focus-locked spotlight workflow."""
+    notice_html = (
+        f'<div id="ap-composer-notice" class="ap-composer-notice" role="status" aria-live="polite">{html.escape(notice)}</div>'
+        if notice
+        else ""
+    )
     if not history:
         count_display = str(episode_count if episode_count > 0 else 23)
         onclick_js = "if (window.togglePodSeekDrawer) { window.togglePodSeekDrawer(true); } else { const col = document.querySelector('.ap-col-left'); if (col) { col.classList.remove('is-collapsed'); col.classList.add('mobile-drawer-open'); document.getElementById('ap-mobile-drawer-backdrop')?.classList.add('is-open'); document.body.classList.add('ap-drawer-open'); } }"
@@ -720,7 +732,7 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23) -> st
             "</div>"
             '<div class="ap-muted" style="font-size:14px;line-height:1.55;font-weight:400;">'
             "Pick a research-backed topic below or ask any question to distill grounded citations with timestamp deep links."
-            "</div></div></div>"
+            f"</div></div></div>{notice_html}"
             "</div>"
         )
     turns: list[str] = []
@@ -761,7 +773,7 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23) -> st
         '<button type="button" id="ap-scroll-bottom-btn" class="ap-chat-nav-btn" title="Scroll to bottom" aria-label="Scroll to bottom" onclick="const c = document.getElementById(\'ap-chat-scroll\'); if (c) c.scrollTo({ top: c.scrollHeight, behavior: \'smooth\' });">'
         '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
         "</button>"
-        "</div>"
+        f"</div>{notice_html}"
         "</div>"
     )
 

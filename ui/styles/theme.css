@@ -841,6 +841,43 @@ button#ap-distill-btn:hover {
   transform: translateY(-50%) scale(1.02) !important;
 }
 
+button#ap-distill-btn:disabled,
+button#ap-distill-btn[disabled],
+button#ap-distill-btn[aria-disabled="true"] {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+  filter: grayscale(0.25) !important;
+  transform: translateY(-50%) !important;
+}
+
+.ap-composer-notice {
+  margin: 4px auto 2px !important;
+  padding: 5px 12px !important;
+  border-radius: 9999px !important;
+  background-color: var(--bg-subtle) !important;
+  border: 1px solid var(--retry-stroke) !important;
+  color: var(--retry-stroke) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+  width: fit-content !important;
+  max-width: calc(100% - 24px) !important;
+  z-index: 62 !important;
+}
+
+@media (max-width: 768px) {
+  .ap-composer-notice {
+    position: fixed !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: calc(104px + env(safe-area-inset-bottom, 0px)) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  }
+}
+
 button#ap-ingest-btn {
   position: absolute !important;
   right: 6px !important;
