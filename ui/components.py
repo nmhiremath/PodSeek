@@ -495,10 +495,10 @@ def render_header_brand_html() -> str:
 def render_header_controls_html() -> str:
     """Render the right-aligned header controls: Mobile Library Drawer button + Light/Dark Theme Slider."""
     mobile_lib_btn = (
-        '<button id="ap-mobile-library-btn" type="button" title="Open Knowledge Base" '
+        '<button id="ap-mobile-library-btn" type="button" title="Open Knowledge Base" aria-label="Open Knowledge Base" '
         "onclick=\"if (window.togglePodSeekDrawer) { window.togglePodSeekDrawer(false); } else { const col = document.querySelector('.ap-col-left'); const bd = document.getElementById('ap-mobile-drawer-backdrop'); if (col) { const isOpen = col.classList.toggle('mobile-drawer-open'); if (bd) bd.classList.toggle('is-open', isOpen); document.body.classList.toggle('ap-drawer-open', isOpen); } }\">"
         '<span style="font-size:12px;line-height:1;display:inline-flex;align-items:center;">📚</span>'
-        '<span style="line-height:1;">Library</span>'
+        '<span class="ap-lib-btn-label" style="line-height:1;">Library</span>'
         '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:middle;"><path d="M19 9l-7 7-7-7"/></svg>'
         "</button>"
     )
