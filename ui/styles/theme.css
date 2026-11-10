@@ -1081,6 +1081,8 @@ div#ap-ingest-status-wrap:not(:has(.ap-status-card)) {
   font-size: 14.5px !important;
   letter-spacing: -0.005em !important;
   line-height: 1.65 !important;
+  max-width: 100% !important;
+  overflow-wrap: break-word !important;
 }
 
 .ap-md p {
@@ -1125,13 +1127,14 @@ a.gai-pill {
   align-items: center !important;
   gap: 5px !important;
   height: 22px !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
   padding: 0 9px 0 4px !important;
   border-radius: 9999px !important;
   background-color: var(--gai-pill-bg) !important;
   color: var(--gai-pill-text) !important;
   font-family: inherit !important;
-  font-size: 12px !important;
-  font-weight: 500 !important;
   font-size: 11.5px !important;
   font-weight: 500 !important;
   line-height: 1 !important;
@@ -1140,6 +1143,13 @@ a.gai-pill {
   margin: 2px 3px !important;
   white-space: nowrap !important;
   transition: background-color 0.14s ease, color 0.14s ease !important;
+}
+
+a.gai-pill > span:not(.gai-yt-circle) {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 a.gai-pill:hover {

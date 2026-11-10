@@ -223,4 +223,5 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert "--ap-mobile-nav-bottom" in css
     assert "#ap-studio-view .pending" in css
     assert ".ap-lib-btn-label" in css
+    assert "a.gai-pill > span:not(.gai-yt-circle)" in css
     assert "ap-lib-btn-label" in render_header_controls_html()
