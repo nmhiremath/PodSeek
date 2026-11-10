@@ -1,4 +1,4 @@
-"""Score a fixed question set against AskPodcast.
+"""Score a fixed question set against PodSeek.
 
 Offline (default): score built-in fixture answers. No API key and no index.
 
@@ -110,13 +110,13 @@ def _print_legend(passed_count: int, total_count: int) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     load_dotenv()
-    parser = argparse.ArgumentParser(description="Evaluate AskPodcast on a fixed question set.")
+    parser = argparse.ArgumentParser(description="Evaluate PodSeek on a fixed question set.")
     parser.add_argument("--live", action="store_true", help="Call POST /ask instead of offline fixtures.")
     parser.add_argument("--llm-judge", action="store_true", help="Add a 1-5 LLM relevance score. Requires --live.")
     parser.add_argument(
         "--api-url",
-        default=os.getenv("ASKPODCAST_API_URL", "http://localhost:8000"),
-        help="Base URL of a running AskPodcast API.",
+        default=os.getenv("PODSEEK_API_URL") or os.getenv("ASKPODCAST_API_URL", "http://localhost:8000"),
+        help="Base URL of a running PodSeek API.",
     )
     args = parser.parse_args(argv)
 

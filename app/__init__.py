@@ -1,1 +1,1 @@
-"""AskPodcast: RAG agent over podcast transcripts."""
+"""PodSeek: RAG agent over podcast transcripts."""

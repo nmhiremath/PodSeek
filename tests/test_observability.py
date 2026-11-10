@@ -28,7 +28,7 @@ def test_tracing_turns_on_when_flag_and_key_are_set(monkeypatch):
 
     assert configure_tracing() is True
     assert os.environ["LANGCHAIN_TRACING_V2"] == "yes"
-    assert os.environ["LANGCHAIN_PROJECT"] == "askpodcast"
+    assert os.environ["LANGCHAIN_PROJECT"] == "podseek"
 
 
 def test_existing_project_name_is_kept(monkeypatch):
@@ -44,8 +44,8 @@ def test_trace_config_names_ingest_separately():
     ask = trace_config("/ask")
     ingest = trace_config("/ingest")
 
-    assert ask.get("run_name") == "askpodcast_ask"
-    assert ingest.get("run_name") == "askpodcast_ingest"
-    assert ask.get("tags") == ["askpodcast", "crag"]
+    assert ask.get("run_name") == "podseek_ask"
+    assert ingest.get("run_name") == "podseek_ingest"
+    assert ask.get("tags") == ["podseek", "crag"]
     assert ask.get("metadata") == {"path": "/ask"}
     assert (ingest.get("metadata") or {}).get("path") == "/ingest"

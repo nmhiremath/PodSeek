@@ -30,12 +30,13 @@ def test_parse_sse_chunk_ignores_noise():
 def test_make_client_selects_remote_or_inprocess(monkeypatch):
     monkeypatch.delenv("PODSEEK_UI_MODE", raising=False)
     monkeypatch.delenv("ASKPODCAST_UI_MODE", raising=False)
-    monkeypatch.setenv("ASKPODCAST_API_URL", "http://example.test:9000/")
+    monkeypatch.delenv("ASKPODCAST_API_URL", raising=False)
+    monkeypatch.setenv("PODSEEK_API_URL", "http://example.test:9000/")
     remote = make_client()
     assert isinstance(remote, RemoteClient)
     assert remote.base_url == "http://example.test:9000"
 
-    monkeypatch.setenv("ASKPODCAST_UI_MODE", "inprocess")
+    monkeypatch.setenv("PODSEEK_UI_MODE", "inprocess")
     inproc = make_client()
     assert isinstance(inproc, InProcessClient)
     assert inproc.health() == {"status": "ok", "app": "PodSeek"}

@@ -1,6 +1,6 @@
 """Gradio UI controller and layout for PodSeek.
 
-The widgets call AskPodcastClient. View rendering lives in `ui/components.py`
+The widgets call PodSeekClient. View rendering lives in `ui/components.py`
 and stylesheets live in `ui/styles/theme.css`.
 """
 
@@ -22,7 +22,7 @@ if _REPO_ROOT not in sys.path:
 import gradio as gr  # noqa: E402 # pyright: ignore[reportMissingImports]
 
 import ui.components as _ui_components  # noqa: E402
-from ui.client import AskPodcastClient, make_client  # noqa: E402
+from ui.client import PodSeekClient, make_client  # noqa: E402
 
 importlib.reload(_ui_components)
 from ui.components import (  # noqa: E402
@@ -942,7 +942,7 @@ def _demo_fallback_enabled() -> bool:
     return val.strip().lower() in {"1", "true", "yes"}
 
 
-def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.css") -> Any:
+def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css") -> Any:
     if client is None:
         client = make_client()
 

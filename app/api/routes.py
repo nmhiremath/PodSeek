@@ -1,4 +1,4 @@
-"""FastAPI route definitions for AskPodcast."""
+"""FastAPI route definitions for PodSeek."""
 
 import json
 import re

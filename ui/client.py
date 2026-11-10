@@ -48,7 +48,7 @@ def parse_sse_chunk(line: str) -> dict | None:
     return value
 
 
-class AskPodcastClient(Protocol):
+class PodSeekClient(Protocol):
     def health(self) -> dict: ...
 
     def episodes(self) -> list[dict]: ...
@@ -60,7 +60,7 @@ class AskPodcastClient(Protocol):
     def ask_stream(self, question: str, mode: str = "balanced") -> Iterator[dict]: ...
 
 
-PodSeekClient = AskPodcastClient
+AskPodcastClient = PodSeekClient
 
 
 class RemoteClient:
