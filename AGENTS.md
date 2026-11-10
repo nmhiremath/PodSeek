@@ -5,7 +5,7 @@ This document is the single source of truth for AI assistants and engineers work
 ---
 
 ## 0. Streamlined Pair Programming & Tutoring Protocol
-1. **One File at a Time (Backend Only):** For backend code changes (`app/`, `scripts/`, etc.), never create or edit more than ONE file in a single turn. For UI changes (`ui/`, `huggingface/`, styles, components, templates), this restriction does not apply—coordinate and apply all necessary UI changes across multiple files in a single turn without waiting.
+1. **One File at a Time (Backend Only):** For backend code changes (`app/`, `scripts/`, etc.), never create or edit more than ONE file in a single turn. For UI changes (`ui/`, styles, components, templates), this restriction does not apply—coordinate and apply all necessary UI changes across multiple files in a single turn without waiting.
 2. **Direct Action with Transparent Rationale:** Apply file edits directly in the turn while clearly explaining "the why" and the architectural rationale. Do not interrupt with unnecessary intermediate confirmation prompts ("Ready for me to edit?").
 3. **Question Isolation:** If the user asks a question, answer the question ONLY. Do not write, modify, or run code in the same turn.
 4. **No Speculative Tool Execution:** Do not run test runners, build tools, or terminal commands unless the user explicitly requested them in their prompt.
@@ -21,7 +21,7 @@ This document is the single source of truth for AI assistants and engineers work
   - Orchestration (`Distill →`): Stateful LangGraph implementing Self-RAG / Corrective RAG (Retrieve -> Grade relevance -> Decision `≥1 relevant?` -> Decision `Retries < 2?` -> Fallback query rewrite OR Circuit-Breaker Abort / Grounded synthesis with inline timestamp citations).
   - API: FastAPI endpoint serving streaming/JSON answers.
   - UI: 3-column Bento Gradio Studio (`ui/app.py`, `ui/components.py`, `ui/styles/theme.css`) + `🤓 Stats for Nerds` observability view.
-  - Deployment: Docker container, pinned reproducible environment, Hugging Face Space (`huggingface/app.py`).
+  - Deployment: Render.com live cloud service (`https://podseek.onrender.com/`, running `python -m ui.app` in `inprocess` mode), Docker container, pinned reproducible environment.
 
 ---
 
@@ -90,10 +90,6 @@ PodSeek/
 │   ├── components.py          # Pure HTML renderers (inline pills, CRAG/Ingest flowcharts)
 │   └── styles/
 │       └── theme.css          # Light/Dark tokens, unified capsules, oval sliders, animations
-├── huggingface/               # Space entrypoint (app file: huggingface/app.py)
-│   ├── app.py
-│   ├── requirements.txt
-│   └── README.md
 └── tests/
     ├── test_schemas.py        # Contract validation tests
     ├── test_youtube_adapter.py# Offline adapter tests
