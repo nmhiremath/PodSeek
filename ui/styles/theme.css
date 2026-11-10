@@ -25,6 +25,7 @@ select,
 p,
 div,
 span,
+h1,
 label {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
   -webkit-font-smoothing: antialiased !important;
@@ -312,13 +313,17 @@ body .gradio-container {
   justify-content: center !important;
 }
 
-.ap-brand-title {
+.ap-brand-title,
+h1.ap-brand-title,
+.prose h1.ap-brand-title {
   font-size: 15px !important;
   font-weight: 700 !important;
   letter-spacing: -0.3px !important;
   color: var(--text-main) !important;
   line-height: 1.15 !important;
   white-space: nowrap !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .ap-header-subtitle {
@@ -710,6 +715,19 @@ div.ap-distill-capsule {
   margin: 0 !important;
   box-shadow: none !important;
   box-sizing: border-box !important;
+}
+
+.ap-capsule-input [data-testid="block-info"],
+.ap-capsule-input .sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 /* Distill text input: Clean, large, modern typography (15px) */

@@ -541,8 +541,8 @@ _INIT_UI_JS_TEMPLATE = """() => {
             });
         }
         let vp = document.querySelector('meta[name="viewport"]');
-        if (vp && !vp.content.includes('interactive-widget')) {
-            vp.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover";
+        if (vp && (!vp.content.includes('interactive-widget') || vp.content.includes('maximum-scale'))) {
+            vp.content = "width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover";
         }
 
         if (window.visualViewport && !window.__podseekViewportBound) {
@@ -597,6 +597,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
             ta.placeholder = '';
             ta.removeAttribute('placeholder');
             ta.setAttribute('data-placeholder-disabled', 'true');
+            ta.setAttribute('aria-label', 'Ask a question about Huberman Lab episodes');
             syncDistillBtnState();
         }
         const capsule = document.querySelector('.ap-distill-capsule');
@@ -1447,7 +1448,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
         )
 
     viewport_meta = (
-        '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover">'
+        '<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover">'
         '<link rel="preconnect" href="https://fonts.googleapis.com">'
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
@@ -1563,7 +1564,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                         render_mode_slider_html("balanced"), elem_classes=["ap-mode-capsule-slot"]
                     )
                     question_input = gr.Textbox(
-                        label="",
+                        label="Ask a question about Huberman Lab episodes",
                         show_label=False,
                         container=False,
                         placeholder="",

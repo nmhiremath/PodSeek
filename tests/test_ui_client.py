@@ -7,6 +7,7 @@ from ui.components import (
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
+    render_header_brand_html,
     render_header_controls_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
@@ -225,3 +226,4 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert ".ap-lib-btn-label" in css
     assert "a.gai-pill > span:not(.gai-yt-circle)" in css
     assert "ap-lib-btn-label" in render_header_controls_html()
+    assert '<h1 class="ap-brand-title">PodSeek</h1>' in render_header_brand_html()

@@ -485,7 +485,7 @@ def render_header_brand_html() -> str:
         f"{toggle_btn}"
         '<div class="ap-brand-badge">PS</div>'
         '<div class="ap-brand-meta">'
-        '<div class="ap-brand-title">PodSeek</div>'
+        '<h1 class="ap-brand-title">PodSeek</h1>'
         '<div class="ap-muted ap-header-subtitle">Huberman Lab Knowledge Engine</div>'
         "</div>"
         "</div>"
