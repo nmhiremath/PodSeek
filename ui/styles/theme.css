@@ -930,13 +930,13 @@ div.ap-presets-carousel,
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
   -webkit-overflow-scrolling: touch !important;
-  padding: 4px 6px 4px !important;
+  padding: 4px 24px 4px 6px !important;
   margin: 6px auto 6px !important;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
-  mask-image: linear-gradient(to right, transparent 0px, black 16px, black calc(100% - 16px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0px, black 16px, black calc(100% - 16px), transparent 100%);
+  mask-image: linear-gradient(to right, black 0px, black calc(100% - 28px), transparent 100%) !important;
+  -webkit-mask-image: linear-gradient(to right, black 0px, black calc(100% - 28px), transparent 100%) !important;
 }
 
 .ap-presets-carousel::-webkit-scrollbar,
@@ -1685,7 +1685,7 @@ button#ap-mode-slider.is-rigorous .cycle-label {
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior-y: contain !important;
-    padding-bottom: calc(116px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)) !important;
     box-sizing: border-box !important;
   }
 
@@ -1724,8 +1724,10 @@ button#ap-mode-slider.is-rigorous .cycle-label {
     margin: 0 !important;
     width: auto !important;
     max-width: calc(100vw - 24px) !important;
-    padding: 4px 4px !important;
+    padding: 4px 24px 4px 4px !important;
     box-sizing: border-box !important;
+    mask-image: linear-gradient(to right, black 0px, black calc(100% - 28px), transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(to right, black 0px, black calc(100% - 28px), transparent 100%) !important;
   }
 
   button.ap-preset-pill {
@@ -1823,7 +1825,7 @@ button#ap-mode-slider.is-rigorous .cycle-label {
   }
 
   #ap-chat-scroll {
-    padding-bottom: calc(116px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .ap-mode-bar {
