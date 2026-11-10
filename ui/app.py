@@ -32,6 +32,7 @@ from ui.components import (  # noqa: E402
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
+    render_head_meta_html,
     render_header_brand_html,
     render_header_controls_html,
     render_ingest_status_html,
@@ -550,6 +551,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
         if (vp && (!vp.content.includes('interactive-widget') || vp.content.includes('maximum-scale'))) {
             vp.content = "width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover";
         }
+        document.querySelectorAll('meta[name="twitter:creator"], meta[property="og:url"][content*="gradio"], meta[name="twitter:site"][content*="gradio"]').forEach((m) => m.remove());
 
         if (window.visualViewport && !window.__podseekViewportBound) {
             window.__podseekViewportBound = true;
@@ -1453,12 +1455,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
             gr.update(visible=True),
         )
 
-    viewport_meta = (
-        '<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover">'
-        '<link rel="preconnect" href="https://fonts.googleapis.com">'
-        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-        '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
-    )
+    viewport_meta = render_head_meta_html()
     with gr.Blocks(
         title="PodSeek",
         fill_width=True,

@@ -7,6 +7,7 @@ from ui.components import (
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
+    render_head_meta_html,
     render_header_brand_html,
     render_header_controls_html,
     render_ingest_status_html,
@@ -238,3 +239,8 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert "a.gai-pill > span:not(.gai-yt-circle)" in css
     assert "ap-lib-btn-label" in render_header_controls_html()
     assert '<h1 class="ap-brand-title">PodSeek</h1>' in render_header_brand_html()
+    head_meta = render_head_meta_html()
+    assert "maximum-scale" not in head_meta
+    assert 'content="https://podseek.onrender.com/"' in head_meta
+    assert 'content="Corrective RAG over Huberman Lab transcripts with timestamp citations."' in head_meta
+    assert "gradio" not in head_meta.lower()

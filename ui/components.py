@@ -35,6 +35,26 @@ def load_theme_css(stylesheet: str = "theme.css") -> str:
     return ""
 
 
+def render_head_meta_html() -> str:
+    """Return HTML head tags for viewport, SEO description, Open Graph, Twitter cards, and fonts."""
+    description = "Corrective RAG over Huberman Lab transcripts with timestamp citations."
+    return (
+        '<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover">'
+        f'<meta name="description" content="{description}">'
+        '<meta property="og:title" content="PodSeek">'
+        '<meta property="og:type" content="website">'
+        '<meta property="og:url" content="https://podseek.onrender.com/">'
+        f'<meta property="og:description" content="{description}">'
+        '<meta name="twitter:card" content="summary">'
+        '<meta name="twitter:title" content="PodSeek">'
+        '<meta name="twitter:url" content="https://podseek.onrender.com/">'
+        f'<meta name="twitter:description" content="{description}">'
+        '<link rel="preconnect" href="https://fonts.googleapis.com">'
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+        '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
+    )
+
+
 def format_citations(citations: list[dict]) -> str:
     """Format citations as Markdown links."""
     if not citations:
