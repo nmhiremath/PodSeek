@@ -8,7 +8,7 @@
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-1.5+-FF6F61?logo=google-cloud&logoColor=white)](https://www.trychroma.com/)
 [![Render](https://img.shields.io/badge/Live_Demo-podseek.onrender.com-2563EB?logo=render&logoColor=white)](https://podseek.onrender.com/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
