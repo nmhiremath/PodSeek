@@ -167,6 +167,17 @@ def test_theme_css_and_components_render_without_gradio():
     assert "most viewed episodes." in empty_chat
     assert "ap-kb-count-link" in empty_chat
 
+    refusal_chat = render_chat_session_html(
+        [
+            {
+                "question": "What are the optimal sauna heat protocols for growth hormone release?",
+                "answer": "I could not find any relevant information in the podcast transcripts to answer your question.",
+                "citations": [],
+            }
+        ]
+    )
+    assert "Answers come only from indexed episodes." in refusal_chat
+
 
 def test_is_huberman_channel_verifier():
     assert is_huberman_channel("Andrew Huberman") is True

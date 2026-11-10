@@ -758,6 +758,15 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23, notic
             )
         else:
             rendered_answer = render_markdown_with_pills(raw_answer, cits)
+            if (
+                raw_answer.strip()
+                == "I could not find any relevant information in the podcast transcripts to answer your question."
+            ):
+                rendered_answer += (
+                    '<div class="ap-muted ap-refusal-note" style="font-size:12.5px;margin-top:6px;">'
+                    "Answers come only from indexed episodes."
+                    "</div>"
+                )
 
         answer_content = f"{spotlight_block}{rendered_answer}" if spotlight_block else rendered_answer
         turn_cls = "ap-chat-turn ap-chat-turn-last" if is_last else "ap-chat-turn"

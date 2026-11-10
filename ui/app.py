@@ -79,7 +79,7 @@ SAMPLE_PRESETS: list[dict[str, str]] = [
         "question": "What is the mind-muscle connection and how does it drive hypertrophy?",
     },
     {
-        "topic": "🔥 Sauna & growth hormone",
+        "topic": "🚫 Off-topic: see a refusal",
         "question": "What are the optimal sauna heat protocols for growth hormone release?",
     },
     {
