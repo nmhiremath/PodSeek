@@ -26,6 +26,7 @@ from ui.client import PodSeekClient, make_client  # noqa: E402
 
 importlib.reload(_ui_components)
 from ui.components import (  # noqa: E402
+    PS_FAVICON_DATA_URI,
     _is_submittable_question,
     format_citations,
     format_event,
@@ -552,6 +553,12 @@ _INIT_UI_JS_TEMPLATE = """() => {
             vp.content = "width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover";
         }
         document.querySelectorAll('meta[name="twitter:creator"], meta[property="og:url"][content*="gradio"], meta[name="twitter:site"][content*="gradio"]').forEach((m) => m.remove());
+        document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]').forEach((lnk) => {
+            if (!lnk.href || !lnk.href.startsWith('data:image/svg+xml')) {
+                lnk.type = 'image/svg+xml';
+                lnk.href = __PS_FAVICON_URI__;
+            }
+        });
 
         if (window.visualViewport && !window.__podseekViewportBound) {
             window.__podseekViewportBound = true;
@@ -1001,7 +1008,9 @@ _INIT_UI_JS_TEMPLATE = """() => {
     obs.observe(document.body, { childList: true, subtree: true });
 }"""
 
-_INIT_UI_JS = _INIT_UI_JS_TEMPLATE.replace("__TYPEWRITER_PHRASES__", json.dumps(QUIRKY_PLACEHOLDERS))
+_INIT_UI_JS = _INIT_UI_JS_TEMPLATE.replace("__TYPEWRITER_PHRASES__", json.dumps(QUIRKY_PLACEHOLDERS)).replace(
+    "__PS_FAVICON_URI__", json.dumps(PS_FAVICON_DATA_URI)
+)
 
 __all__ = ["build_demo", "format_citations", "format_event"]
 
@@ -1713,8 +1722,9 @@ if __name__ == "__main__":
     print("=" * 64)
 
     # Launch bound to 0.0.0.0 for LAN visibility, with share link fallback
+    favicon_file = Path(__file__).resolve().parent / "styles" / "favicon.svg"
     app = build_demo()
     try:
-        app.launch(server_name="0.0.0.0", server_port=port, share=True, show_api=False)
+        app.launch(server_name="0.0.0.0", server_port=port, share=True, show_api=False, favicon_path=favicon_file)
     except Exception:
-        app.launch(server_name="0.0.0.0", server_port=port, share=False, show_api=False)
+        app.launch(server_name="0.0.0.0", server_port=port, share=False, show_api=False, favicon_path=favicon_file)

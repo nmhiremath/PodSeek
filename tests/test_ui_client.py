@@ -241,6 +241,8 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert '<h1 class="ap-brand-title">PodSeek</h1>' in render_header_brand_html()
     head_meta = render_head_meta_html()
     assert "maximum-scale" not in head_meta
+    assert 'rel="icon" type="image/svg+xml"' in head_meta
+    assert "%3EPS%3C/text%3E" in head_meta
     assert 'content="https://podseek.onrender.com/"' in head_meta
     assert 'content="Corrective RAG over Huberman Lab transcripts with timestamp citations."' in head_meta
     assert "gradio" not in head_meta.lower()

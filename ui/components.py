@@ -35,11 +35,26 @@ def load_theme_css(stylesheet: str = "theme.css") -> str:
     return ""
 
 
+PS_FAVICON_DATA_URI = (
+    "data:image/svg+xml,"
+    "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
+    "%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E"
+    "%3Cstop offset='0%25' stop-color='%233B82F6'/%3E"
+    "%3Cstop offset='100%25' stop-color='%231D4ED8'/%3E"
+    "%3C/linearGradient%3E%3C/defs%3E"
+    "%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E"
+    "%3Ctext x='16' y='21.5' text-anchor='middle' fill='%23FFFFFF' "
+    "font-family='ui-monospace,SFMono-Regular,Menlo,monospace' font-weight='800' "
+    "font-size='14' letter-spacing='-0.4'%3EPS%3C/text%3E%3C/svg%3E"
+)
+
+
 def render_head_meta_html() -> str:
-    """Return HTML head tags for viewport, SEO description, Open Graph, Twitter cards, and fonts."""
+    """Return HTML head tags for viewport, favicon, SEO description, Open Graph, Twitter cards, and fonts."""
     description = "Corrective RAG over Huberman Lab transcripts with timestamp citations."
     return (
         '<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover">'
+        f'<link rel="icon" type="image/svg+xml" href="{PS_FAVICON_DATA_URI}">'
         f'<meta name="description" content="{description}">'
         '<meta property="og:title" content="PodSeek">'
         '<meta property="og:type" content="website">'
