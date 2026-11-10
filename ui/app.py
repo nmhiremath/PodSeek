@@ -1391,7 +1391,13 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
     )
-    with gr.Blocks(title="PodSeek", fill_width=True, css=load_theme_css(stylesheet), head=viewport_meta) as demo:
+    with gr.Blocks(
+        title="PodSeek",
+        fill_width=True,
+        analytics_enabled=False,
+        css=load_theme_css(stylesheet),
+        head=viewport_meta,
+    ) as demo:
         chat_state = gr.State([])
         p1, p2, p3, p4, p5 = pick_random_presets(5)
         preset_1_state = gr.State(p1["question"])

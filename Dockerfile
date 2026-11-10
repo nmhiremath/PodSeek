@@ -1,3 +1,5 @@
+# Container image for the standalone FastAPI API server (`uvicorn app.api:app`).
+# Note: The Render cloud deployment runs the Gradio Studio UI in-process via `python -m ui.app` (see render.yaml).
 FROM python:3.13-slim
 
 # Prevent Python from writing bytecode and buffer stdout/stderr

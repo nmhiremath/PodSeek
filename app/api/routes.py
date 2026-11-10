@@ -1,6 +1,7 @@
 """FastAPI route definitions for PodSeek."""
 
 import json
+import logging
 import re
 import time
 from collections.abc import AsyncGenerator
@@ -11,7 +12,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 
 from app.agent.graph import corrective_rag_agent
 from app.agent.state import AgentState
@@ -36,6 +37,7 @@ from app.schemas import (
 from app.vectorstore import get_vectorstore, index_chunks
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 # --- Structured Output Schema for Summarization ---
@@ -149,8 +151,8 @@ def _get_cached_qa(question: str, mode: str = "balanced") -> dict[str, Any] | No
                 loaded = json.loads(_QA_CACHE_FILE.read_text())
                 if isinstance(loaded, dict):
                     _QA_CACHE.update(loaded)
-            except Exception:
-                pass
+            except (OSError, json.JSONDecodeError, ValueError) as exc:
+                logger.warning("Failed to load QA cache from %s: %s", _QA_CACHE_FILE, exc)
     return _QA_CACHE.get(_qa_cache_key(question, mode=mode))
 
 
@@ -161,8 +163,8 @@ def _set_cached_qa(question: str, entry: dict[str, Any], mode: str = "balanced")
     try:
         _QA_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
         _QA_CACHE_FILE.write_text(json.dumps(_QA_CACHE, indent=2))
-    except Exception:
-        pass
+    except (OSError, TypeError, ValueError) as exc:
+        logger.warning("Failed to persist QA cache to %s: %s", _QA_CACHE_FILE, exc)
 
 
 def _node_event(node_name: str, node_output: dict) -> dict:
@@ -292,7 +294,8 @@ def list_episodes() -> list[EpisodeSummary]:
                     keywords=data.get("keywords", []),
                 )
             )
-        except Exception:
+        except (OSError, json.JSONDecodeError, ValidationError, KeyError, ValueError) as exc:
+            logger.warning("Skipping malformed episode cache file %s: %s", json_file, exc)
             continue
     return episodes
 
