@@ -460,6 +460,12 @@ _INIT_UI_JS_TEMPLATE = """() => {
         };
 
         const colLeft = document.querySelector('.ap-col-left');
+        if (window.innerWidth <= 768 && !window.__podseekMobileDrawerInit) {
+            window.__podseekMobileDrawerInit = true;
+            if (colLeft) colLeft.classList.remove('mobile-drawer-open');
+            document.getElementById('ap-mobile-drawer-backdrop')?.classList.remove('is-open');
+            document.body.classList.remove('ap-drawer-open');
+        }
         if (colLeft && window.innerWidth > 768) {
             try {
                 if (localStorage.getItem('podseek_sidebar_collapsed') !== '0') {
