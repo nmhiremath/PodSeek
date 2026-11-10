@@ -701,13 +701,13 @@ def render_spotlight_workflow_html(
         return (
             '<details class="ap-trace-details">'
             f'<summary><span style="color:var(--done-stroke);">✓</span> CRAG Flowchart · {chunks} chunks · {mode_label} <span style="font-size:10px;opacity:0.7;">▾</span></summary>'
-            '<div style="margin-top:6px;max-width:100%;overflow:hidden;" class="modern-scroll">'
+            '<div style="margin-top:6px;max-width:100%;overflow-x:auto;overflow-y:hidden;" class="modern-scroll">'
             + flowchart_svg
             + "</div></details>"
         )
 
     return (
-        '<div class="ap-spotlight-card" style="padding:6px;overflow:hidden;margin-bottom:12px;">'
+        '<div class="ap-spotlight-card" style="padding:6px;overflow-x:auto;overflow-y:hidden;margin-bottom:12px;">'
         + flowchart_svg
         + "</div>"
     )

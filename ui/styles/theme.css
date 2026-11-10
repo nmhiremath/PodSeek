@@ -2658,7 +2658,7 @@ button#ap-sidebar-toggle-btn:hover {
   /* Spotlight Workflow Scaling on Mobile Viewports */
   .ap-spotlight-card,
   details.ap-trace-details {
-    overflow-x: hidden !important;
+    overflow-x: auto !important;
     overflow-y: hidden !important;
     max-width: 100% !important;
     padding: 6px 4px !important;
@@ -2672,7 +2672,8 @@ button#ap-sidebar-toggle-btn:hover {
     padding: 10px 4px 6px !important;
     border: none !important;
     background-color: transparent !important;
-    overflow: hidden !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
