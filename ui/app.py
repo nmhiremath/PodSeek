@@ -797,7 +797,14 @@ _INIT_UI_JS_TEMPLATE = """() => {
         const chatEl = document.getElementById('ap-chat-scroll');
         if (chatEl && !chatEl.dataset.psScrollBound) {
             chatEl.dataset.psScrollBound = '1';
-            chatEl.addEventListener('scroll', updateScrollNav, { passive: true });
+            chatEl.addEventListener('scroll', () => {
+                if (!window.__podseekProgrammaticScroll) {
+                    const dist = chatEl.scrollHeight - chatEl.scrollTop - chatEl.clientHeight;
+                    window.__podseekFollowBottom = dist <= 120;
+                    window.__podseekSavedScrollTop = chatEl.scrollTop;
+                }
+                updateScrollNav();
+            }, { passive: true });
         }
 
         const handleWheel = (e) => {
@@ -834,7 +841,6 @@ _INIT_UI_JS_TEMPLATE = """() => {
         updateScrollNav();
     };
     setupPodSeekUI();
-    try { window.scrollTo(0, 0); } catch (e) {}
 
     // Animated Typewriter Engine: types character by character, holds for 2 seconds, backspaces, and picks next
     if (!window.__podseekTypewriterStarted) {
@@ -930,18 +936,50 @@ _INIT_UI_JS_TEMPLATE = """() => {
             setupPodSeekUI();
         }, 50);
 
-        // Auto-scroll chat only when actual chat turns or messages change AND user was already near bottom
-        const hasChatMutation = mutations.some(m => {
-            const chat = document.getElementById('ap-chat-scroll');
-            return chat && chat.contains(m.target);
+        // Scroll latest answer into view when content is replaced or a turn finishes; stay pinned while streaming if following
+        const chatEl = document.getElementById('ap-chat-scroll');
+        const hasChatMutation = Boolean(chatEl) && mutations.some(m => {
+            const t = m.target;
+            return t && (chatEl.contains(t) || (t.contains && t.contains(chatEl)));
         });
-        if (hasChatMutation) {
-            const chatEl = document.getElementById('ap-chat-scroll');
-            if (chatEl && !chatEl.classList.contains('ap-chat-empty')) {
-                const distanceFromBottom = chatEl.scrollHeight - chatEl.scrollTop - chatEl.clientHeight;
-                if (distanceFromBottom < 100) {
-                    chatEl.scrollTop = chatEl.scrollHeight;
+        if (hasChatMutation && chatEl) {
+            if (chatEl.classList.contains('ap-chat-empty')) {
+                window.__podseekLastTurnCount = 0;
+                window.__podseekLastTurnDone = true;
+                window.__podseekFollowBottom = true;
+                window.__podseekSavedScrollTop = 0;
+            } else {
+                const turnCount = parseInt(chatEl.dataset.turnCount || '0', 10);
+                const turnDone = chatEl.dataset.turnDone === 'true';
+                const prevCount = window.__podseekLastTurnCount || 0;
+                const prevDone = window.__podseekLastTurnDone !== false;
+                if (typeof window.__podseekFollowBottom === 'undefined') {
+                    window.__podseekFollowBottom = true;
                 }
+                if (turnCount > prevCount) {
+                    window.__podseekFollowBottom = true;
+                }
+                const turnJustFinished = turnDone && (!prevDone || turnCount > prevCount);
+                window.__podseekProgrammaticScroll = true;
+                if (turnJustFinished) {
+                    const lastAns = document.getElementById('ap-last-answer') || document.getElementById('ap-last-turn');
+                    if (lastAns && lastAns.offsetHeight > chatEl.clientHeight * 0.85) {
+                        chatEl.scrollTop = Math.max(0, lastAns.offsetTop - 12);
+                    } else {
+                        chatEl.scrollTop = chatEl.scrollHeight;
+                    }
+                    window.__podseekSavedScrollTop = chatEl.scrollTop;
+                } else if (window.__podseekFollowBottom) {
+                    chatEl.scrollTop = chatEl.scrollHeight;
+                    window.__podseekSavedScrollTop = chatEl.scrollTop;
+                } else if (typeof window.__podseekSavedScrollTop === 'number') {
+                    chatEl.scrollTop = window.__podseekSavedScrollTop;
+                }
+                window.__podseekLastTurnCount = turnCount;
+                window.__podseekLastTurnDone = turnDone;
+                requestAnimationFrame(() => {
+                    window.__podseekProgrammaticScroll = false;
+                });
             }
             if (window.updateChatScrollNav) {
                 window.updateChatScrollNav();

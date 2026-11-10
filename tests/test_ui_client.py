@@ -152,6 +152,10 @@ def test_theme_css_and_components_render_without_gradio():
     assert "gai-pill" in chat
     assert "Controlling Your Dopamine · 20:45" in chat
     assert "Controlling Your Dopamine · 01:04:33" in chat
+    assert 'id="ap-last-turn"' in chat
+    assert 'id="ap-last-answer"' in chat
+    assert 'data-turn-count="1"' in chat
+    assert 'data-turn-done="true"' in chat
     assert "<code>" not in chat
     assert ")." not in chat
 

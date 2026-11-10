@@ -736,7 +736,9 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23, notic
             "</div>"
         )
     turns: list[str] = []
-    for item in history:
+    last_done = True
+    for idx, item in enumerate(history):
+        is_last = idx == len(history) - 1
         q = html.escape(str(item.get("question", "")))
         raw_answer = str(item.get("answer", ""))
         cits = list(item.get("citations") or [])
@@ -744,6 +746,10 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23, notic
         spotlight_block = ""
         if isinstance(wf_info, dict):
             spotlight_block = render_spotlight_workflow_html(**wf_info)
+            if is_last:
+                last_done = bool(wf_info.get("done", False))
+        elif is_last:
+            last_done = raw_answer not in {"Distilling transcripts...", "Distilling grounded response...", ""}
 
         if raw_answer in {"Distilling transcripts...", "Distilling grounded response...", ""}:
             rendered_answer = (
@@ -754,17 +760,24 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23, notic
             rendered_answer = render_markdown_with_pills(raw_answer, cits)
 
         answer_content = f"{spotlight_block}{rendered_answer}" if spotlight_block else rendered_answer
+        turn_cls = "ap-chat-turn ap-chat-turn-last" if is_last else "ap-chat-turn"
+        turn_id = ' id="ap-last-turn"' if is_last else ""
+        ans_cls = "ap-subtle ap-chat-answer ap-chat-answer-last" if is_last else "ap-subtle ap-chat-answer"
+        ans_id = ' id="ap-last-answer"' if is_last else ""
         turns.append(
+            f'<div{turn_id} class="{turn_cls}">'
             f'<div style="display:flex;justify-content:flex-end;margin-bottom:12px;">'
             f'<div style="max-width:85%;background:var(--accent);color:#fff;padding:10px 16px;'
             f'border-radius:16px 16px 4px 16px;font-size:14.5px;font-weight:500;line-height:1.45;letter-spacing:-0.01em;">'
             f"{q}</div></div>"
-            f'<div class="ap-subtle" style="padding:16px 18px;margin-bottom:16px;font-size:14.5px;line-height:1.65;letter-spacing:-0.005em;border-radius:16px;">'
+            f'<div{ans_id} class="{ans_cls}" style="padding:16px 18px;margin-bottom:16px;font-size:14.5px;line-height:1.65;letter-spacing:-0.005em;border-radius:16px;">'
             f"{answer_content}</div>"
+            f"</div>"
         )
+    done_attr = "true" if last_done else "false"
     return (
         '<div class="ap-chat-viewport-wrap">'
-        '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll" '
+        f'<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll" data-turn-count="{len(history)}" data-turn-done="{done_attr}" '
         'style="overflow-y:auto;padding-right:4px;">' + "".join(turns) + "</div>"
         '<div id="ap-chat-scroll-nav" class="ap-chat-scroll-nav">'
         '<button type="button" id="ap-scroll-top-btn" class="ap-chat-nav-btn" title="Scroll to top" aria-label="Scroll to top" onclick="const c = document.getElementById(\'ap-chat-scroll\'); if (c) c.scrollTo({ top: 0, behavior: \'smooth\' });">'
