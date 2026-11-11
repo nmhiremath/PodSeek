@@ -605,6 +605,21 @@ _INIT_UI_JS_TEMPLATE = """() => {
                 window.syncDesktopViewport();
             }
         };
+        const syncTypewriterPosition = () => {
+            const wrap = document.querySelector('.ap-typewriter-wrap');
+            const modeBtn = document.querySelector('button.ap-mode-cycle-btn');
+            const capsule = document.querySelector('.ap-distill-capsule');
+            const inputEl = document.getElementById('ap-distill-input');
+            if (wrap && capsule && modeBtn && inputEl) {
+                const capsuleRect = capsule.getBoundingClientRect();
+                const modeRect = modeBtn.getBoundingClientRect();
+                const minLeft = Math.round(modeRect.right - capsuleRect.left) + 12;
+                const leftPos = Math.max(inputEl.offsetLeft, minLeft);
+                if (leftPos > 0) {
+                    wrap.style.setProperty('left', `${leftPos}px`, 'important');
+                }
+            }
+        };
         const syncDistillBtnState = () => {
             const btn = document.getElementById('ap-distill-btn');
             const inputEl = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
@@ -619,6 +634,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
             if (inputEl) {
                 syncTextareaAutoGrow(inputEl);
             }
+            syncTypewriterPosition();
         };
         if (distillBtn && !ta) {
             distillBtn.disabled = true;
@@ -914,6 +930,18 @@ _INIT_UI_JS_TEMPLATE = """() => {
                 wrapEl.style.removeProperty('display');
                 wrapEl.style.removeProperty('visibility');
                 wrapEl.style.setProperty('opacity', '0.35', 'important');
+                const modeBtn = document.querySelector('button.ap-mode-cycle-btn');
+                const capsule = document.querySelector('.ap-distill-capsule');
+                const inputEl = document.getElementById('ap-distill-input');
+                if (capsule && modeBtn && inputEl) {
+                    const capsuleRect = capsule.getBoundingClientRect();
+                    const modeRect = modeBtn.getBoundingClientRect();
+                    const minLeft = Math.round(modeRect.right - capsuleRect.left) + 12;
+                    const leftPos = Math.max(inputEl.offsetLeft, minLeft);
+                    if (leftPos > 0) {
+                        wrapEl.style.setProperty('left', `${leftPos}px`, 'important');
+                    }
+                }
             }
 
             const currentPhrase = phrases[phraseIdx] || "Ask across episodes...";

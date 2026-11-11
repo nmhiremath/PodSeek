@@ -271,6 +271,9 @@ def test_distill_capsule_autogrow_css():
     # Assert distill capsule aligns items to bottom as textarea expands
     assert ".ap-distill-capsule" in css
     assert "align-items: flex-end" in css
+    # Assert mode capsule slot is centered vertically with button centerline
+    assert ".ap-mode-capsule-slot" in css
+    assert "justify-content: center" in css
     # Assert distill wrappers do not force height: 100% and support auto growth
     assert ".ap-distill-capsule .input-container" in css
     assert ".ap-distill-capsule #ap-distill-input" in css

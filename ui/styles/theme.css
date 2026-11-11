@@ -607,10 +607,13 @@ div.ap-distill-capsule {
   flex: 0 0 auto !important;
   display: inline-flex !important;
   align-items: center !important;
+  justify-content: center !important;
   margin: 0 !important;
-  padding: 0 0 3px 2px !important;
+  padding: 0 0 0 2px !important;
   width: auto !important;
-  height: auto !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
   min-width: 0 !important;
   max-width: none !important;
   background: transparent !important;
@@ -628,10 +631,11 @@ div.ap-distill-capsule {
   transform: none !important;
   display: inline-flex !important;
   align-items: center !important;
+  justify-content: center !important;
   margin: 0 !important;
   padding: 0 !important;
   width: auto !important;
-  height: auto !important;
+  height: 100% !important;
   overflow: visible !important;
   background: transparent !important;
   border: none !important;
@@ -1866,7 +1870,7 @@ button#ap-mode-slider.is-rigorous .cycle-label {
     border: 1px solid var(--border-strong) !important;
     border-radius: 26px !important;
     box-shadow: 0 10px 32px rgba(0, 0, 0, 0.16) !important;
-    padding: 7px 8px !important;
+    padding: 8px 8px !important;
     margin: 0 !important;
     min-height: 52px !important;
     height: auto !important;
@@ -1875,7 +1879,7 @@ button#ap-mode-slider.is-rigorous .cycle-label {
     flex-direction: row !important;
     flex-wrap: nowrap !important;
     align-items: flex-end !important;
-    gap: 8px !important;
+    gap: 12px !important;
   }
 
   .ap-mode-capsule-slot,
@@ -1885,7 +1889,14 @@ button#ap-mode-slider.is-rigorous .cycle-label {
     left: auto !important;
     top: auto !important;
     flex: 0 0 auto !important;
-    padding: 0 0 3px 2px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    padding: 0 0 0 2px !important;
+    margin: 0 !important;
   }
 
   .ap-distill-capsule button#ap-distill-btn,
@@ -1977,8 +1988,9 @@ button#ap-mode-slider.is-rigorous .cycle-label {
 
   button#ap-mode-slider {
     width: auto !important;
-    height: 30px !important;
-    min-height: 30px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
     padding: 0 8px 0 5px !important;
     font-size: 11px !important;
   }
@@ -2995,7 +3007,7 @@ a.ap-kb-count-link:hover {
 /* --- Animated Typewriter Effect in Distill Capsule --- */
 .ap-typewriter-wrap {
   position: absolute !important;
-  left: 120px !important;
+  left: 126px !important;
   right: 105px !important;
   top: 14px !important;
   transform: none !important;
@@ -3060,9 +3072,9 @@ a.ap-kb-count-link:hover {
 
 @media (max-width: 768px) {
   .ap-typewriter-wrap {
-    left: 104px !important;
-    right: 86px !important;
-    top: 14px !important;
+    left: 126px !important;
+    right: 88px !important;
+    top: 15px !important;
     transform: none !important;
     font-size: 13.5px !important;
     line-height: 22px !important;
