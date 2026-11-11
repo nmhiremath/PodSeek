@@ -137,7 +137,7 @@ def grade_documents(state: AgentState) -> dict:
         ]
     )
 
-    grader_chain = grader_prompt | structured_grader
+    grader_chain = (grader_prompt | structured_grader).with_config(run_name="grade_documents_llm")
     numbered_excerpts = "\n\n".join(f"[Excerpt {i + 1}]\n{doc.page_content}" for i, doc in enumerate(documents))
 
     relevant_docs: list[Document] = []
@@ -194,7 +194,7 @@ def rewrite_query(state: AgentState) -> dict:
         ]
     )
 
-    chain = prompt | llm
+    chain = (prompt | llm).with_config(run_name="rewrite_query_llm")
     response = chain.invoke({"question": question})
     new_query = str(getattr(response, "text", getattr(response, "content", response))).strip()
 
@@ -270,7 +270,7 @@ def generate(state: AgentState) -> dict:
         ]
     )
 
-    chain = prompt | llm
+    chain = (prompt | llm).with_config(run_name="generate_answer_llm")
     full_text = ""
     try:
         for chunk in chain.stream({"question": question, "context": context_str}):

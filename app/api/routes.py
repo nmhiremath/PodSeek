@@ -76,7 +76,7 @@ def _analyze_episode(full_text: str, title: str) -> EpisodeAnalysis:
         ]
     )
 
-    chain = prompt | structured_analyzer
+    chain = (prompt | structured_analyzer).with_config(run_name="summarize_episode")
     # Cap transcript at ~40,000 words to ensure rapid execution within token bounds
     trimmed = " ".join(full_text.split()[:40000])
     result = chain.invoke({"title": title, "transcript": trimmed}, config=trace_config("/ingest"))
