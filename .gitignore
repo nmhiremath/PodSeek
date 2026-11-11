@@ -26,3 +26,6 @@ audit_telemetry.json
 cookies.txt
 *cookies*.txt
 .gradio/
+
+# runtime QA cache, rebuilt per deploy
+data/raw/qa_cache.json

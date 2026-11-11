@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Runtime QA Cache:** Stopped committing `data/raw/qa_cache.json` and added it to `.gitignore`. The cache now starts empty on each deployment and populates dynamically at runtime, ensuring production requests execute live queries rather than serving pre-committed responses.
+
 ### Added
 - **GoatCounter Analytics & Outcome Events:** Integrated cookie-free page view analytics via GoatCounter script injection gated on `GOATCOUNTER_CODE`. Added lightweight custom outcome telemetry (`ask/<mode>/<outcome>`) for completed questions (`answered`, `refused`, `cached`) without sending question or answer content.
 - **Agent-Based LangSmith Tracing:** Migrated tracing from project-based to agent-based workspace addressing (`LANGSMITH_AGENT_ID=podseek` and `LANGSMITH_AGENT_ENVIRONMENT`), with unified environment support replacing dev projects, conflicting project environment popping, and an anonymizing client masking email and phone PII.

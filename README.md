@@ -395,7 +395,7 @@ The test suite validates data schemas, YouTube parsing adapters, sliding-window 
 # Run Ruff linter
 ruff check .
 
-# Run offline Pytest suite (46 tests, fast offline execution)
+# Run offline Pytest suite (47 tests, fast offline execution)
 pytest -v
 
 # Validate OpenSpec specifications strictly
