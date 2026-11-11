@@ -58,25 +58,7 @@ Conversational audio transcripts present three distinct failure modes for conven
 
 **PodSeek** addresses these challenges through a deterministic **Corrective RAG (CRAG)** state machine orchestrated via **LangGraph**, paired with a **speaker-aware sliding-window chunking engine** that preserves exact start and end timestamps. Every claim is strictly grounded in verified excerpts and cited with clickable YouTube deep links (`https://youtu.be/<id>?t=<seconds>`).
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────────────────┐
-│                                   CORRECTIVE LOOP RUNTIME                                   │
-│                                                                                             │
-│                  ┌───────(Turbo · exact quote · Balanced dist < 0.35)───────┐               │
-│                  │                                                          ▼               │
-│   [START] ──> [Retrieve] ──> [Grade Documents] ──(≥1 Valid)───────────> [Generate] ──> [END]│
-│                  ▲                    │                                     ▲               │
-│                  │                (0 Valid)                                 │               │
-│                  │                    ▼                                     │               │
-│                  │           [Retries < max?]                               │               │
-│                  │             │            │                               │               │
-│                  │           (Yes)         (No)                             │               │
-│                  │             ▼            │                               │               │
-│                  └── [Rewrite Query]        └─────────(Refusal)─────────────┘               │
-└─────────────────────────────────────────────────────────────────────────────────────────────┘
-```
-
-![Corrective Loop Animation](docs/assets/crag-loop.svg)
+![Corrective RAG loop: retrieve, then skip or grade, rewrite up to the mode's limit, then generate an answer or a refusal](docs/assets/crag-loop.svg)
 
 ---
 
