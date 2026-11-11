@@ -65,23 +65,32 @@ service: "PodSeek Application (FastAPI & LangGraph)" {
     grade: "2. Grade Documents\nSingle-Call Batch LLM\nPydantic Binary Scores" {
       class: agentNode
     }
+    checkRetries: "Retries < max?\nBalanced: 1\nRigorous: 2" {
+      shape: diamond
+      style: {
+        fill: "#1E293B"
+        font-color: "#F8FAFC"
+        stroke: "#818CF8"
+      }
+    }
     rewrite: "3. Rewrite Query\nSearch Query Optimizer\nCircuit Breaker (<= 2)" {
       class: agentNode
-      style.fill: "#F59E0B"
-      style.stroke: "#D97706"
+      style.fill: "#1E1B4B"
+      style.stroke: "#818CF8"
     }
     generate: "4. Generate\nGrounded Synthesis\nTimestamp Citations [HH:MM:SS]\nRefusal Contract" {
       class: agentNode
-      style.fill: "#10B981"
-      style.stroke: "#059669"
+      style.fill: "#1E1B4B"
+      style.stroke: "#818CF8"
     }
 
-    retrieve -> grade: "Standard: dist >= 0.35"
+    retrieve -> grade: "Rigorous · Balanced dist >= 0.35"
     retrieve -> generate: "Turbo · exact quote · Balanced dist < 0.35"
     grade -> generate: ">= 1 Relevant"
-    grade -> rewrite: "0 Relevant (Retries < max)"
+    grade -> checkRetries: "0 Relevant"
+    checkRetries -> rewrite: "Yes: Retries < max"
     rewrite -> retrieve: "Retry Search"
-    grade -> generate: "Retries >= max (Refusal)"
+    checkRetries -> generate: "No: Retries >= max (Refusal)"
   }
 
   ingestion: "Ingestion Pipeline (app/ingestion/)" {

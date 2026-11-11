@@ -27,7 +27,7 @@ flowchart TD
     START([START]) --> retrieve["1. Retrieve<br/>(k=4 Chunks + Cosine Dist)"]:::agent
 
     retrieve -->|Turbo · exact quote · Balanced dist < 0.35| generate["4. Generate<br/>(Grounded Synthesis / Refusal)"]:::success
-    retrieve -->|Standard: dist ≥ 0.35| grade["2. Grade Documents<br/>(Batch LLM Classifier)"]:::agent
+    retrieve -->|Rigorous · Balanced dist ≥ 0.35| grade["2. Grade Documents<br/>(Batch LLM Classifier)"]:::agent
 
     grade --> checkValid{"≥1 Relevant Chunk?"}:::router
 

@@ -75,7 +75,7 @@ pytest -v
 # Run offline benchmark evaluation
 python -m scripts.evaluate
 
-# Run live benchmark evaluation across modes (requires GEMINI_API_KEY)
+# Run live benchmark evaluation across modes (requires running API at --api-url, default http://localhost:8000)
 python -m scripts.evaluate --live --mode turbo
 python -m scripts.evaluate --live --mode balanced
 python -m scripts.evaluate --live --mode rigorous

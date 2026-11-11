@@ -59,20 +59,21 @@ Conversational audio transcripts present three distinct failure modes for conven
 **PodSeek** addresses these challenges through a deterministic **Corrective RAG (CRAG)** state machine orchestrated via **LangGraph**, paired with a **speaker-aware sliding-window chunking engine** that preserves exact start and end timestamps. Every claim is strictly grounded in verified excerpts and cited with clickable YouTube deep links (`https://youtu.be/<id>?t=<seconds>`).
 
 ```
-┌────────────────────────────────────────────────────────────────────────────────────────┐
-│                                 CORRECTIVE LOOP RUNTIME                                │
-│                                                                                        │
-│   [START] ──> [Retrieve] ──┬──(Turbo · exact quote · Balanced dist < 0.35)──> [Generate] ──> [END]
-│                            │                                                   ▲       │
-│                            └──> [Grade Documents] ──(≥1 Valid)────────────────┤       │
-│                                        │                                       │       │
-│                                    (0 Valid)                                   │       │
-│                                        ▼                                       │       │
-│                           [Retries < max?] ──(Yes)──> [Rewrite]                │       │
-│                                        │                   │                   │       │
-│                                  (No: Refusal)             └───────────────────┤       │
-│                                        └───────────────────────────────────────┘       │
-└────────────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                   CORRECTIVE LOOP RUNTIME                                   │
+│                                                                                             │
+│                  ┌───────(Turbo · exact quote · Balanced dist < 0.35)───────┐               │
+│                  │                                                          ▼               │
+│   [START] ──> [Retrieve] ──> [Grade Documents] ──(≥1 Valid)───────────> [Generate] ──> [END]│
+│                  ▲                    │                                     ▲               │
+│                  │                (0 Valid)                                 │               │
+│                  │                    ▼                                     │               │
+│                  │           [Retries < max?]                               │               │
+│                  │             │            │                               │               │
+│                  │           (Yes)         (No)                             │               │
+│                  │             ▼            │                               │               │
+│                  └── [Rewrite Query]        └─────────(Refusal)─────────────┘               │
+└─────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ![Corrective Loop Animation](docs/assets/crag-loop.svg)
@@ -190,7 +191,7 @@ flowchart TD
     START([START]) --> retrieve["1. Retrieve<br/>(k=4 Chunks + Cosine Dist)"]:::agent
 
     retrieve -->|Turbo · exact quote · Balanced dist < 0.35| generate["4. Generate<br/>(Grounded Synthesis / Refusal)"]:::success
-    retrieve -->|Standard: dist ≥ 0.35| grade["2. Grade Documents<br/>(Batch LLM Classifier)"]:::agent
+    retrieve -->|Rigorous · Balanced dist ≥ 0.35| grade["2. Grade Documents<br/>(Batch LLM Classifier)"]:::agent
 
     grade --> checkValid{"≥1 Relevant Chunk?"}:::router
 

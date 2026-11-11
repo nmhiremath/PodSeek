@@ -48,7 +48,7 @@ The system SHALL evaluate whether to proceed to answer generation or initiate a 
 
 #### Scenario: Mode-specific retry limit reached (Circuit Breaker)
 - **WHEN** `relevant_documents` is empty
-- **AND** `rewrite_count` meets or exceeds `max_retries` (0 for Turbo, 1 for Balanced, 2 for Rigorous)
+- **AND** `rewrite_count` meets or exceeds `max_retries` (0 for Turbo, 1 for Balanced, 2 for Rigorous; note Turbo's 0-retry limit in `decide_to_generate` is unreachable in practice because Turbo unconditionally bypasses grading)
 - **THEN** `decide_to_generate` routes execution to `generate` to issue a refusal.
 
 #### Scenario: Trigger query rewrite
