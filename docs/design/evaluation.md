@@ -22,7 +22,7 @@ Executed via `python -m scripts.evaluate --live --mode <mode>` against the 50-ep
 | `balanced` | 89.7% | 100.0% (16/16) | 12,577 ms | 21,438 ms | 100% citation format & refusal pass |
 | `rigorous` | 87.2% | 100.0% (16/16) | 15,106 ms | 22,761 ms | Full grading on all chunks, 100% pass |
 
-> Note: Turbo mode failed 1 of 16 citation checks because skipping LLM grading allowed an out-of-scope question to return unverified excerpts rather than cleanly refusing. `TODO(identify): name the Turbo citation failure from the PR #2 live eval output (one of the three off-topic questions). Do not invent it.`
+> Note: Turbo mode failed 1 of 16 citation checks (93.8%) because it unconditionally bypasses `grade_documents` and routes straight to `generate`. Because it never reaches the grading classifier or circuit-breaker retry check, Turbo refusals rely exclusively on the generation prompt's refusal instructions, which synthesized an answer using retrieved excerpts rather than issuing a clean refusal for one off-topic query. `TODO(identify): name the Turbo citation failure from the PR #2 live eval output (one of the three off-topic questions). Do not invent it.`
 
 ## 3. Enterprise Approach
 At enterprise scale, organizations implement:

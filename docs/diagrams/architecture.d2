@@ -76,12 +76,12 @@ service: "PodSeek Application (FastAPI & LangGraph)" {
       style.stroke: "#059669"
     }
 
-    retrieve -> grade: "Standard"
-    retrieve -> generate: "Fast-Path (Turbo / dist < 0.35 / Quote)"
+    retrieve -> grade: "Standard: dist >= 0.35"
+    retrieve -> generate: "Turbo · exact quote · Balanced dist < 0.35"
     grade -> generate: ">= 1 Relevant"
     grade -> rewrite: "0 Relevant (Retries < max)"
     rewrite -> retrieve: "Retry Search"
-    grade -> generate: "Max Retries (Refusal)"
+    grade -> generate: "Retries >= max (Refusal)"
   }
 
   ingestion: "Ingestion Pipeline (app/ingestion/)" {

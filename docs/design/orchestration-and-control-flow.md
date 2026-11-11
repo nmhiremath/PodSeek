@@ -26,25 +26,25 @@ flowchart TD
 
     START([START]) --> retrieve["1. Retrieve<br/>(k=4 Chunks + Cosine Dist)"]:::agent
 
-    retrieve -->|Fast-path: Turbo / dist < 0.35 / Quote| generate["4. Generate<br/>(Grounded Synthesis / Refusal)"]:::success
+    retrieve -->|Turbo · exact quote · Balanced dist < 0.35| generate["4. Generate<br/>(Grounded Synthesis / Refusal)"]:::success
     retrieve -->|Standard: dist ≥ 0.35| grade["2. Grade Documents<br/>(Batch LLM Classifier)"]:::agent
 
     grade --> checkValid{"≥1 Relevant Chunk?"}:::router
 
     checkValid -->|Yes| generate
-    checkValid -->|No| checkRetries{"Retries < max_retries?<br/>(Turbo: 0, Balanced: 1, Rigorous: 2)"}:::router
+    checkValid -->|No: 0 valid| checkRetries{"Retries < max?<br/>(Balanced: 1, Rigorous: 2)"}:::router
 
     checkRetries -->|Yes| rewrite["3. Rewrite Query<br/>(Query Optimizer)"]:::rewrite
-    rewrite -->|Increment rewrite_count| retrieve
+    rewrite -->|Loop back| retrieve
 
-    checkRetries -->|No: Max Retries Reached| generate
+    checkRetries -->|No: refusal| generate
 
     generate --> END_OK([END]):::success
 ```
 
 - **Compiled State Graph (`app/agent/graph.py:build_graph`):** The workflow defines four nodes (`retrieve`, `grade_documents`, `rewrite_query`, `generate`) operating on a strongly typed `AgentState` schema (`app/agent/state.py`).
-- **Post-Retrieval Router (`app/agent/graph.py:route_after_retrieve`):** Evaluates whether to proceed directly to `generate` (fast-path for Turbo mode, exact quote matches, or Balanced mode with $top\_distance < 0.35$) or route to `grade_documents`.
-- **Decision Router (`app/agent/graph.py:decide_to_generate`):** Checks if `relevant_documents` is populated. If empty, it inspects `rewrite_count` against mode-specific retry bounds: 0 for Turbo, 1 for Balanced, and 2 for Rigorous (`MAX_REWRITES = 2`).
+- **Post-Retrieval Router (`app/agent/graph.py:route_after_retrieve`):** Evaluates whether to proceed directly to `generate` (fast-path for Turbo mode, exact quote matches, or Balanced mode with $top\_distance < 0.35$) or route to `grade_documents`. Because Turbo mode unconditionally bypasses `grade_documents`, it never encounters the retry loop, making its `max_retries = 0` branch in `decide_to_generate` unreachable; Turbo refusals rely entirely on the prompt instructions within `generate`.
+- **Decision Router (`app/agent/graph.py:decide_to_generate`):** Checks if `relevant_documents` is populated. If empty, it inspects `rewrite_count` against mode-specific retry bounds: 1 for Balanced and 2 for Rigorous (`MAX_REWRITES = 2`).
 - **Loop Bounds & Circuit Breaker (`app/agent/graph.py`):** If `rewrite_count >= max_retries`, the graph breaks the loop and forces routing to `generate`, which is contractually bound to issue a refusal rather than continuing to search.
 
 ## 3. Enterprise Approach

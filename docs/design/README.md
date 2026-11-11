@@ -11,12 +11,12 @@ Every pillar document follows an identical 8-part structure: definition, impleme
 ```mermaid
 architecture-beta
     group client(internet)[Client Layer]
-    service ui(server)[Studio UI] in client
     service browser(internet)[Web Browser] in client
 
-    group service(server)[PodSeek Service]
-    service api(server)[FastAPI Router] in service
-    service agent(server)[LangGraph CRAG] in service
+    group backend(server)[PodSeek Service]
+    service ui(server)[Studio UI] in backend
+    service api(server)[FastAPI Router] in backend
+    service agent(server)[LangGraph CRAG] in backend
 
     group storage(database)[Storage Layer]
     service chroma(database)[ChromaDB] in storage

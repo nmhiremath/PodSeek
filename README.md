@@ -62,16 +62,16 @@ Conversational audio transcripts present three distinct failure modes for conven
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │                                 CORRECTIVE LOOP RUNTIME                                │
 │                                                                                        │
-│   [START] ──> [Retrieve] ──┬──(Turbo / dist < 0.35 / Exact Match)──> [Generate] ──> [END]│
-│                            │                                            ▲              │
-│                            └──> [Grade Documents] ──(≥1 Valid)─────────┤              │
-│                                        │                                │              │
-│                                    (0 Valid)                            │              │
-│                                        ▼                                │              │
-│                        [Retries < max_retries?] ──(Yes)──> [Rewrite]    │              │
-│                                        │                       │        │              │
-│                    (No: Max Retries / Refusal)                 └────────┘              │
-│                                        └────────────────────────────────┘              │
+│   [START] ──> [Retrieve] ──┬──(Turbo · exact quote · Balanced dist < 0.35)──> [Generate] ──> [END]
+│                            │                                                   ▲       │
+│                            └──> [Grade Documents] ──(≥1 Valid)────────────────┤       │
+│                                        │                                       │       │
+│                                    (0 Valid)                                   │       │
+│                                        ▼                                       │       │
+│                           [Retries < max?] ──(Yes)──> [Rewrite]                │       │
+│                                        │                   │                   │       │
+│                                  (No: Refusal)             └───────────────────┤       │
+│                                        └───────────────────────────────────────┘       │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -142,12 +142,12 @@ npx @fission-ai/openspec validate --all --strict --no-interactive
 ```mermaid
 architecture-beta
     group client(internet)[Client Layer]
-    service ui(server)[Studio UI] in client
     service browser(internet)[Web Browser] in client
 
-    group service(server)[PodSeek Service]
-    service api(server)[FastAPI Router] in service
-    service agent(server)[LangGraph CRAG] in service
+    group backend(server)[PodSeek Service]
+    service ui(server)[Studio UI] in backend
+    service api(server)[FastAPI Router] in backend
+    service agent(server)[LangGraph CRAG] in backend
 
     group storage(database)[Storage Layer]
     service chroma(database)[ChromaDB] in storage
@@ -189,18 +189,18 @@ flowchart TD
 
     START([START]) --> retrieve["1. Retrieve<br/>(k=4 Chunks + Cosine Dist)"]:::agent
 
-    retrieve -->|Fast-path: Turbo / dist < 0.35 / Quote| generate["4. Generate<br/>(Grounded Synthesis / Refusal)"]:::success
+    retrieve -->|Turbo · exact quote · Balanced dist < 0.35| generate["4. Generate<br/>(Grounded Synthesis / Refusal)"]:::success
     retrieve -->|Standard: dist ≥ 0.35| grade["2. Grade Documents<br/>(Batch LLM Classifier)"]:::agent
 
     grade --> checkValid{"≥1 Relevant Chunk?"}:::router
 
     checkValid -->|Yes| generate
-    checkValid -->|No| checkRetries{"Retries < max_retries?<br/>(Turbo: 0, Balanced: 1, Rigorous: 2)"}:::router
+    checkValid -->|No: 0 valid| checkRetries{"Retries < max?<br/>(Balanced: 1, Rigorous: 2)"}:::router
 
     checkRetries -->|Yes| rewrite["3. Rewrite Query<br/>(Query Optimizer)"]:::rewrite
-    rewrite -->|Increment rewrite_count| retrieve
+    rewrite -->|Loop back| retrieve
 
-    checkRetries -->|No: Max Retries Reached| generate
+    checkRetries -->|No: refusal| generate
 
     generate --> END_OK([END]):::success
 ```
