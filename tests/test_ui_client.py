@@ -166,11 +166,17 @@ def test_theme_css_and_components_render_without_gradio():
     assert "<code>" not in chat
     assert ")." not in chat
 
-    empty_chat = render_chat_session_html([], episode_count=23)
-    assert "Ask across Huberman Lab&#39;s" in empty_chat or "Ask across Huberman Lab's" in empty_chat
-    assert "23" in empty_chat
-    assert "most viewed episodes." in empty_chat
+    empty_chat = render_chat_session_html([], episode_count=50)
+    assert "Find the moment Huberman said it." in empty_chat
+    assert "Andrew Huberman is a Stanford neuroscientist" in empty_chat
+    assert "50 most viewed episodes" in empty_chat
+    assert "Search " in empty_chat and "most viewed episodes" in empty_chat
     assert "ap-kb-count-link" in empty_chat
+    assert "Pick a topic or ask a question" in empty_chat
+    assert "Choose a mode: Turbo is fast, Rigorous checks every source" in empty_chat
+    assert "Tap a timestamp to hear it" in empty_chat
+    assert "If the episodes don't cover it, PodSeek says so instead of guessing" in empty_chat
+    assert "Independent project, not affiliated with Huberman Lab. Not medical advice." in empty_chat
 
     refusal_chat = render_chat_session_html(
         [
@@ -240,6 +246,11 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert "--ap-mobile-nav-bottom" in css
     assert "#ap-studio-view .pending" in css
     assert ".ap-lib-btn-label" in css
+    assert ".ap-empty-hero" in css
+    assert ".ap-empty-title" in css
+    assert ".ap-empty-steps" in css
+    assert ".ap-step-num" in css
+    assert ".ap-empty-footnote" in css
     assert "a.gai-pill > span:not(.gai-yt-circle)" in css
     assert "ap-lib-btn-label" in render_header_controls_html()
     assert '<h1 class="ap-brand-title">PodSeek</h1>' in render_header_brand_html()
@@ -379,3 +390,50 @@ def test_ui_ingest_capsule_gating(monkeypatch):
         ]
         assert not any("Demo is read-only." in val for val in html_contents_enabled)
         assert not any("Read-only" in val for val in html_contents_enabled)
+def test_mobile_onboarding_css_structure():
+    """Assert mobile onboarding steps/intro rules are consolidated without absolute positioning."""
+    import re
+
+    css = load_theme_css("theme.css")
+
+    # 1. Assert mobile media query sets flex-direction: column on steps container
+    assert "@media (max-width: 640px)" in css
+    media_idx = css.find("@media (max-width: 640px)")
+    assert media_idx != -1
+
+    # Extract entire @media (max-width: 640px) block by matching braces
+    start_brace = css.find("{", media_idx)
+    assert start_brace != -1
+    brace_count = 0
+    end_brace = -1
+    for i in range(start_brace, len(css)):
+        if css[i] == "{":
+            brace_count += 1
+        elif css[i] == "}":
+            brace_count -= 1
+            if brace_count == 0:
+                end_brace = i
+                break
+    assert end_brace != -1
+    mobile_css = css[start_brace:end_brace]
+
+    assert ".ap-empty-steps" in mobile_css
+    assert "flex-direction: column" in mobile_css
+
+    # 2. Assert no rule on steps or intro uses position: absolute
+    onboarding_patterns = [
+        r"\.ap-empty-hero",
+        r"\.ap-empty-title",
+        r"\.ap-empty-intro",
+        r"\.ap-empty-steps",
+        r"\.ap-empty-step",
+        r"\.ap-step-num",
+        r"\.ap-step-text",
+        r"\.ap-empty-footnote",
+    ]
+    for match in re.finditer(r"([^{]+)\{([^}]+)\}", css):
+        selector, body = match.group(1), match.group(2)
+        if any(re.search(pat, selector) for pat in onboarding_patterns):
+            assert "position: absolute" not in body, (
+                f"Onboarding rule '{selector.strip()}' must not use position: absolute"
+            )

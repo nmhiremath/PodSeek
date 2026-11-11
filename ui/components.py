@@ -799,7 +799,7 @@ def render_spotlight_workflow_html(
     )
 
 
-def render_chat_session_html(history: list[dict], episode_count: int = 23, notice: str = "") -> str:
+def render_chat_session_html(history: list[dict], episode_count: int = 50, notice: str = "") -> str:
     """Render the ephemeral session chat thread with rendered Markdown, inline pills, and focus-locked spotlight workflow."""
     notice_html = (
         f'<div id="ap-composer-notice" class="ap-composer-notice" role="status" aria-live="polite">{html.escape(notice)}</div>'
@@ -807,18 +807,60 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23, notic
         else ""
     )
     if not history:
-        count_display = str(episode_count if episode_count > 0 else 23)
-        onclick_js = "if (window.togglePodSeekDrawer) { window.togglePodSeekDrawer(true); } else { const col = document.querySelector('.ap-col-left'); if (col) { col.classList.remove('is-collapsed'); col.classList.add('mobile-drawer-open'); document.getElementById('ap-mobile-drawer-backdrop')?.classList.add('is-open'); document.body.classList.add('ap-drawer-open'); } }"
+        count_display = str(episode_count if episode_count > 0 else 50)
+        onclick_js = (
+            "if (window.togglePodSeekDrawer) { "
+            "if (window.innerWidth <= 768) { window.togglePodSeekDrawer(true); } "
+            "else { window.togglePodSeekDrawer(); } "
+            "} else { "
+            "const col = document.querySelector('.ap-col-left'); "
+            "if (col) { "
+            "if (window.innerWidth <= 768) { "
+            "col.classList.remove('is-collapsed'); "
+            "col.classList.add('mobile-drawer-open'); "
+            "document.getElementById('ap-mobile-drawer-backdrop')?.classList.add('is-open'); "
+            "document.body.classList.add('ap-drawer-open'); "
+            "} else { "
+            "col.classList.toggle('is-collapsed'); "
+            "} "
+            "} "
+            "}"
+        )
         return (
             '<div class="ap-chat-viewport-wrap">'
             '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll ap-chat-empty">'
-            '<div style="max-width:560px;margin:0 auto;text-align:center;padding:16px 20px;">'
-            '<div style="font-size:21px;font-weight:700;margin-bottom:8px;letter-spacing:-0.025em;color:var(--text-main);line-height:1.3;">'
-            f'Ask across Huberman Lab\'s <button type="button" onclick="{onclick_js}" class="ap-kb-count-link" title="Open Knowledge Base">{count_display}</button> most viewed episodes.'
+            '<div class="ap-empty-hero">'
+            '<h1 class="ap-empty-title">Find the moment Huberman said it.</h1>'
+            '<p class="ap-empty-intro ap-empty-intro-desktop ap-muted">'
+            "Andrew Huberman is a Stanford neuroscientist whose Huberman Lab podcast covers sleep, focus, stress, and health in multi-hour episodes. "
+            f'PodSeek searches the transcripts of his <button type="button" onclick="{onclick_js}" class="ap-kb-count-link" title="Toggle episode library">{count_display} most viewed episodes</button> '
+            "and answers with citations that jump to the exact second on YouTube."
+            "</p>"
+            '<p class="ap-empty-intro ap-empty-intro-mobile ap-muted">'
+            f'Search <button type="button" onclick="{onclick_js}" class="ap-kb-count-link" title="Toggle episode library">{count_display} of Andrew Huberman\'s most viewed episodes</button> '
+            "and jump to the exact second he said it."
+            "</p>"
+            '<div class="ap-empty-steps">'
+            '<div class="ap-empty-step">'
+            '<span class="ap-step-num">1</span>'
+            '<span class="ap-step-text">Pick a topic or ask a question</span>'
             "</div>"
-            '<div class="ap-muted" style="font-size:14px;line-height:1.55;font-weight:400;">'
-            "Pick a research-backed topic below or ask any question to distill grounded citations with timestamp deep links."
-            f"</div></div></div>{notice_html}"
+            '<div class="ap-empty-step">'
+            '<span class="ap-step-num">2</span>'
+            '<span class="ap-step-text">Choose a mode: Turbo is fast, Rigorous checks every source</span>'
+            "</div>"
+            '<div class="ap-empty-step">'
+            '<span class="ap-step-num">3</span>'
+            '<span class="ap-step-text">Tap a timestamp to hear it</span>'
+            "</div>"
+            "</div>"
+            '<div class="ap-empty-footnote ap-empty-footnote-desktop ap-muted">'
+            "If the episodes don't cover it, PodSeek says so instead of guessing. Independent project, not affiliated with Huberman Lab. Not medical advice."
+            "</div>"
+            '<div class="ap-empty-footnote ap-empty-footnote-mobile ap-muted">'
+            "Independent project, not affiliated with Huberman Lab. Not medical advice."
+            "</div>"
+            f"</div></div>{notice_html}"
             "</div>"
         )
     turns: list[str] = []
