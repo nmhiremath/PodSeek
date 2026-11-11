@@ -318,30 +318,64 @@ def test_render_ingest_readonly_section():
 
 def test_ui_ingest_capsule_gating(monkeypatch):
     """Verify UI demo build conditionally renders ingest capsule or compact read-only note."""
+    from typing import Any
+    from unittest.mock import MagicMock
+
+    import gradio as gr
+
     from ui.app import build_demo
+
+    gr_any: Any = gr
+    is_mock = isinstance(gr, MagicMock) or isinstance(getattr(gr, "Blocks", None), MagicMock)
 
     # Test Disabled Mode
     monkeypatch.setenv("PODSEEK_INGEST_ENABLED", "false")
+    if is_mock:
+        gr_any.reset_mock()
     demo_disabled = build_demo(client=InProcessClient())
-    elem_ids_disabled = {b.elem_id for b in demo_disabled.blocks.values() if hasattr(b, "elem_id") and b.elem_id}
-    assert "ap-ingest-input" not in elem_ids_disabled
-    assert "ap-ingest-btn" not in elem_ids_disabled
 
-    html_contents_disabled = [
-        b.value for b in demo_disabled.blocks.values() if hasattr(b, "value") and isinstance(b.value, str)
-    ]
-    assert any("Demo is read-only." in val for val in html_contents_disabled)
-    assert any("Read-only" in val for val in html_contents_disabled)
+    if is_mock:
+        textbox_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Textbox.call_args_list if "elem_id" in c.kwargs]
+        button_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Button.call_args_list if "elem_id" in c.kwargs]
+        assert "ap-ingest-input" not in textbox_elem_ids
+        assert "ap-ingest-btn" not in button_elem_ids
+
+        html_strings = [str(c.args[0]) for c in gr_any.HTML.call_args_list if c.args]
+        assert any("Demo is read-only." in val for val in html_strings)
+        assert any("Read-only" in val for val in html_strings)
+    else:
+        elem_ids_disabled = {b.elem_id for b in demo_disabled.blocks.values() if getattr(b, "elem_id", None)}
+        assert "ap-ingest-input" not in elem_ids_disabled
+        assert "ap-ingest-btn" not in elem_ids_disabled
+
+        html_contents_disabled = [
+            b.value for b in demo_disabled.blocks.values() if isinstance(getattr(b, "value", None), str)
+        ]
+        assert any("Demo is read-only." in val for val in html_contents_disabled)
+        assert any("Read-only" in val for val in html_contents_disabled)
 
     # Test Enabled Mode
     monkeypatch.setenv("PODSEEK_INGEST_ENABLED", "true")
+    if is_mock:
+        gr_any.reset_mock()
     demo_enabled = build_demo(client=InProcessClient())
-    elem_ids_enabled = {b.elem_id for b in demo_enabled.blocks.values() if hasattr(b, "elem_id") and b.elem_id}
-    assert "ap-ingest-input" in elem_ids_enabled
-    assert "ap-ingest-btn" in elem_ids_enabled
 
-    html_contents_enabled = [
-        b.value for b in demo_enabled.blocks.values() if hasattr(b, "value") and isinstance(b.value, str)
-    ]
-    assert not any("Demo is read-only." in val for val in html_contents_enabled)
-    assert not any("Read-only" in val for val in html_contents_enabled)
+    if is_mock:
+        textbox_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Textbox.call_args_list if "elem_id" in c.kwargs]
+        button_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Button.call_args_list if "elem_id" in c.kwargs]
+        assert "ap-ingest-input" in textbox_elem_ids
+        assert "ap-ingest-btn" in button_elem_ids
+
+        html_strings = [str(c.args[0]) for c in gr_any.HTML.call_args_list if c.args]
+        assert not any("Demo is read-only." in val for val in html_strings)
+        assert not any("Read-only" in val for val in html_strings)
+    else:
+        elem_ids_enabled = {b.elem_id for b in demo_enabled.blocks.values() if getattr(b, "elem_id", None)}
+        assert "ap-ingest-input" in elem_ids_enabled
+        assert "ap-ingest-btn" in elem_ids_enabled
+
+        html_contents_enabled = [
+            b.value for b in demo_enabled.blocks.values() if isinstance(getattr(b, "value", None), str)
+        ]
+        assert not any("Demo is read-only." in val for val in html_contents_enabled)
+        assert not any("Read-only" in val for val in html_contents_enabled)
