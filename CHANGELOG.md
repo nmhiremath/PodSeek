@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Runtime QA Cache:** Stopped committing `data/raw/qa_cache.json` and added it to `.gitignore`. The cache now starts empty on each deployment and populates dynamically at runtime, ensuring production requests execute live queries rather than serving pre-committed responses.
 
+### Fixed
+- **Distill Capsule Autogrow, Mode Centering & Typewriter Separation:** Fixed premature question wrapping at ~230px by styling the `.input-container` wrapper with `flex: 1 1 auto; width: 100%`. Removed `height: 100%` from distill wrappers, allowing the textarea to autogrow from 1 to 5 lines (`max-height: 120px`) with bottom-aligned mode and distill controls and a thin scrollbar. Centered the mode pill vertically on mobile with symmetrical spacing, and ensured comfortable breathing space between the mode pill and typewriter placeholder.
+
+
 ### Added
 - **Read-Only Demo Ingestion Gating (`PODSEEK_INGEST_ENABLED`):** Added server-side gating on `POST /ingest` and UI in-process handler `on_ingest` with HTTP 403 refusal (`"Ingestion is disabled on the live demo."`) before any network or ChromaDB calls. Consolidated `is_ingest_enabled()` into a canonical helper in `app.ingestion` imported across API and UI. In read-only mode, replaced the disabled ingest capsule with a compact "Ingest Episode" heading row, "Read-only" pill badge, and repository clone note with streamlined vertical spacing. Configured `PODSEEK_INGEST_ENABLED=false` in `render.yaml`.
 - **Onboarding Empty State Hero:** Redesigned initial chat empty state with authoritative headline ("Find the moment Huberman said it."), concise intro with episode library toggle, a 3-step guide (horizontal card row on desktop, borderless stacked rows on mobile), and an honest refusal footnote. Optimized vertical whitespace so the entire onboarding block, topic preset chips, and input capsule fit without scrolling on 1280x800 desktop and 390x844 mobile viewports.

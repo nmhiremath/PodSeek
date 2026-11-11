@@ -282,6 +282,22 @@ def test_goatcounter_page_analytics(monkeypatch):
         assert "data-goatcounter" not in render_head_meta_html()
 
 
+def test_distill_capsule_autogrow_css():
+    css = load_theme_css("theme.css")
+    # Assert distill capsule aligns items to bottom as textarea expands
+    assert ".ap-distill-capsule" in css
+    assert "align-items: flex-end" in css
+    # Assert mode capsule slot is centered vertically with button centerline
+    assert ".ap-mode-capsule-slot" in css
+    assert "justify-content: center" in css
+    # Assert distill wrappers do not force height: 100% and support auto growth
+    assert ".ap-distill-capsule .input-container" in css
+    assert ".ap-distill-capsule #ap-distill-input" in css
+    assert "height: auto" in css
+    # Assert textarea has max-height: 120px (5 lines at 24px) and content autogrow
+    assert "max-height: 120px" in css
+    assert "field-sizing: content" in css
+    assert "scrollbar-width: thin" in css
 def test_system_theme_early_resolution_script():
     """Verify that head meta includes early theme resolution script supporting system theme and localStorage."""
     head_meta = render_head_meta_html()

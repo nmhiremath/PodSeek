@@ -594,6 +594,31 @@ _INIT_UI_JS_TEMPLATE = """() => {
 
         const ta = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
         const distillBtn = document.getElementById('ap-distill-btn');
+        const syncTextareaAutoGrow = (el) => {
+            if (!el) return;
+            el.style.height = 'auto';
+            const h = Math.min(120, Math.max(24, el.scrollHeight));
+            el.style.height = `${h}px`;
+            el.style.overflowY = el.scrollHeight > 120 ? 'auto' : 'hidden';
+            if (window.syncDesktopViewport) {
+                window.syncDesktopViewport();
+            }
+        };
+        const syncTypewriterPosition = () => {
+            const wrap = document.querySelector('.ap-typewriter-wrap');
+            const modeBtn = document.querySelector('button.ap-mode-cycle-btn');
+            const capsule = document.querySelector('.ap-distill-capsule');
+            const inputEl = document.getElementById('ap-distill-input');
+            if (wrap && capsule && modeBtn && inputEl) {
+                const capsuleRect = capsule.getBoundingClientRect();
+                const modeRect = modeBtn.getBoundingClientRect();
+                const minLeft = Math.round(modeRect.right - capsuleRect.left) + 12;
+                const leftPos = Math.max(inputEl.offsetLeft, minLeft);
+                if (leftPos > 0) {
+                    wrap.style.setProperty('left', `${leftPos}px`, 'important');
+                }
+            }
+        };
         const syncDistillBtnState = () => {
             const btn = document.getElementById('ap-distill-btn');
             const inputEl = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
@@ -605,6 +630,10 @@ _INIT_UI_JS_TEMPLATE = """() => {
             if (canSubmit) {
                 document.getElementById('ap-composer-notice')?.remove();
             }
+            if (inputEl) {
+                syncTextareaAutoGrow(inputEl);
+            }
+            syncTypewriterPosition();
         };
 
         if (distillBtn && !ta) {
@@ -617,6 +646,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
             ta.setAttribute('data-placeholder-disabled', 'true');
             ta.setAttribute('aria-label', 'Ask a question about Huberman Lab episodes');
             syncDistillBtnState();
+            syncTextareaAutoGrow(ta);
         }
         const capsule = document.querySelector('.ap-distill-capsule');
         if (capsule) {
@@ -900,6 +930,18 @@ _INIT_UI_JS_TEMPLATE = """() => {
                 wrapEl.style.removeProperty('display');
                 wrapEl.style.removeProperty('visibility');
                 wrapEl.style.setProperty('opacity', '0.35', 'important');
+                const modeBtn = document.querySelector('button.ap-mode-cycle-btn');
+                const capsule = document.querySelector('.ap-distill-capsule');
+                const inputEl = document.getElementById('ap-distill-input');
+                if (capsule && modeBtn && inputEl) {
+                    const capsuleRect = capsule.getBoundingClientRect();
+                    const modeRect = modeBtn.getBoundingClientRect();
+                    const minLeft = Math.round(modeRect.right - capsuleRect.left) + 12;
+                    const leftPos = Math.max(inputEl.offsetLeft, minLeft);
+                    if (leftPos > 0) {
+                        wrapEl.style.setProperty('left', `${leftPos}px`, 'important');
+                    }
+                }
             }
 
             const currentPhrase = phrases[phraseIdx] || "Ask across episodes...";
@@ -1017,6 +1059,11 @@ _INIT_UI_JS_TEMPLATE = """() => {
             if (window.updateChatScrollNav) {
                 window.updateChatScrollNav();
             }
+        }
+
+        const curTa = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
+        if (curTa) {
+            syncTextareaAutoGrow(curTa);
         }
 
         const sseEl = document.getElementById('ap-sse-scroll');
