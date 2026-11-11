@@ -1,19 +1,21 @@
 # 11. Strict Opt-In LangSmith Tracing
 
 > Recorded retroactively on 2026-11-10; decision originally made in commit `d4c0068` (PR #2).
+> 2026-11-11 update: migrated to agent-based workspace addressing (`LANGSMITH_AGENT_ID` and `LANGSMITH_AGENT_ENVIRONMENT`), `LANGSMITH_TRACING` flag, and PII masking.
 
 ## Status
-Accepted
+Accepted (2026-11-11 update: migrated to agent-based workspace addressing and PII masking)
 
 ## Context
 LangChain automatically inspects environment variables and enables LangSmith telemetry whenever `LANGCHAIN_TRACING_V2=true` is set. In local development or automated CI environments where an engineer copies a `.env.example` file or sets a flag without providing a valid API key, LangChain emits noisy background errors, slows down test execution, or risks leaking evaluation trace payloads to unwanted endpoints.
 
 ## Decision
-Implement a strict, dual-gate opt-in module in `app/observability.py`. `configure_tracing()` evaluates both `LANGCHAIN_TRACING_V2` and `LANGCHAIN_API_KEY`. Tracing is enabled if and only if:
-1. `LANGCHAIN_TRACING_V2` matches `{"1", "true", "yes"}`.
-2. `LANGCHAIN_API_KEY` is non-empty.
+Implement a strict, multi-gate opt-in module in `app/observability.py`. `configure_tracing()` evaluates `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_AGENT_ID`, and `LANGSMITH_AGENT_ENVIRONMENT`. Tracing is enabled if and only if:
+1. `LANGSMITH_TRACING` matches `{"1", "true", "yes"}`.
+2. `LANGSMITH_API_KEY` is non-empty.
+3. Both `LANGSMITH_AGENT_ID` and `LANGSMITH_AGENT_ENVIRONMENT` are non-empty.
 
-If either condition is unmet, the system explicitly forces `os.environ["LANGCHAIN_TRACING_V2"] = "false"`, completely silencing LangChain's telemetry hooks. The API calls `configure_tracing()` upon startup, and CI workflows explicitly inject `LANGCHAIN_TRACING_V2: "false"`.
+If any condition is unmet, the system explicitly forces `os.environ["LANGSMITH_TRACING"] = "false"` and `os.environ["LANGCHAIN_TRACING_V2"] = "false"`, completely silencing LangChain's telemetry hooks. Conflicting project-destination variables (`LANGSMITH_PROJECT`, `LANGCHAIN_PROJECT`, `LANGCHAIN_SESSION`) are stripped, and trace runs are routed through an anonymizing client that masks email addresses and phone numbers. The API and UI call `configure_tracing()` upon startup, and CI workflows explicitly inject `LANGSMITH_TRACING: "false"` and `LANGCHAIN_TRACING_V2: "false"`.
 
 ## Alternatives Considered
 1. **Unconditional OpenTelemetry / Prometheus Exporter:** Instrument all spans via OTel. Rejected because standardizing on LangChain-native LangSmith provides deeper graph-level state inspection without adding heavy collector daemons.

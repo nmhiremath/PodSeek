@@ -98,14 +98,20 @@ def configure_tracing() -> bool:
     return True
 
 
-def trace_config(path: str, mode: str = "balanced") -> RunnableConfig:
+def trace_config(path: str, mode: str | None = None) -> RunnableConfig:
     """LangGraph/LangChain config. Harmless when tracing is disabled."""
-    run_name = "podseek_ingest" if path == "/ingest" else "podseek_ask"
+    run_name = "podseek_ingest" if path == "/ingest" else "crag_graph"
     ui_mode = os.getenv("PODSEEK_UI_MODE", "remote")
+    tags = ["podseek", "crag"]
+    if mode:
+        tags.append(mode)
+    metadata: dict[str, Any] = {"path": path, "ui_mode": ui_mode}
+    if mode:
+        metadata["mode"] = mode
     return {
         "run_name": run_name,
-        "tags": ["podseek", "crag", mode],
-        "metadata": {"path": path, "mode": mode, "ui_mode": ui_mode},
+        "tags": tags,
+        "metadata": metadata,
     }
 
 

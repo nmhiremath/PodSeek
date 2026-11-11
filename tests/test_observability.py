@@ -84,11 +84,44 @@ def test_trace_config_names_ingest_separately():
     ask = trace_config("/ask", mode="balanced")
     ingest = trace_config("/ingest")
 
-    assert ask.get("run_name") == "podseek_ask"
+    assert ask.get("run_name") == "crag_graph"
     assert ingest.get("run_name") == "podseek_ingest"
     assert ask.get("tags") == ["podseek", "crag", "balanced"]
     assert ask.get("metadata") == {"path": "/ask", "mode": "balanced", "ui_mode": "remote"}
-    assert (ingest.get("metadata") or {}).get("path") == "/ingest"
+    assert ingest.get("tags") == ["podseek", "crag"]
+    assert ingest.get("metadata") == {"path": "/ingest", "ui_mode": "remote"}
+
+
+def test_cached_ask_trace_outputs_outcome_cached(monkeypatch):
+    """Assert that a cached /ask query produces outputs.outcome == 'cached' in its trace."""
+    from langsmith import tracing_context
+
+    from app.api.routes import _ask_traced
+    from app.schemas.api import AskRequest
+
+    mock_cached = {
+        "answer": "Light exposure sets your circadian clock.",
+        "citations": [],
+        "rewrites": 0,
+        "relevant_chunks": 2,
+        "top_distance": 0.35,
+    }
+    monkeypatch.setattr("app.api.routes._get_cached_qa", lambda *args, **kwargs: mock_cached)
+
+    mock_client = MagicMock()
+    req = AskRequest(question="How does morning sunlight affect sleep?", mode="balanced")
+
+    with tracing_context(enabled=True):
+        resp, outcome = _ask_traced(req, langsmith_extra={"client": mock_client})
+
+    assert outcome == "cached"
+    assert resp.answer == "Light exposure sets your circadian clock."
+
+    assert mock_client.update_run.call_count > 0
+    call_kwargs = mock_client.update_run.call_args.kwargs
+    outputs = call_kwargs.get("outputs") or {}
+    assert outputs.get("outcome") == "cached"
+    assert outputs.get("answer") == "Light exposure sets your circadian clock."
 
 
 def test_inprocess_ui_startup_calls_tracing_gate(monkeypatch):

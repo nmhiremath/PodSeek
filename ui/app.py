@@ -20,12 +20,7 @@ _REPO_ROOT = str(Path(__file__).resolve().parent.parent)
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-try:
-    import gradio as gr  # noqa: E402 # pyright: ignore[reportMissingImports]
-except ModuleNotFoundError:  # pragma: no cover
-    from unittest.mock import MagicMock
-
-    gr = MagicMock()  # type: ignore
+import gradio as gr  # noqa: E402 # pyright: ignore[reportMissingImports]
 
 import ui.components as _ui_components  # noqa: E402
 from app.agent.nodes import determine_outcome  # noqa: E402
@@ -1436,12 +1431,6 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                 }
                 updated = current_history + [demo_turn]
                 logs.append(("✓ [demo_fallback] Loaded cached example response", "var(--done-stroke)"))
-                demo_outcome = determine_outcome(DEMO_ANSWER, cached=False, aborted=False)
-                demo_tracker = (
-                    f'<div id="ap-analytics-event" data-mode="{html.escape(mode_val)}" data-outcome="{html.escape(demo_outcome)}" style="display:none;">'
-                    f'<script>window.goatcounter?.count({{path: "ask/{mode_val}/{demo_outcome}", title: "Question {demo_outcome}", event: true}});</script>'
-                    f"</div>"
-                )
                 yield (
                     render_chat_session_html(updated),
                     updated,
@@ -1451,15 +1440,10 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                     render_sse_log_html(logs),
                     "",
                     gr.update(visible=True),
-                    demo_tracker,
+                    "",
                 )
                 return
             logs.append((f"✕ Error: {exc}", "var(--retry-stroke)"))
-            err_tracker = (
-                f'<div id="ap-analytics-event" data-mode="{html.escape(mode_val)}" data-outcome="refused" style="display:none;">'
-                f'<script>window.goatcounter?.count({{path: "ask/{mode_val}/refused", title: "Question refused", event: true}});</script>'
-                f"</div>"
-            )
             yield (
                 render_chat_session_html(current_history),
                 current_history,
@@ -1469,7 +1453,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                 render_sse_log_html(logs),
                 "",
                 gr.update(visible=True),
-                err_tracker,
+                "",
             )
             return
 
@@ -1502,11 +1486,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
             {"question": cleaned, "answer": answer, "citations": citations, "workflow": wf_final}
         ]
         outcome = determine_outcome(answer, cached=is_cached, aborted=aborted)
-        tracker_html = (
-            f'<div id="ap-analytics-event" data-mode="{html.escape(mode_val)}" data-outcome="{html.escape(outcome)}" style="display:none;">'
-            f'<script>window.goatcounter?.count({{path: "ask/{mode_val}/{outcome}", title: "Question {outcome}", event: true}});</script>'
-            f"</div>"
-        )
+        tracker_html = f'<div id="ap-analytics-event" data-mode="{html.escape(mode_val)}" data-outcome="{html.escape(outcome)}" style="display:none;"></div>'
         yield (
             render_chat_session_html(final_history),
             final_history,

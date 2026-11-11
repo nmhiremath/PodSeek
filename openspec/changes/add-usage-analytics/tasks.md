@@ -23,7 +23,7 @@
 
 ## 4. Documentation, Referrer Links & Privacy Notice
 
-- [x] 4.1 Update demo links to `https://podseek.onrender.com/?utm_source=github-readme` in `README.md` and `https://podseek.onrender.com/?utm_source=github` on GitHub repository homepage.
+- [x] 4.1 Update demo links to `https://podseek.onrender.com/?utm_source=github-readme` in `README.md` and `https://podseek.onrender.com/?utm_source=github-repo-about` on GitHub repository homepage.
 - [x] 4.2 Document agent environment variables and privacy note in `README.md` and `.env.example`.
 - [x] 4.3 Update `CHANGELOG.md` with release notes for the analytics and observability updates.
 - [x] 4.4 Untrack `data/raw/qa_cache.json` so cache starts empty and operates as runtime state per deploy; verify with missing cache test in `tests/test_api.py`.

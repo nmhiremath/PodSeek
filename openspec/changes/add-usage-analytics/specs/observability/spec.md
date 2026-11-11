@@ -23,11 +23,11 @@ The system SHALL inject contextual run names, tags, and path metadata into LangG
 
 #### Scenario: Tracing an ingest operation
 - **WHEN** `trace_config("/ingest")` is called
-- **THEN** a `RunnableConfig` is returned with `run_name="podseek_ingest"`, `tags=["podseek", "crag"]`, and `metadata={"path": "/ingest"}`.
+- **THEN** a `RunnableConfig` is returned with `run_name="podseek_ingest"`, `tags=["podseek", "crag"]`, and `metadata={"path": "/ingest", "ui_mode": "remote"}`.
 
 #### Scenario: Tracing a question query
 - **WHEN** `trace_config("/ask", mode="balanced")` is called
-- **THEN** a `RunnableConfig` is returned with `run_name="podseek_ask"`, `tags=["podseek", "crag", "balanced"]`, and `metadata={"path": "/ask", "mode": "balanced"}`.
+- **THEN** a `RunnableConfig` is returned with `run_name="crag_graph"`, `tags=["podseek", "crag", "balanced"]`, and `metadata={"path": "/ask", "mode": "balanced", "ui_mode": "remote"}`.
 
 #### Scenario: Root traceable execution with PII anonymization
 - **WHEN** `ask_question` or `iter_agent_events` is executed with tracing enabled

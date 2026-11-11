@@ -12,7 +12,7 @@ PodSeek needs privacy-first usage analytics and agent-level observability to mon
 - Enforce strict 4-variable gating for LangSmith tracing, clearing conflicting project destination variables and sanitizing environment caches.
 - Wrap question ask pipelines (`ask_question` and `iter_agent_events`) under a root `@traceable(name="podseek_ask", run_type="chain")` run with PII masking (emails and phone numbers).
 - Isolate test runs completely from trace emission via `tests/conftest.py` top-level environment overrides and autouse context disabling.
-- Update documentation and deployment manifests with referendum links (`?utm_source=github-readme` in README) and privacy guarantees.
+- Update documentation and deployment manifests with referrer links (`?utm_source=github-readme` in README) and privacy guarantees.
 
 ## Capabilities
 

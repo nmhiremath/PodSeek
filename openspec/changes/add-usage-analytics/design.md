@@ -22,7 +22,7 @@ See `proposal.md` for background and motivation. PodSeek runs on Render free tie
 
 ### 1. GoatCounter Event Dispatch via Gradio-Native Hidden HTML & JS Callback
 - **Decision:** Use a hidden `gr.HTML` element with CSS `display: none !important;` and a Gradio `.then(..., js=...)` event callback with a companion MutationObserver fallback.
-- **Rationale:** Gradio 5 event triggers do not directly expose client-side JavaScript analytics APIs from Python generators. The hidden HTML element conveys the structured `<div id="ap-analytics-tracker" data-mode="..." data-outcome="...">` payload on completion without polluting visible chat messages.
+- **Rationale:** Gradio 5 event triggers do not directly expose client-side JavaScript analytics APIs from Python generators. The hidden HTML element conveys the structured `<div id="ap-analytics-event" data-mode="..." data-outcome="...">` payload on completion without polluting visible chat messages.
 - **Alternatives Considered:**
   - *Custom frontend web component:* Introduces unnecessary complexity and build dependencies.
   - *Server-side webhook to GoatCounter:* Leaks server IP, requires outbound HTTP requests on critical path, and loses client referrer context.

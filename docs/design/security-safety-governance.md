@@ -5,7 +5,7 @@ Security, safety, and governance in production AI systems protects data integrit
 
 ## 2. What PodSeek Does
 PodSeek implements defensive boundaries at ingestion, storage, runtime, and configuration:
-- **Zero Secrets in Source Control:** All credentials (`GEMINI_API_KEY`, `OPENAI_API_KEY`, `LANGCHAIN_API_KEY`) are loaded via environment variables (`python-dotenv`). `.gitignore` explicitly excludes `.env`, `cookies.txt`, and local credentials.
+- **Zero Secrets in Source Control:** All credentials (`GEMINI_API_KEY`, `OPENAI_API_KEY`, `LANGSMITH_API_KEY`) are loaded via environment variables (`python-dotenv`). `.gitignore` explicitly excludes `.env`, `cookies.txt`, and local credentials.
 - **Ingestion Channel Guardrail (`app/ingestion/youtube.py:is_huberman_channel`):** Prevents vector store poisoning and unverified content injection by verifying channel author metadata via YouTube oEmbed before fetching transcripts.
 - **Indirect Prompt Injection Defense (`app/agent/nodes.py:generate`):** Transcript excerpts are wrapped in strict delimiters (`[{title} | {speaker} @ {ts}]:\n"{doc.page_content}"`) and isolated under human/system prompt boundaries. The generation prompt strictly bounds the LLM to use the excerpts only as passive factual context, forbidding execution of instructions embedded in transcripts.
 - **Zero PII Storage:** PodSeek does not store user accounts, cookies, IP addresses, or personal identity information. Queries are ephemeral session interactions.
@@ -37,7 +37,7 @@ PodSeek's security architecture breaks down under the following triggers:
 
 ## 7. Pitfalls Encountered
 - **Exposing Internal API Errors in UI:** Raw exception messages from `httpx` originally leaked server file paths and internal connection parameters to the frontend. Fixed in commit `4d0697c` with `_raise_clean_api_error()` in `ui/client.py`.
-- **Accidental Trace Telemetry:** Early testing without credentials risked emitting traces to LangSmith. Fixed in commit `d4c0068` by strictly requiring both `LANGCHAIN_TRACING_V2=true` and `LANGCHAIN_API_KEY`.
+- **Accidental Trace Telemetry:** Early testing without credentials risked emitting traces to LangSmith. Fixed by strictly requiring `LANGSMITH_TRACING=true`, `LANGSMITH_API_KEY`, `LANGSMITH_AGENT_ID`, and `LANGSMITH_AGENT_ENVIRONMENT` (originally `d4c0068`, updated to agent workspace addressing in PR #5).
 
 ## 8. Next Steps (Candidate OpenSpec Changes)
 - `rate-limiting-middleware`: Add SlowAPI rate limiting to `POST /ask` and `POST /ingest` to protect free-tier quotas against denial-of-wallet flooding.

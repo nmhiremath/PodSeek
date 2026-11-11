@@ -22,7 +22,7 @@ PodSeek implements defensive programming across all pipeline stages, prioritizin
 | **Non-Huberman Ingestion Attempt** | `is_huberman_channel()` evaluates to `False` | Ingestion endpoint rejects with HTTP 400 and detail: `Only Huberman Lab episodes can be ingested (detected channel: ...)` before downloading captions. |
 | **Render Free-Tier Cold Start** | Initial request latency after idle spin-down | Documented Render platform behavior; in-process client and committed ChromaDB ensure fast initialization once container wakes. |
 | **Empty or Short User Input** | Input length $< 3$ non-whitespace characters | Gradio UI disables Distill button; client validation prevents submitting query. |
-| **Missing LangSmith Credentials** | `configure_tracing()` checks env vars | Automatically forces `LANGCHAIN_TRACING_V2="false"`, preventing telemetry crashes. |
+| **Missing LangSmith Credentials** | `configure_tracing()` checks env vars | Automatically forces `LANGSMITH_TRACING="false"` and `LANGCHAIN_TRACING_V2="false"` when `LANGSMITH_TRACING`, `LANGSMITH_API_KEY`, `LANGSMITH_AGENT_ID`, or `LANGSMITH_AGENT_ENVIRONMENT` is missing, preventing telemetry crashes. |
 
 ## 3. Enterprise Approach
 At enterprise scale, organizations deploy:

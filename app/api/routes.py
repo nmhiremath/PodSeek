@@ -216,22 +216,6 @@ def _process_ask_inputs(inputs: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _process_ask_outputs(response: Any) -> dict[str, Any]:
-    answer = getattr(response, "answer", "")
-    citations = getattr(response, "citations", []) or []
-    rt = get_current_run_tree()
-    outcome = None
-    if rt and hasattr(rt, "extra"):
-        outcome = rt.extra.get("metadata", {}).get("outcome")
-    if not outcome:
-        outcome = determine_outcome(answer)
-    return {
-        "answer": answer,
-        "outcome": outcome,
-        "citations": len(citations) if isinstance(citations, list) else 0,
-    }
-
-
 def _reduce_agent_events(events: Any) -> dict[str, Any]:
     answer = ""
     citations_count = 0
@@ -251,12 +235,7 @@ def _reduce_agent_events(events: Any) -> dict[str, Any]:
                 answer += str(ev["delta"])
             if "citations" in ev and isinstance(ev["citations"], list):
                 citations_count = len(ev["citations"])
-    rt = get_current_run_tree()
-    outcome = None
-    if rt and hasattr(rt, "extra"):
-        outcome = rt.extra.get("metadata", {}).get("outcome")
-    if not outcome:
-        outcome = determine_outcome(answer, cached=cached, aborted=aborted)
+    outcome = determine_outcome(answer, cached=cached, aborted=aborted)
     return {
         "answer": answer,
         "outcome": outcome,
@@ -549,17 +528,19 @@ def ingest_episode(request: IngestRequest) -> IngestResponse:
         raise HTTPException(status_code=500, detail=f"Failed to ingest episode: {e}")
 
 
-@router.post("/ask", response_model=AskResponse)
 @with_anonymized_client
 @traceable(
     name="podseek_ask",
     run_type="chain",
     client=anonymizer_client,
     process_inputs=_process_ask_inputs,
-    process_outputs=_process_ask_outputs,
+    process_outputs=lambda r: {
+        "answer": r[0].answer,
+        "outcome": r[1],
+        "citations": len(r[0].citations),
+    },
 )
-def ask_question(request: AskRequest) -> AskResponse:
-    """Submit a question and receive a complete answer with clickable timestamp citations."""
+def _ask_traced(request: AskRequest) -> tuple[AskResponse, str]:
     start_time = time.perf_counter()
     req_mode = request.mode or "balanced"
     try:
@@ -573,7 +554,7 @@ def ask_question(request: AskRequest) -> AskResponse:
             if rt:
                 rt.add_metadata({"outcome": "cached", "cached": True, "rewrites": rewrites, "top_distance": top_dist})
                 rt.add_tags([req_mode])
-            return AskResponse(
+            resp = AskResponse(
                 question=request.question,
                 answer=str(cached["answer"]),
                 citations=[Citation.model_validate(c) for c in raw_cits],
@@ -583,6 +564,7 @@ def ask_question(request: AskRequest) -> AskResponse:
                 top_distance=top_dist,
                 latency_ms=latency,
             )
+            return resp, "cached"
 
         final_state = corrective_rag_agent.invoke(
             _initial_state(request.question, mode=req_mode), config=trace_config("/ask", mode=req_mode)
@@ -631,7 +613,7 @@ def ask_question(request: AskRequest) -> AskResponse:
                 mode=req_mode,
             )
 
-        return AskResponse(
+        resp = AskResponse(
             question=request.question,
             answer=answer,
             citations=citations,
@@ -641,8 +623,17 @@ def ask_question(request: AskRequest) -> AskResponse:
             top_distance=top_dist,
             latency_ms=latency,
         )
+        return resp, outcome
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Agent execution failed: {e}")
+
+
+@router.post("/ask", response_model=AskResponse)
+def ask_question(request: AskRequest) -> AskResponse:
+    """Submit a question and receive a complete answer with clickable timestamp citations."""
+    return _ask_traced(request)[0]
 
 
 @router.post("/ask/stream")

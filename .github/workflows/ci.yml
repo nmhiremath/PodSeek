@@ -11,6 +11,7 @@ jobs:
     name: Lint & Offline Unit Tests (Python 3.13)
     runs-on: ubuntu-latest
     env:
+      LANGSMITH_TRACING: "false"
       LANGCHAIN_TRACING_V2: "false"
 
     steps:
