@@ -51,3 +51,42 @@ def test_qa_cache_missing_file_yields_no_hits_and_no_errors(tmp_path, monkeypatc
     assert not missing_cache.exists()
     cached = routes._get_cached_qa("What causes dopamine crash?", mode="balanced")
     assert cached is None
+
+
+def test_stream_concurrent_calls_do_not_block_event_loop(monkeypatch):
+    """Verify that concurrent /ask/stream calls run in threadpool and do not block each other."""
+    import asyncio
+    import time
+
+    from httpx import ASGITransport, AsyncClient
+
+    from app.api import routes
+
+    delay = 0.1
+
+    def slow_iter_events(question: str, mode: str = "balanced"):
+        time.sleep(delay)
+        yield {"node": "generate", "generation": f"Answer for {question}", "mode": mode}
+
+    monkeypatch.setattr(routes, "iter_agent_events", slow_iter_events)
+
+    async def _run():
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+            t0 = time.perf_counter()
+            resp1, resp2 = await asyncio.gather(
+                ac.post("/ask/stream", json={"question": "first question"}),
+                ac.post("/ask/stream", json={"question": "second question"}),
+            )
+            elapsed = time.perf_counter() - t0
+            return resp1, resp2, elapsed
+
+    resp1, resp2, total_time = asyncio.run(_run())
+
+    assert resp1.status_code == 200
+    assert resp2.status_code == 200
+    assert "Answer for first question" in resp1.text
+    assert "Answer for second question" in resp2.text
+
+    # If blocking the event loop, total_time would be >= 2 * delay (0.2s).
+    # Since Starlette iterates sync generators in a threadpool, both complete in ~1x delay.
+    assert total_time < delay * 1.8
