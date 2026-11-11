@@ -6,12 +6,14 @@ from app.ingestion.youtube import is_huberman_channel
 from ui.client import InProcessClient, RemoteClient, make_client, parse_sse_chunk
 from ui.components import (
     _is_submittable_question,
+    is_ingest_enabled,
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
     render_head_meta_html,
     render_header_brand_html,
     render_header_controls_html,
+    render_ingest_readonly_section_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
     render_mode_slider_html,
@@ -290,6 +292,104 @@ def test_system_theme_early_resolution_script():
     assert "localStorage.setItem('podseek_theme'" in render_header_controls_html()
 
 
+def test_is_ingest_enabled_flag(monkeypatch):
+    """Verify PODSEEK_INGEST_ENABLED parsing across varied truthy and falsy representations."""
+    monkeypatch.delenv("PODSEEK_INGEST_ENABLED", raising=False)
+    assert is_ingest_enabled() is True
+
+    for truthy in ["true", "True", "TRUE", "1", "yes", "YES", "on"]:
+        monkeypatch.setenv("PODSEEK_INGEST_ENABLED", truthy)
+        assert is_ingest_enabled() is True
+
+    for falsy in ["false", "False", "FALSE", "0", "no", "NO", "off", "  false  "]:
+        monkeypatch.setenv("PODSEEK_INGEST_ENABLED", falsy)
+        assert is_ingest_enabled() is False
+
+
+def test_render_ingest_readonly_section():
+    """Verify read-only section contains repository link, badge, and copy."""
+    section_html = render_ingest_readonly_section_html()
+    assert "Ingest Episode" in section_html
+    assert "Read-only" in section_html
+    assert "Demo is read-only." in section_html
+    assert "https://github.com/nmhiremath/PodSeek" in section_html
+    assert "Clone the repo" in section_html
+    assert "to add episodes." in section_html
+    assert 'target="_blank"' in section_html
+    assert 'rel="noopener noreferrer"' in section_html
+    assert "hyphens:none" in section_html
+    assert "margin:0 0 4px;" in section_html
+    assert "margin:0 0 12px;" in section_html
+
+    error_card = render_ingest_status_html("error", "Failed link", "Invalid YouTube link")
+    assert "⚠️" in error_card
+    assert "Failed link" in error_card
+    assert "Invalid YouTube link" in error_card
+
+
+def test_ui_ingest_capsule_gating(monkeypatch):
+    """Verify UI demo build conditionally renders ingest capsule or compact read-only note."""
+    from typing import Any
+    from unittest.mock import MagicMock
+
+    import gradio as gr
+
+    from ui.app import build_demo
+
+    gr_any: Any = gr
+    is_mock = isinstance(gr, MagicMock) or isinstance(getattr(gr, "Blocks", None), MagicMock)
+
+    # Test Disabled Mode
+    monkeypatch.setenv("PODSEEK_INGEST_ENABLED", "false")
+    if is_mock:
+        gr_any.reset_mock()
+    demo_disabled = build_demo(client=InProcessClient())
+
+    if is_mock:
+        textbox_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Textbox.call_args_list if "elem_id" in c.kwargs]
+        button_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Button.call_args_list if "elem_id" in c.kwargs]
+        assert "ap-ingest-input" not in textbox_elem_ids
+        assert "ap-ingest-btn" not in button_elem_ids
+
+        html_strings = [str(c.args[0]) for c in gr_any.HTML.call_args_list if c.args]
+        assert any("Demo is read-only." in val for val in html_strings)
+        assert any("Read-only" in val for val in html_strings)
+    else:
+        elem_ids_disabled = {b.elem_id for b in demo_disabled.blocks.values() if getattr(b, "elem_id", None)}
+        assert "ap-ingest-input" not in elem_ids_disabled
+        assert "ap-ingest-btn" not in elem_ids_disabled
+
+        html_contents_disabled = [
+            b.value for b in demo_disabled.blocks.values() if isinstance(getattr(b, "value", None), str)
+        ]
+        assert any("Demo is read-only." in val for val in html_contents_disabled)
+        assert any("Read-only" in val for val in html_contents_disabled)
+
+    # Test Enabled Mode
+    monkeypatch.setenv("PODSEEK_INGEST_ENABLED", "true")
+    if is_mock:
+        gr_any.reset_mock()
+    demo_enabled = build_demo(client=InProcessClient())
+
+    if is_mock:
+        textbox_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Textbox.call_args_list if "elem_id" in c.kwargs]
+        button_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Button.call_args_list if "elem_id" in c.kwargs]
+        assert "ap-ingest-input" in textbox_elem_ids
+        assert "ap-ingest-btn" in button_elem_ids
+
+        html_strings = [str(c.args[0]) for c in gr_any.HTML.call_args_list if c.args]
+        assert not any("Demo is read-only." in val for val in html_strings)
+        assert not any("Read-only" in val for val in html_strings)
+    else:
+        elem_ids_enabled = {b.elem_id for b in demo_enabled.blocks.values() if getattr(b, "elem_id", None)}
+        assert "ap-ingest-input" in elem_ids_enabled
+        assert "ap-ingest-btn" in elem_ids_enabled
+
+        html_contents_enabled = [
+            b.value for b in demo_enabled.blocks.values() if isinstance(getattr(b, "value", None), str)
+        ]
+        assert not any("Demo is read-only." in val for val in html_contents_enabled)
+        assert not any("Read-only" in val for val in html_contents_enabled)
 def test_mobile_onboarding_css_structure():
     """Assert mobile onboarding steps/intro rules are consolidated without absolute positioning."""
     import re

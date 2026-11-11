@@ -62,3 +62,14 @@ The system SHALL resolve the application color scheme from system preferences wh
 - **WHEN** the operating system changes color scheme dynamically
 - **AND** `localStorage` contains no explicit `podseek_theme` preference
 - **THEN** the UI updates its theme classes and background styling immediately to match the new system color scheme.
+
+### Requirement: Read-Only Demo Ingestion Controls
+The system SHALL omit ingestion input controls and display a compact read-only heading and note when running in read-only demo mode.
+
+#### Scenario: Compact read-only heading and repository note
+- **GIVEN** `PODSEEK_INGEST_ENABLED` is set to `"false"`
+- **WHEN** the Studio UI loads
+- **THEN** the Ingest Episode input capsule (`#ap-ingest-input` and `#ap-ingest-btn`) is not rendered
+- **AND** the "Ingest Episode" heading row displays a muted "Read-only" pill badge
+- **AND** a single-line muted note is displayed stating `"Demo is read-only. Clone the repo to add episodes."`
+- **AND** `"Clone the repo"` links to `https://github.com/nmhiremath/PodSeek`.

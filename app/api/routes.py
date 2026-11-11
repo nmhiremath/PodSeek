@@ -24,6 +24,7 @@ from app.ingestion import (
     chunk_segments,
     extract_video_id,
     fetch_raw_captions,
+    is_ingest_enabled,
 )
 from app.ingestion.youtube import fetch_video_metadata, is_huberman_channel
 from app.observability import anonymizer_client, trace_config, with_anonymized_client
@@ -364,6 +365,11 @@ def list_episodes() -> list[EpisodeSummary]:
 @router.post("/ingest", response_model=IngestResponse)
 def ingest_episode(request: IngestRequest) -> IngestResponse:
     """Ingest a YouTube episode, chunk transcript, analyze, and index into ChromaDB."""
+    if not is_ingest_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Ingestion is disabled on the live demo.",
+        )
     video_id = extract_video_id(request.video_url_or_id)
     if not video_id:
         raise HTTPException(status_code=400, detail="Invalid YouTube URL or video ID.")

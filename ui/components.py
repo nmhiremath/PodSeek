@@ -11,6 +11,8 @@ import os
 import re
 from pathlib import Path
 
+from app.ingestion import is_ingest_enabled as is_ingest_enabled
+
 STYLES_DIR = Path(__file__).resolve().parent / "styles"
 
 _YT_BADGE_SVG = (
@@ -26,6 +28,20 @@ def _is_submittable_question(text: object) -> bool:
     if not isinstance(text, str):
         text = str(getattr(text, "value", text or ""))
     return len(text.strip()) >= 3
+
+
+def render_ingest_readonly_section_html() -> str:
+    """Render the compact read-only ingest heading row and note when ingestion is disabled."""
+    return (
+        '<div class="ap-ingest-header-row" style="display:flex;align-items:center;justify-content:space-between;margin:0 0 4px;">'
+        '<span class="ap-ingest-title" style="font-size:12.5px;font-weight:700;margin:0;color:var(--text-main);">Ingest Episode</span>'
+        '<span class="ap-readonly-badge ap-muted" style="font-size:10.5px;font-weight:600;line-height:1;padding:2.5px 7px;border-radius:9999px;background:var(--border-hairline);color:var(--text-muted);letter-spacing:0.02em;">Read-only</span>'
+        "</div>"
+        '<div class="ap-ingest-readonly-note ap-muted" style="font-size:11.5px;line-height:1.45;margin:0 0 12px;color:var(--text-muted);white-space:normal;hyphens:none;-webkit-hyphens:none;">'
+        "Demo is read-only. "
+        '<a href="https://github.com/nmhiremath/PodSeek" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:underline;text-underline-offset:2px;">Clone the repo</a> to add episodes.'
+        "</div>"
+    )
 
 
 def load_theme_css(stylesheet: str = "theme.css") -> str:
@@ -615,12 +631,16 @@ def render_header_controls_html() -> str:
     return f'<div class="ap-slider-wrap">{mobile_lib_btn}{theme_slider}</div>'
 
 
-def render_episodes_html(items: list[dict]) -> str:
+def render_episodes_html(items: list[dict], ingest_enabled: bool = True) -> str:
     """Render the scrollable list of indexed episodes for the desktop regular left pane."""
     count = len(items)
+    divider_style = (
+        "border-top:1px solid var(--border-hairline);margin:0 0 6px;padding-top:12px;"
+        if not ingest_enabled
+        else "border-top:1px solid var(--border-hairline);margin:8px 0 6px;padding-top:8px;"
+    )
     heading_html = (
-        '<div class="ap-episodes-heading" '
-        'style="border-top:1px solid var(--border-hairline);margin:8px 0 6px;padding-top:8px;'
+        f'<div class="ap-episodes-heading" style="{divider_style}'
         f'font-size:12.5px;font-weight:700;color:var(--text-main);">Indexed Episodes ({count})</div>'
     )
     if not items:
