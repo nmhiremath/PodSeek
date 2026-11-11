@@ -9,6 +9,13 @@ This document is the single source of truth for AI assistants and engineers work
 2. **Direct Action with Transparent Rationale:** Apply file edits directly in the turn while clearly explaining "the why" and the architectural rationale. Do not interrupt with unnecessary intermediate confirmation prompts ("Ready for me to edit?").
 3. **Question Isolation:** If the user asks a question, answer the question ONLY. Do not write, modify, or run code in the same turn.
 4. **No Speculative Tool Execution:** Do not run test runners, build tools, or terminal commands unless the user explicitly requested them in their prompt.
+5. **OpenSpec Spec-Driven Development:** Before implementing any non-trivial feature, architectural change, or capability modification:
+   - Author an OpenSpec change proposal in `openspec/changes/<change-name>/` with `proposal.md`, `tasks.md`, and spec deltas (`specs/<capability>/spec.md` with ADDED/MODIFIED/REMOVED requirements).
+   - Work strictly on a dedicated feature branch off latest `main` (`main` is protected; never push directly).
+   - Validate specifications using `npx @fission-ai/openspec validate --all --strict --no-interactive`.
+   - Ensure all offline tests pass (`pytest -v`) and linter is clean (`ruff check .`).
+   - Open a Pull Request targeting `main` with the PR template completed.
+   - Upon PR merge, archive the change into `openspec/changes/archive/` using `npx @fission-ai/openspec archive <change-name>` and update baseline capability specs under `openspec/specs/`.
 
 ---
 
