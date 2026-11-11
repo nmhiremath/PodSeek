@@ -4,7 +4,7 @@ import json
 import logging
 import re
 import time
-from collections.abc import AsyncGenerator
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any, cast
 
@@ -637,11 +637,11 @@ def ask_question(request: AskRequest) -> AskResponse:
 
 
 @router.post("/ask/stream")
-async def stream_question(request: AskRequest) -> StreamingResponse:
+def stream_question(request: AskRequest) -> StreamingResponse:
     """Stream LangGraph node events and final answer in real-time via Server-Sent Events."""
     req_mode = request.mode or "balanced"
 
-    async def event_generator() -> AsyncGenerator[str]:
+    def event_generator() -> Iterator[str]:
         for event_data in iter_agent_events(request.question, mode=req_mode):
             yield f"data: {json.dumps(event_data)}\n\n"
 
