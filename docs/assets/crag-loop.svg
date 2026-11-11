@@ -54,55 +54,57 @@
       </feMerge>
     </filter>
 
-    <!-- Motion Paths for Modes -->
+    <!-- Invisible Motion Guide Paths for animateMotion -->
     <!-- Turbo: START -> Retrieve -> Bypass -> Generate -> END -->
-    <path id="pathTurbo" d="M 50 105 L 175 105 C 175 32, 600 32, 600 75 L 602 105 L 748 105" fill="none"/>
+    <path id="pathTurbo" d="M 50 105 L 175 105 C 175 32, 602 32, 602 75 L 602 105 L 748 105" fill="none" stroke="none"/>
 
     <!-- Balanced (worst case, 1 rewrite): START -> Retrieve -> Grade -> Valid? -> Retries<max? -> Rewrite -> Retrieve -> Grade -> Valid? -> Retries<max? -> Generate -> END -->
-    <path id="pathBalanced" d="M 50 105 L 175 105 L 340 105 L 452 105 L 452 190 L 302 190 L 175 190 L 175 105 L 340 105 L 452 105 L 452 190 C 530 190, 570 160, 580 135 L 602 105 L 748 105" fill="none"/>
+    <path id="pathBalanced" d="M 50 105 L 175 105 L 340 105 L 452 105 L 452 190 L 302 190 L 175 190 L 175 105 L 340 105 L 452 105 L 452 190 C 530 190, 570 160, 580 137 L 602 105 L 748 105" fill="none" stroke="none"/>
 
     <!-- Rigorous (worst case, 2 rewrites): Loop twice then Generate -> END -->
-    <path id="pathRigorous" d="M 50 105 L 175 105 L 340 105 L 452 105 L 452 190 L 302 190 L 175 190 L 175 105 L 340 105 L 452 105 L 452 190 L 302 190 L 175 190 L 175 105 L 340 105 L 452 105 L 452 190 C 530 190, 570 160, 580 135 L 602 105 L 748 105" fill="none"/>
+    <path id="pathRigorous" d="M 50 105 L 175 105 L 340 105 L 452 105 L 452 190 L 302 190 L 175 190 L 175 105 L 340 105 L 452 105 L 452 190 L 302 190 L 175 190 L 175 105 L 340 105 L 452 105 L 452 190 C 530 190, 570 160, 580 137 L 602 105 L 748 105" fill="none" stroke="none"/>
   </defs>
 
-  <!-- Title / Badge -->
-  <text x="30" y="30" fill="#94a3b8" font-size="12" font-weight="700" letter-spacing="1">WORKFLOW · CORRECTIVE RAG (SELF-RAG) STATE MACHINE</text>
+  <!-- Title / Badge (Cleanly spaced without overlap) -->
+  <text x="30" y="28" fill="#94a3b8" font-size="11" font-weight="700" letter-spacing="1">WORKFLOW · CRAG STATE MACHINE</text>
 
-  <!-- Static Paths (Connections) -->
-  <!-- START to Retrieve -->
+  <!-- Fast-Path Badge (Centered above bypass curve) -->
+  <rect x="260" y="14" width="280" height="20" rx="5" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+  <text x="400" y="27.5" fill="#38bdf8" font-size="9" font-weight="600" text-anchor="middle">Turbo · exact quote · Balanced dist &lt; 0.35</text>
+
+  <!-- EDGES / CONNECTIONS -->
+  <!-- 1. START to Retrieve -->
   <path d="M 75 105 L 115 105" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- Retrieve to Grade -->
+  <!-- 2. Retrieve to Grade -->
   <path d="M 235 105 L 285 105" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- Bypass Edge: Retrieve to Generate (over top) -->
-  <path d="M 175 75 C 175 32, 600 32, 600 70" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowCyan)"/>
-  <rect x="250" y="20" width="295" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
-  <text x="397" y="32" fill="#38bdf8" font-size="9" font-weight="600" text-anchor="middle">Turbo · exact quote · Balanced dist &lt; 0.35</text>
+  <!-- 3. Single Bypass Edge: Retrieve to Generate (over top) -->
+  <path d="M 175 75 C 175 32, 602 32, 602 70" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowCyan)"/>
 
-  <!-- Grade to Decision Diamond 1 (Valid?) -->
+  <!-- 4. Grade to Decision Diamond 1 (Valid?) -->
   <path d="M 395 105 L 432 105" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- Decision 1 to Generate (Success: ≥1 valid) -->
+  <!-- 5. Decision 1 to Generate (Success: ≥1 valid) -->
   <path d="M 472 105 L 535 105" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
   <text x="495" y="98" fill="#10b981" font-size="9.5" font-weight="600">≥1 valid</text>
 
-  <!-- Decision 1 down to Decision 2 (0 valid) -->
+  <!-- 6. Decision 1 down to Decision 2 (0 valid) -->
   <path d="M 452 123 L 452 172" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
   <text x="458" y="150" fill="#f59e0b" font-size="9.5" font-weight="600">0 valid</text>
 
-  <!-- Decision 2 to Rewrite Query (yes: Retries < max) -->
+  <!-- 7. Decision 2 to Rewrite Query (yes: Retries < max) -->
   <path d="M 432 190 L 365 190" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
   <text x="398" y="183" fill="#f59e0b" font-size="9.5" font-weight="600">yes</text>
 
-  <!-- Rewrite Loop back to Retrieve -->
-  <path d="M 240 190 L 175 190 L 175 143" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowAmber)"/>
+  <!-- 8. Rewrite Loop back to Retrieve -->
+  <path d="M 240 190 L 175 190 L 175 141" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowAmber)"/>
 
-  <!-- Decision 2 to Generate (no / refusal: Retries ≥ max) -->
-  <path d="M 472 190 C 530 190, 570 160, 580 143" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowRose)"/>
+  <!-- 9. Decision 2 to Generate (no / refusal: Retries ≥ max) -->
+  <path d="M 472 190 C 530 190, 570 160, 580 141" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowRose)"/>
   <text x="492" y="183" fill="#f43f5e" font-size="9.5" font-weight="600">no (refusal)</text>
 
-  <!-- Generate to END -->
+  <!-- 10. Generate to END -->
   <path d="M 670 105 L 720 105" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
 
   <!-- NODES -->
@@ -143,11 +145,6 @@
   <rect x="725" y="90" width="46" height="30" rx="15" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
   <text x="748" y="109" fill="#ecfdf5" font-size="10" font-weight="700" text-anchor="middle">END</text>
 
-  <!-- Static Faint Paths for Reduced Motion / Non-Animated Fallback -->
-  <path d="M 50 105 L 175 105 C 175 32, 600 32, 600 75 L 602 105 L 748 105" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="2,4" opacity="0.3"/>
-  <path d="M 50 105 L 175 105 L 340 105 L 452 105 L 452 190 L 302 190 L 175 190 L 175 105 L 340 105 L 452 105 L 452 190 C 530 190, 570 160, 580 135 L 602 105 L 748 105" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="2,4" opacity="0.3"/>
-  <path d="M 50 105 L 175 105 L 340 105 L 452 105 L 452 190 C 530 190, 570 160, 580 135 L 602 105 L 748 105" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-dasharray="2,4" opacity="0.3"/>
-
   <!-- Animated Mode Lights (SMIL) -->
   <!-- Turbo Mode Light (Cyan, 4s duration, begins at 0s) -->
   <circle r="4.5" fill="#38bdf8" filter="url(#glowCyan)">
@@ -170,7 +167,7 @@
     </animateMotion>
   </circle>
 
-  <!-- Legend & Mode Description (Bottom Right) -->
+  <!-- Legend & Mode Description (Bottom Panel) -->
   <g transform="translate(30, 235)">
     <!-- Legend Frame -->
     <rect x="0" y="0" width="780" height="72" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
