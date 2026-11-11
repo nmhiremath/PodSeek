@@ -7,6 +7,7 @@ formatter can be unit-tested in isolation.
 from __future__ import annotations
 
 import html
+import os
 import re
 from pathlib import Path
 
@@ -52,7 +53,7 @@ PS_FAVICON_DATA_URI = (
 def render_head_meta_html() -> str:
     """Return HTML head tags for viewport, favicon, SEO description, Open Graph, Twitter cards, and fonts."""
     description = "Corrective RAG over Huberman Lab transcripts with timestamp citations."
-    return (
+    tags = (
         '<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover">'
         f'<link rel="icon" type="image/svg+xml" href="{PS_FAVICON_DATA_URI}">'
         f'<meta name="description" content="{description}">'
@@ -68,6 +69,10 @@ def render_head_meta_html() -> str:
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
     )
+    code = (os.getenv("GOATCOUNTER_CODE") or "").strip()
+    if code and re.fullmatch(r"^[a-z0-9-]+$", code):
+        tags += f'<script data-goatcounter="https://{code}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>'
+    return tags
 
 
 def format_citations(citations: list[dict]) -> str:
