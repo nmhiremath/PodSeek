@@ -20,7 +20,7 @@
   <text x="30" y="27" fill="#71717A" font-size="11" font-weight="600" letter-spacing="0.06em">WORKFLOW · CRAG STATE MACHINE</text>
 
   <!-- Plain Bypass Label (Below path, clear of section title) -->
-  <text x="392" y="67" fill="#71717A" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="10.5" font-weight="400" text-anchor="middle">Turbo · exact quote · Balanced dist &lt; 0.35</text>
+  <text x="392" y="67" fill="#71717A" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle">Turbo · exact quote · Balanced dist &lt; 0.35</text>
 
   <!-- EDGES / CONNECTIONS -->
   <!-- 1. START to Retrieve -->
@@ -45,14 +45,14 @@
 
   <!-- 7. Decision 2 to Rewrite Query (yes) -->
   <path d="M 420 200 L 365 200" fill="none" stroke="#71717A" stroke-width="1.25" marker-end="url(#arrow)"/>
-  <text x="392" y="192" fill="#71717A" font-size="10" font-weight="400" text-anchor="middle">yes</text>
+  <text x="392" y="192" fill="#71717A" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle">yes</text>
 
   <!-- 8. Rewrite Loop back to Retrieve (Dashed gray) -->
   <path d="M 240 200 C 190 200, 175 175, 175 147" fill="none" stroke="#71717A" stroke-width="1.25" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
 
   <!-- 9. Decision 2 to Generate (no / refusal - Dashed gray) -->
   <path d="M 484 200 L 552 200 C 582 200, 602 175, 602 147" fill="none" stroke="#71717A" stroke-width="1.25" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
-  <text x="515" y="190" fill="#71717A" font-size="10" font-weight="400">no (refusal)</text>
+  <text x="515" y="190" fill="#71717A" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400">no (refusal)</text>
 
   <!-- 10. Generate to END -->
   <path d="M 670 115 L 725 115" fill="none" stroke="#71717A" stroke-width="1.25" marker-end="url(#arrow)"/>
@@ -65,7 +65,7 @@
   <!-- 1. Retrieve -->
   <rect x="115" y="85" width="120" height="60" rx="10" fill="#FFFFFF" stroke="#D4D4D8" stroke-width="1"/>
   <text x="175" y="108" fill="#18181B" font-size="12" font-weight="600" text-anchor="middle">🔍 Retrieve</text>
-  <text x="175" y="127" fill="#71717A" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle">k=4 Chunks + Dist</text>
+  <text x="175" y="127" fill="#71717A" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle">k=4 + dist</text>
 
   <!-- 2. Grade Documents -->
   <rect x="285" y="85" width="110" height="60" rx="10" fill="#FFFFFF" stroke="#D4D4D8" stroke-width="1"/>
