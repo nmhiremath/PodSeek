@@ -18,7 +18,7 @@ flowchart LR
         api["FastAPI<br/>/ask · /ask/stream · /ingest"]
         cache[("QA cache<br/>qa_cache.json")]
         agent["LangGraph CRAG agent<br/>retrieve → grade → rewrite → generate"]
-        ui --> api
+        ui -- "in-process or HTTP" --> api
         api -- "cache hit" --> cache
         api -- "cache miss" --> agent
     end
@@ -42,6 +42,8 @@ flowchart LR
     agent -. "traces" .-> ls
     api -. "ingest only" .-> yt
     api -. "ingest, episode list" .-> raw
+    api -. "ingest: embed, index" .-> chroma
+    api -. "ingest: summarize, embed" .-> gemini
 
     classDef core fill:#1E293B,stroke:#6366F1,color:#F8FAFC
     classDef store fill:#0F172A,stroke:#94A3B8,color:#F8FAFC

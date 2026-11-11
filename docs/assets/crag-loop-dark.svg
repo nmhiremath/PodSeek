@@ -71,14 +71,14 @@
   <rect x="270" y="14" width="244" height="20" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.25"/>
   <text x="392" y="27.5" fill="#38bdf8" font-size="9" font-weight="600" text-anchor="middle">Turbo · exact quote · Balanced dist &lt; 0.35</text>
 
-  <!-- STATIC FAINT MODE TRAILS (Faint dashed visual guides for non-SMIL renderers; offset 2px so they don't stack) -->
+  <!-- STATIC FAINT MODE TRAILS (Faint dashed visual guides for non-SMIL renderers; offsets: Turbo -6px, Balanced +6px, Rigorous +10px) -->
   <g id="staticModeTrails">
-    <!-- Turbo faint path (offset -2px in Y) -->
-    <path d="M 50 113 L 175 113 L 175 83 C 175 60, 195 46, 225 46 L 552 46 C 582 46, 602 60, 602 79 L 602 113 L 748 113" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.18" stroke-dasharray="3,6"/>
-    <!-- Balanced faint path (baseline Y) -->
-    <path d="M 50 115 L 175 115 L 340 115 L 452 115 L 452 200 L 302 200 L 240 200 C 190 200, 175 175, 175 147 L 175 115 L 340 115 L 452 115 L 452 200 L 552 200 C 582 200, 602 175, 602 147 L 602 115 L 748 115" fill="none" stroke="#10b981" stroke-width="1.5" stroke-opacity="0.18" stroke-dasharray="3,6"/>
-    <!-- Rigorous faint path (offset +2px in Y) -->
-    <path d="M 50 117 L 175 117 L 340 117 L 452 117 L 452 202 L 302 202 L 240 202 C 190 202, 175 177, 175 149 L 175 117 L 340 117 L 452 117 L 452 202 L 552 202 C 582 202, 602 177, 602 149 L 602 117 L 748 117" fill="none" stroke="#f97316" stroke-width="1.5" stroke-opacity="0.18" stroke-dasharray="3,6"/>
+    <!-- Turbo faint path (offset -6px) -->
+    <path d="M 50 109 L 169 109 L 169 79 C 169 56, 189 42, 219 42 L 546 42 C 576 42, 596 56, 596 75 L 596 109 L 748 109" fill="none" stroke="#38bdf8" stroke-width="2" stroke-opacity="0.35" stroke-dasharray="3,6"/>
+    <!-- Balanced faint path (offset +6px) -->
+    <path d="M 50 121 L 181 121 L 340 121 L 458 121 L 458 206 L 302 206 L 240 206 C 196 206, 181 181, 181 153 L 181 121 L 340 121 L 458 121 L 458 206 L 558 206 C 588 206, 608 181, 608 153 L 608 121 L 748 121" fill="none" stroke="#10b981" stroke-width="2" stroke-opacity="0.35" stroke-dasharray="3,6"/>
+    <!-- Rigorous faint path (offset +10px) -->
+    <path d="M 50 125 L 185 125 L 340 125 L 462 125 L 462 210 L 302 210 L 240 210 C 200 210, 185 185, 185 157 L 185 125 L 340 125 L 462 125 L 462 210 L 302 210 L 240 210 C 200 210, 185 185, 185 157 L 185 125 L 340 125 L 462 125 L 462 210 L 562 210 C 592 210, 612 185, 612 157 L 612 125 L 748 125" fill="none" stroke="#f97316" stroke-width="2" stroke-opacity="0.35" stroke-dasharray="3,6"/>
   </g>
 
   <!-- EDGES / CONNECTIONS -->
@@ -94,9 +94,9 @@
   <!-- 4. Grade to Decision Diamond 1 (Valid?) -->
   <path d="M 395 115 L 432 115" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <!-- 5. Decision 1 to Generate (Success: ≥1 valid - Neutral Slate) -->
+  <!-- 5. Decision 1 to Generate (Success: ≥1 valid - Neutral Slate, centered) -->
   <path d="M 472 115 L 535 115" fill="none" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrowSlate)"/>
-  <text x="495" y="108" fill="#94a3b8" font-size="9.5" font-weight="600">≥1 valid</text>
+  <text x="503.5" y="108" fill="#94a3b8" font-size="9.5" font-weight="600" text-anchor="middle">≥1 valid</text>
 
   <!-- 6. Decision 1 down to Decision 2 (0 valid - Indigo) -->
   <path d="M 452 133 L 452 176" fill="none" stroke="#818cf8" stroke-width="2" marker-end="url(#arrowIndigo)"/>
@@ -200,7 +200,7 @@
     <line x1="455" y1="10" x2="455" y2="64" stroke="#1e293b" stroke-width="1.5"/>
 
     <!-- Column 2: Note in Grey on Right -->
-    <text x="475" y="21" fill="#64748b" font-size="9" font-weight="700" letter-spacing="1">NOTE</text>
+    <text x="475" y="21" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="1">NOTE</text>
     <text x="475" y="37" fill="#94a3b8" font-size="9" font-style="italic">Balanced and Rigorous lights show the worst</text>
     <text x="475" y="50" fill="#94a3b8" font-size="9" font-style="italic">case (max rewrites). Exact quote matches skip</text>
     <text x="475" y="63" fill="#94a3b8" font-size="9" font-style="italic">grading in every mode.</text>

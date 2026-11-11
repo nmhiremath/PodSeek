@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **OpenSpec Baseline:** Adopted OpenSpec specification-driven development across 9 baseline capabilities in `openspec/specs/` (`retrieval`, `corrective-loop`, `answer-generation`, `inference-providers`, `streaming-api`, `ingestion`, `studio-ui`, `evaluation`, `observability`) with strict validation.
 - **Architectural Decision Records (ADRs):** Authored 14 retroactive MADR-style architectural decision records (`docs/adr/`) documenting technical decisions from project inception through PR #2.
 - **Agentic System Design Documentation:** Authored 12 design pillar documents (`docs/design/`), an enterprise tooling comparison matrix (`enterprise-mapping.md`), and a scale limitations roadmap (`limitations.md`).
-- **Architecture Diagrams:** Authored D2 architecture source (`docs/diagrams/architecture.d2`), light/dark rendered SVGs, and hand-authored SMIL animated Corrective RAG loop diagrams (`docs/assets/crag-loop-dark.svg` and `docs/assets/crag-loop-light.svg`).
+- **Architecture Diagrams:** Replaced D2 architecture diagrams with a labeled System Context flowchart in `README.md` and `docs/design/README.md`, accompanied by hand-authored light/dark SMIL animated Corrective RAG loop diagrams (`docs/assets/crag-loop-dark.svg` and `docs/assets/crag-loop-light.svg`).
 
 ---
 

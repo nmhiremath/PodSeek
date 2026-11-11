@@ -1,33 +1,11 @@
 # Architecture Diagrams
 
-This directory contains the source files for PodSeek's architecture diagrams.
+This directory documents the visual architecture diagrams for PodSeek.
 
-## Hero Diagram (`architecture.d2`)
+## System Context Flowchart
+The system context diagram is authored in Mermaid (`flowchart LR`) and embedded directly in `README.md` and `docs/design/README.md`. It illustrates component boundaries across the web service (Gradio Studio UI, FastAPI, QA cache, LangGraph agent), committed data (ChromaDB, raw transcripts), and external services (Google GenAI, YouTube, LangSmith).
 
-The hero architecture diagram is authored in [D2](https://d2lang.com) (`architecture.d2`) and rendered into light and dark SVG assets embedded in the root `README.md`.
-
-### Prerequisites
-Install the D2 CLI (version 0.9.0 or later):
-```bash
-# macOS via Homebrew
-brew install d2
-
-# Linux / curl
-curl -fsSL https://d2lang.com/install.sh | sh -s --
-```
-
-### Re-render Commands
-To re-render both light and dark SVGs using the dagre layout engine:
-
-```bash
-# Render light theme (Theme 4: Cool Classics)
-d2 --layout=dagre --theme=4 docs/diagrams/architecture.d2 docs/assets/architecture-light.svg
-
-# Render dark theme (Theme 200: Dark Mauve)
-d2 --layout=dagre --theme=200 docs/diagrams/architecture.d2 docs/assets/architecture-dark.svg
-```
-
-### Animated Corrective Loop (`docs/assets/crag-loop-dark.svg` / `docs/assets/crag-loop-light.svg`)
+## Animated Corrective Loop (`docs/assets/crag-loop-dark.svg` / `docs/assets/crag-loop-light.svg`)
 The hand-authored SMIL animated SVG visualizes the 4-node Corrective RAG loop (`Retrieve` -> `Grade` -> `Rewrite` -> `Generate`), including the Balanced distance fast-path and circuit-breaker refusal routing directly to `Generate`.
 
 ### Demo Screen Recording (`docs/assets/demo.gif`)
