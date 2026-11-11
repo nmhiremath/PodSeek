@@ -43,3 +43,22 @@ The system SHALL support both decoupled HTTP/SSE remote client mode and single-p
 - **WHEN** `PODSEEK_UI_MODE` is set to `"inprocess"` (or default when no remote URL is configured)
 - **THEN** `make_client()` instantiates `InProcessClient`
 - **AND** UI calls invoke FastAPI route handlers and LangGraph event generators directly without HTTP socket roundtrips.
+
+### Requirement: Adaptive System Theme and Preference Resolution
+The system SHALL resolve the application color scheme from system preferences when no user choice is stored, respect explicit user overrides stored in localStorage, and react to live OS theme changes when no preference is saved.
+
+#### Scenario: No saved preference follows prefers-color-scheme
+- **WHEN** the UI loads
+- **AND** `localStorage` contains no `podseek_theme` preference
+- **THEN** the theme resolves to the operating system's color scheme evaluated via `window.matchMedia('(prefers-color-scheme: dark)')`
+- **AND** the corresponding theme class and background color are applied immediately.
+
+#### Scenario: Saved preference overrides system theme
+- **WHEN** the UI loads
+- **AND** `localStorage` contains an explicit `podseek_theme` value of `"dark"` or `"light"`
+- **THEN** the saved preference determines the application theme regardless of the operating system's color scheme.
+
+#### Scenario: OS color scheme changes apply live only with no saved preference
+- **WHEN** the operating system changes color scheme dynamically
+- **AND** `localStorage` contains no explicit `podseek_theme` preference
+- **THEN** the UI updates its theme classes and background styling immediately to match the new system color scheme.

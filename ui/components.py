@@ -53,6 +53,53 @@ PS_FAVICON_DATA_URI = (
 def render_head_meta_html() -> str:
     """Return HTML head tags for viewport, favicon, SEO description, Open Graph, Twitter cards, and fonts."""
     description = "Corrective RAG over Huberman Lab transcripts with timestamp citations."
+    early_theme_js = (
+        "<script>"
+        "(() => {"
+        "window.podSeekApplyTheme = (isDark) => {"
+        "const root = document.documentElement;"
+        "if (!root) return;"
+        "const targets = [root, document.body];"
+        "const gC = document.querySelector('.gradio-container');"
+        "const gA = document.querySelector('gradio-app');"
+        "if (gC) targets.push(gC);"
+        "if (gA) targets.push(gA);"
+        "targets.forEach(el => {"
+        "if (!el) return;"
+        "el.classList.toggle('ap-dark', isDark);"
+        "if (!isDark) el.classList.remove('dark');"
+        "});"
+        "const bg = isDark ? '#111113' : '#F8F9FA';"
+        "root.style.setProperty('background-color', bg, 'important');"
+        "if (document.body) document.body.style.setProperty('background-color', bg, 'important');"
+        "if (gA) gA.style.setProperty('background-color', bg, 'important');"
+        "};"
+        "let isDark = false;"
+        "try {"
+        "const saved = localStorage.getItem('podseek_theme');"
+        "if (saved === 'dark') isDark = true;"
+        "else if (saved === 'light') isDark = false;"
+        "else isDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);"
+        "} catch (e) {"
+        "isDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);"
+        "}"
+        "window.podSeekApplyTheme(isDark);"
+        "if (!window._podSeekThemeListenerAttached && window.matchMedia) {"
+        "window._podSeekThemeListenerAttached = true;"
+        "const mq = window.matchMedia('(prefers-color-scheme: dark)');"
+        "const onSysChange = (e) => {"
+        "let s = null;"
+        "try { s = localStorage.getItem('podseek_theme'); } catch (err) {}"
+        "if (s !== 'dark' && s !== 'light') {"
+        "if (window.podSeekApplyTheme) window.podSeekApplyTheme(e.matches);"
+        "}"
+        "};"
+        "if (mq.addEventListener) mq.addEventListener('change', onSysChange);"
+        "else if (mq.addListener) mq.addListener(onSysChange);"
+        "}"
+        "})();"
+        "</script>"
+    )
     tags = (
         '<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover">'
         f'<link rel="icon" type="image/svg+xml" href="{PS_FAVICON_DATA_URI}">'
@@ -68,6 +115,7 @@ def render_head_meta_html() -> str:
         '<link rel="preconnect" href="https://fonts.googleapis.com">'
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
+        f"{early_theme_js}"
     )
     code = (os.getenv("GOATCOUNTER_CODE") or "").strip()
     if code and re.fullmatch(r"^[a-z0-9-]+$", code):
@@ -546,22 +594,8 @@ def render_header_controls_html() -> str:
         '<button id="ap-theme-slider" type="button" title="Toggle Light / Dark theme" '
         'onclick="(() => {'
         "const isDark = !document.documentElement.classList.contains('ap-dark');"
-        "document.documentElement.classList.toggle('ap-dark', isDark);"
-        "document.body.classList.toggle('ap-dark', isDark);"
-        "document.querySelector('.gradio-container')?.classList.toggle('ap-dark', isDark);"
-        "document.querySelector('gradio-app')?.classList.toggle('ap-dark', isDark);"
-        "if (!isDark) {"
-        "document.documentElement.classList.remove('dark');"
-        "document.body.classList.remove('dark');"
-        "document.querySelector('.gradio-container')?.classList.remove('dark');"
-        "document.querySelector('gradio-app')?.classList.remove('dark');"
-        "}"
+        "if (window.podSeekApplyTheme) { window.podSeekApplyTheme(isDark); }"
         "try { localStorage.setItem('podseek_theme', isDark ? 'dark' : 'light'); } catch (e) {}"
-        "const bg = isDark ? '#111113' : '#F8F9FA';"
-        "document.documentElement.style.setProperty('background-color', bg, 'important');"
-        "document.body.style.setProperty('background-color', bg, 'important');"
-        "const gApp = document.querySelector('gradio-app');"
-        "if (gApp) gApp.style.setProperty('background-color', bg, 'important');"
         '})()">'
         '<span class="ts-thumb"></span>'
         '<span class="ts-icon ts-sun">'
@@ -666,16 +700,8 @@ def render_header_library_html(items: list[dict]) -> str:
         '<button id="ap-theme-slider" type="button" title="Toggle Light / Dark theme" '
         'onclick="(() => {'
         "const isDark = !document.documentElement.classList.contains('ap-dark');"
-        "document.documentElement.classList.toggle('ap-dark', isDark);"
-        "document.documentElement.classList.toggle('dark', isDark);"
-        "document.body.classList.toggle('ap-dark', isDark);"
-        "document.body.classList.toggle('dark', isDark);"
-        "document.querySelector('.gradio-container')?.classList.toggle('ap-dark', isDark);"
-        "const bg = isDark ? '#111113' : '#F8F9FA';"
-        "document.documentElement.style.setProperty('background-color', bg, 'important');"
-        "document.body.style.setProperty('background-color', bg, 'important');"
-        "const gApp = document.querySelector('gradio-app');"
-        "if (gApp) gApp.style.setProperty('background-color', bg, 'important');"
+        "if (window.podSeekApplyTheme) { window.podSeekApplyTheme(isDark); }"
+        "try { localStorage.setItem('podseek_theme', isDark ? 'dark' : 'light'); } catch (e) {}"
         '})()">'
         '<span class="ts-thumb"></span>'
         '<span class="ts-icon ts-sun">'
