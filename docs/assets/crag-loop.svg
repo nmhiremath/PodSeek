@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 280" width="100%" height="100%" style="background-color: #0b1120; border-radius: 12px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#451a03"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#881337"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <!-- Markers -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowRose" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f43f5e"/>
+    </marker>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <!-- Title / Badge -->
+  <text x="30" y="34" fill="#94a3b8" font-size="12" font-weight="700" letter-spacing="1">WORKFLOW · CORRECTIVE RAG (SELF-RAG) STATE MACHINE</text>
+
+  <!-- Static Paths (Connections) -->
+  <!-- START to Retrieve -->
+  <path d="M 75 110 L 115 110" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Retrieve to Grade -->
+  <path d="M 235 110 L 285 110" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Fast-Path: Retrieve to Generate (over top) -->
+  <path d="M 175 80 C 175 35, 595 35, 595 72" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowCyan)"/>
+  <rect x="315" y="22" width="165" height="18" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1"/>
+  <text x="397" y="34" fill="#38bdf8" font-size="9" font-weight="600" text-anchor="middle">Fast-Path: Turbo / dist &lt; 0.35</text>
+
+  <!-- Grade to Decision Diamond -->
+  <path d="M 395 110 L 435 110" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Decision to Generate (Success) -->
+  <path d="M 470 95 L 535 95" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  <text x="495" y="88" fill="#10b981" font-size="9.5" font-weight="600">≥1 valid</text>
+
+  <!-- Decision down to Rewrite Check -->
+  <path d="M 452 128 L 452 185" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
+  <text x="458" y="155" fill="#f59e0b" font-size="9.5" font-weight="600">0 valid</text>
+
+  <!-- Rewrite Loop back to Retrieve -->
+  <path d="M 240 210 L 175 210 L 175 148" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowAmber)"/>
+  <text x="195" y="225" fill="#f59e0b" font-size="9.5" font-weight="600">Retry &lt; max (2)</text>
+
+  <!-- Max Retries Circuit Breaker to Refusal -->
+  <path d="M 475 210 L 535 210" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrowRose)"/>
+  <text x="480" y="202" fill="#f43f5e" font-size="9.5" font-weight="600">Retries ≥ max</text>
+
+  <!-- Generate to END -->
+  <path d="M 660 95 L 705 95" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Refuse to END -->
+  <path d="M 660 210 L 705 210" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- NODES -->
+  <!-- START -->
+  <rect x="25" y="92" width="50" height="36" rx="18" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+  <text x="50" y="114" fill="#cbd5e1" font-size="11" font-weight="700" text-anchor="middle">START</text>
+
+  <!-- 1. Retrieve -->
+  <rect x="115" y="80" width="120" height="60" rx="8" fill="url(#blueGrad)" stroke="#3b82f6" stroke-width="2"/>
+  <text x="175" y="103" fill="#f8fafc" font-size="12" font-weight="700" text-anchor="middle">🔍 Retrieve</text>
+  <text x="175" y="122" fill="#93c5fd" font-size="9.5" text-anchor="middle">Top-4 Chunks + Dist</text>
+
+  <!-- 2. Grade -->
+  <rect x="285" y="80" width="110" height="60" rx="8" fill="url(#blueGrad)" stroke="#3b82f6" stroke-width="2"/>
+  <text x="340" y="103" fill="#f8fafc" font-size="12" font-weight="700" text-anchor="middle">⚖️ Grade</text>
+  <text x="340" y="122" fill="#93c5fd" font-size="9.5" text-anchor="middle">Single Batch LLM</text>
+
+  <!-- Decision Diamond -->
+  <polygon points="452,92 472,110 452,128 432,110" fill="#1e293b" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="452" y="113" fill="#f8fafc" font-size="8.5" font-weight="700" text-anchor="middle">Valid?</text>
+
+  <!-- 3. Rewrite -->
+  <rect x="240" y="185" width="125" height="50" rx="8" fill="url(#amberGrad)" stroke="#f59e0b" stroke-width="2"/>
+  <text x="302" y="206" fill="#fef3c7" font-size="11" font-weight="700" text-anchor="middle">✍️ Rewrite Query</text>
+  <text x="302" y="222" fill="#fcd34d" font-size="9" text-anchor="middle">Optimizer (<=2)</text>
+
+  <!-- 4. Generate -->
+  <rect x="535" y="68" width="125" height="55" rx="8" fill="url(#greenGrad)" stroke="#10b981" stroke-width="2"/>
+  <text x="597" y="91" fill="#ecfdf5" font-size="12" font-weight="700" text-anchor="middle">✨ Generate</text>
+  <text x="597" y="108" fill="#a7f3d0" font-size="9" text-anchor="middle">Grounded + Citations</text>
+
+  <!-- Circuit-Breaker Refusal -->
+  <rect x="535" y="185" width="125" height="50" rx="8" fill="url(#roseGrad)" stroke="#f43f5e" stroke-width="2"/>
+  <text x="597" y="206" fill="#ffe4e6" font-size="11" font-weight="700" text-anchor="middle">🛑 Refuse</text>
+  <text x="597" y="222" fill="#fda4af" font-size="9" text-anchor="middle">Circuit Breaker</text>
+
+  <!-- END Success -->
+  <rect x="710" y="80" width="46" height="30" rx="15" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
+  <text x="733" y="99" fill="#ecfdf5" font-size="10" font-weight="700" text-anchor="middle">END</text>
+
+  <!-- END Refusal -->
+  <rect x="710" y="195" width="46" height="30" rx="15" fill="#881337" stroke="#f43f5e" stroke-width="1.5"/>
+  <text x="733" y="214" fill="#ffe4e6" font-size="10" font-weight="700" text-anchor="middle">END</text>
+
+  <!-- Animated Traveling Pulse Dot along Path: START -> Retrieve -> Grade -> Rewrite -> Retrieve -> Grade -> Generate -> END -->
+  <path id="cyclePath" d="M 50 110 L 175 110 L 340 110 L 452 110 L 452 210 L 302 210 L 175 210 L 175 110 L 340 110 L 452 110 L 597 95 L 733 95" fill="none" stroke="none"/>
+  <circle r="4.5" fill="#38bdf8" filter="drop-shadow(0 0 6px #38bdf8)">
+    <animateMotion dur="8s" repeatCount="indefinite" rotate="auto">
+      <mpath href="#cyclePath"/>
+    </animateMotion>
+  </circle>
+</svg>
