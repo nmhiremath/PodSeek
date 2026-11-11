@@ -58,7 +58,11 @@ Conversational audio transcripts present three distinct failure modes for conven
 
 **PodSeek** addresses these challenges through a deterministic **Corrective RAG (CRAG)** state machine orchestrated via **LangGraph**, paired with a **speaker-aware sliding-window chunking engine** that preserves exact start and end timestamps. Every claim is strictly grounded in verified excerpts and cited with clickable YouTube deep links (`https://youtu.be/<id>?t=<seconds>`).
 
-![Corrective RAG loop: retrieve, then skip or grade, rewrite up to the mode's limit, then generate an answer or a refusal](docs/assets/crag-loop.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/crag-loop-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/crag-loop-light.svg">
+  <img alt="Corrective RAG loop: retrieve, then skip or grade, rewrite up to the mode's limit, then generate an answer or a refusal" src="docs/assets/crag-loop-light.svg">
+</picture>
 
 ---
 

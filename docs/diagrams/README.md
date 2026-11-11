@@ -27,7 +27,7 @@ d2 --layout=dagre --theme=4 docs/diagrams/architecture.d2 docs/assets/architectu
 d2 --layout=dagre --theme=200 docs/diagrams/architecture.d2 docs/assets/architecture-dark.svg
 ```
 
-### Animated Corrective Loop (`docs/assets/crag-loop.svg`)
+### Animated Corrective Loop (`docs/assets/crag-loop-dark.svg` / `docs/assets/crag-loop-light.svg`)
 The hand-authored SMIL animated SVG visualizes the 4-node Corrective RAG loop (`Retrieve` -> `Grade` -> `Rewrite` -> `Generate`), including the Balanced distance fast-path and circuit-breaker refusal routing directly to `Generate`.
 
 ### Demo Screen Recording (`docs/assets/demo.gif`)
