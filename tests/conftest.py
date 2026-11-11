@@ -3,6 +3,16 @@
 from __future__ import annotations
 
 import os
+import sys
+from unittest.mock import MagicMock
+
+# In headless/CI environments where requirements-ui.txt (gradio) is not installed,
+# inject a MagicMock stub into sys.modules so modules depending on gradio can be loaded.
+if "gradio" not in sys.modules:
+    try:
+        import gradio  # noqa: F401
+    except ModuleNotFoundError:
+        sys.modules["gradio"] = MagicMock()
 
 import langsmith
 import langsmith.utils

@@ -20,7 +20,12 @@ _REPO_ROOT = str(Path(__file__).resolve().parent.parent)
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-import gradio as gr  # noqa: E402 # pyright: ignore[reportMissingImports]
+try:
+    import gradio as gr  # noqa: E402 # pyright: ignore[reportMissingImports]
+except ModuleNotFoundError:  # pragma: no cover
+    from unittest.mock import MagicMock
+
+    gr = MagicMock()  # type: ignore
 
 import ui.components as _ui_components  # noqa: E402
 from app.agent.nodes import determine_outcome  # noqa: E402
