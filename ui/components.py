@@ -838,7 +838,7 @@ def render_chat_session_html(history: list[dict], episode_count: int = 50, notic
             "If the episodes don't cover it, PodSeek says so instead of guessing. Independent project, not affiliated with Huberman Lab. Not medical advice."
             "</div>"
             '<div class="ap-empty-footnote ap-empty-footnote-mobile ap-muted">'
-            "Says so when episodes don't cover it. Independent project, not medical advice."
+            "Independent project, not affiliated with Huberman Lab. Not medical advice."
             "</div>"
             f"</div></div>{notice_html}"
             "</div>"

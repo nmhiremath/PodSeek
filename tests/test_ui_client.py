@@ -174,7 +174,7 @@ def test_theme_css_and_components_render_without_gradio():
     assert "Choose a mode: Turbo is fast, Rigorous checks every source" in empty_chat
     assert "Tap a timestamp to hear it" in empty_chat
     assert "If the episodes don't cover it, PodSeek says so instead of guessing" in empty_chat
-    assert "Says so when episodes don't cover it. Independent project, not medical advice." in empty_chat
+    assert "Independent project, not affiliated with Huberman Lab. Not medical advice." in empty_chat
 
     refusal_chat = render_chat_session_html(
         [
