@@ -4,8 +4,25 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .DS_Store
-.vscode/*
-!.vscode/settings.json
+# Editor / IDE
+.vscode/
+.idea/
+pyrefly.toml
+
+# Local AI-agent config (regenerate OpenSpec skills: openspec init --tools <ids>)
+.agents/
+.agent/
+.claude/
+.cursor/
+.gemini/
+.windsurf/
+
+# Caches, logs, local artifacts
+.ruff_cache/
+.mypy_cache/
+*.log
+ui_audit/
+audit_telemetry.json
 cookies.txt
 *cookies*.txt
 .gradio/

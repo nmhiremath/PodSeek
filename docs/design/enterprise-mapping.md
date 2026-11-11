@@ -1,0 +1,19 @@
+# Enterprise Architecture Mapping Matrix
+
+This document provides a direct, honest comparison between typical enterprise AI stack tooling and PodSeek's equivalent implementations, clearly identifying architectural boundaries and production gaps.
+
+| Concern | Typical Enterprise Tool | PodSeek Equivalent | Key Files | Gap / What PodSeek Lacks |
+| :--- | :--- | :--- | :--- | :--- |
+| **Vector Database** | Pinecone, Qdrant Cloud, Weaviate | Embedded ChromaDB on persistent disk (72 MB, 2,052 vectors) | `app/vectorstore.py`, `chroma_db/` | Single-replica only; no horizontal sharding, dynamic partitioning, or cross-region replication. |
+| **Hybrid Search** | Elasticsearch / OpenSearch + BM25 + Vector RRF | Cosine similarity + exact regex quote hoisting | `app/agent/nodes.py:retrieve` | No inverted index (BM25/SPLADE); cannot perform fuzzy keyword search on rare terms without exact quotes. |
+| **Re-Ranking** | Cohere Rerank, BGE-Reranker-Large | LLM Batch Relevance Grader (`BatchGradeResult`) | `app/agent/nodes.py:grade_documents` | Uses generative LLM rather than a cross-encoder model; higher latency and token cost per grading operation. |
+| **Agent Orchestration** | Temporal.io, AWS Step Functions, LangGraph Cloud | In-memory compiled LangGraph StateGraph | `app/agent/graph.py`, `app/agent/state.py` | In-memory state only; no durable pause/resume, human-in-the-loop approvals, or distributed task queues. |
+| **LLM Gateway & Routing** | LiteLLM Proxy, Portkey, Kong AI Gateway | In-repo provider factory with LRU caching | `app/factory.py` | No automated cross-provider runtime failover, per-tenant virtual keys, or centralized rate-limit enforcement. |
+| **Guardrails & Hallucination** | NeMo Guardrails, Guardrails AI, Llama Guard | Pre-grading, circuit breaker, post-generation regex | `app/agent/nodes.py:generate` | No secondary NLI entailment classifier; relies on prompt adherence, regex refusal detection, and retry limits. |
+| **Offline Evaluation** | Ragas, DeepEval, TruLens | Heuristic benchmark harness (keywords + citation syntax) | `app/evaluation.py`, `scripts/evaluate.py` | Heuristic keyword recall rather than semantic embedding similarity; small 16-question evaluation suite. |
+| **Observability & Tracing** | OpenTelemetry, Datadog APM, Langfuse, Arize | Strict opt-in LangSmith + custom SSE event stream | `app/observability.py`, `app/api/routes.py` | No time-series latency dashboards (Prometheus/Grafana); no live user feedback collection (thumbs up/down). |
+| **Semantic Response Cache** | Redis Vector Cache, GPTCache | Composite-keyed normalized JSON disk cache | `app/api/routes.py`, `data/raw/qa_cache.json` | Exact normalized string matching only; semantic duplicates with different wording miss the cache. |
+| **Ingestion Pipeline** | Apache Airflow, Prefect, Celery + Redis | Synchronous FastAPI endpoint + CLI batch scripts | `app/ingestion/`, `scripts/ingest_top_episodes.py` | Synchronous execution; long-running ingest blocks worker thread; no distributed task worker queue. |
+| **Channel & Provenance Guard** | Enterprise Data Governance / DLP Policy Engines | YouTube oEmbed author check (`is_huberman_channel`) | `app/ingestion/youtube.py` | Simple substring author check; does not inspect audio watermarks, verify licensing rights, or scan for PII. |
+| **Container Hosting** | Kubernetes (EKS/GKE), Helm, Istio Service Mesh | Render.com free tier blueprint + Docker Compose | `render.yaml`, `Dockerfile` | Single-instance deployment; 512 MB RAM ceiling; idle spin-down and cold starts (documented Render free-tier behavior). |
+| **Continuous Integration** | Enterprise Jenkins / GitHub Enterprise Runners | GitHub Actions (Python 3.13, Ruff, offline Pytest) | `.github/workflows/ci.yml` | Tests run strictly offline; no nightly automated live model regression runs in CI to preserve zero-cost. |

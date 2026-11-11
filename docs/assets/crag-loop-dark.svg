@@ -1,0 +1,240 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 330" width="100%" height="100%" font-family="Inter, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <!-- Simple Arrowhead Marker -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#71717A"/>
+    </marker>
+
+    <!-- Invisible Motion Guide Paths for animateMotion -->
+    <!-- Turbo: Exactly follows START -> Retrieve -> (175,85) curve (602,81) -> Generate -> END -->
+    <path id="pathTurbo" d="M 50 115 L 175 115 L 175 85 C 175 62, 195 48, 225 48 L 552 48 C 582 48, 602 62, 602 81 L 602 115 L 748 115" fill="none" stroke="none"/>
+
+    <!-- Balanced (worst case, 1 rewrite): Exactly follows nodes and edges -->
+    <path id="pathBalanced" d="M 50 115 L 175 115 L 340 115 L 452 115 L 452 200 L 302 200 L 240 200 C 190 200, 175 175, 175 147 L 175 115 L 340 115 L 452 115 L 452 200 L 552 200 C 582 200, 602 175, 602 147 L 602 115 L 748 115" fill="none" stroke="none"/>
+
+    <!-- Rigorous (worst case, 2 rewrites): Loops twice through rewrite then refusal -->
+    <path id="pathRigorous" d="M 50 115 L 175 115 L 340 115 L 452 115 L 452 200 L 302 200 L 240 200 C 190 200, 175 175, 175 147 L 175 115 L 340 115 L 452 115 L 452 200 L 302 200 L 240 200 C 190 200, 175 175, 175 147 L 175 115 L 340 115 L 452 115 L 452 200 L 552 200 C 582 200, 602 175, 602 147 L 602 115 L 748 115" fill="none" stroke="none"/>
+  </defs>
+
+  <!-- Title (Section Title) -->
+  <text x="30" y="27" fill="#A1A1AA" font-size="11" font-weight="600" letter-spacing="0.06em">WORKFLOW · CRAG STATE MACHINE</text>
+
+  <!-- Plain Bypass Label (Below path, clear of section title) -->
+  <text x="392" y="67" fill="#A1A1AA" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle">Turbo · exact quote · Balanced dist &lt; 0.35</text>
+
+  <!-- EDGES / CONNECTIONS -->
+  <!-- 1. START to Retrieve -->
+  <path d="M 75 115 L 115 115" fill="none" stroke="#71717A" stroke-width="1.25" marker-end="url(#arrow)"/>
+
+  <!-- 2. Retrieve to Grade -->
+  <path d="M 235 115 L 285 115" fill="none" stroke="#71717A" stroke-width="1.25" marker-end="url(#arrow)"/>
+
+  <!-- 3. Single Bypass Edge: Retrieve to Generate (Dashed gray) -->
+  <path d="M 175 85 C 175 62, 195 48, 225 48 L 552 48 C 582 48, 602 62, 602 81" fill="none" stroke="#71717A" stroke-width="1.25" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
+
+  <!-- 4. Grade to Decision Diamond 1 (Valid?) -->
+  <path d="M 395 115 L 432 115" fill="none" stroke="#71717A" stroke-width="1.25" marker-end="url(#arrow)"/>
+
+  <!-- 5. Decision 1 to Generate (≥1 valid) -->
+  <path d="M 472 115 L 535 115" fill="none" stroke="#71717A" stroke-width="1.25" marker-end="url(#arrow)"/>
+  <text x="503.5" y="108" fill="#A1A1AA" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle">≥1 valid</text>
+
+  <!-- 6. Decision 1 down to Decision 2 (0 valid) -->
+  <path d="M 452 133 L 452 176" fill="none" stroke="#71717A" stroke-width="1.25" marker-end="url(#arrow)"/>
+  <text x="460" y="156" fill="#A1A1AA" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400">0 valid</text>
+
+  <!-- 7. Decision 2 to Rewrite Query (yes) -->
+  <path d="M 420 200 L 365 200" fill="none" stroke="#71717A" stroke-width="1.25" marker-end="url(#arrow)"/>
+  <text x="392" y="192" fill="#A1A1AA" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle">yes</text>
+
+  <!-- 8. Rewrite Loop back to Retrieve (Dashed gray) -->
+  <path d="M 240 200 C 190 200, 175 175, 175 147" fill="none" stroke="#71717A" stroke-width="1.25" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
+
+  <!-- 9. Decision 2 to Generate (no / refusal - Dashed gray) -->
+  <path d="M 484 200 L 552 200 C 582 200, 602 175, 602 147" fill="none" stroke="#71717A" stroke-width="1.25" stroke-dasharray="4,4" marker-end="url(#arrow)"/>
+  <text x="515" y="190" fill="#A1A1AA" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400">no (refusal)</text>
+
+  <!-- 10. Generate to END -->
+  <path d="M 670 115 L 725 115" fill="none" stroke="#71717A" stroke-width="1.25" marker-end="url(#arrow)"/>
+
+  <!-- NODES -->
+  <!-- START -->
+  <rect x="25" y="97" width="50" height="36" rx="18" fill="#18181B" stroke="#3F3F46" stroke-width="1"/>
+  <text x="50" y="119" fill="#F4F4F5" font-size="11" font-weight="600" text-anchor="middle">START</text>
+
+  <!-- 1. Retrieve -->
+  <rect x="115" y="85" width="120" height="60" rx="10" fill="#18181B" stroke="#3F3F46" stroke-width="1"/>
+  <text x="175" y="108" fill="#F4F4F5" font-size="12" font-weight="600" text-anchor="middle">🔍 Retrieve</text>
+  <text x="175" y="127" fill="#A1A1AA" font-family="'JetBrains Mono', ui-monospace, Menlo, monospace" font-size="11" font-weight="400" text-anchor="middle">k=4 + dist</text>
+
+  <!-- 2. Grade Documents -->
+  <rect x="285" y="85" width="110" height="60" rx="10" fill="#18181B" stroke="#3F3F46" stroke-width="1"/>
+  <text x="340" y="108" fill="#F4F4F5" font-size="12" font-weight="600" text-anchor="middle">⚖️ Grade</text>
+  <text x="340" y="127" fill="#A1A1AA" font-size="10" font-weight="400" text-anchor="middle">Batch LLM Classifier</text>
+
+  <!-- Decision Diamond 1: Valid? -->
+  <polygon points="452,97 472,115 452,133 432,115" fill="#202024" stroke="#3F3F46" stroke-width="1"/>
+  <text x="452" y="118.5" fill="#F4F4F5" font-size="9" font-weight="600" text-anchor="middle">Valid?</text>
+
+  <!-- Decision Diamond 2: Retries < max? -->
+  <polygon points="452,176 484,200 452,224 420,200" fill="#202024" stroke="#3F3F46" stroke-width="1"/>
+  <text x="452" y="196.5" fill="#F4F4F5" font-size="8.5" font-weight="600" text-anchor="middle">Retries &lt;</text>
+  <text x="452" y="208" fill="#F4F4F5" font-size="8.5" font-weight="600" text-anchor="middle">max?</text>
+
+  <!-- 3. Rewrite Query -->
+  <rect x="240" y="175" width="125" height="50" rx="10" fill="#18181B" stroke="#3F3F46" stroke-width="1"/>
+  <text x="302" y="196" fill="#F4F4F5" font-size="11.5" font-weight="600" text-anchor="middle">✍️ Rewrite Query</text>
+  <text x="302" y="212" fill="#A1A1AA" font-size="9.5" font-weight="400" text-anchor="middle">Optimizer (retries &lt; max)</text>
+
+  <!-- 4. Generate -->
+  <rect x="535" y="85" width="135" height="60" rx="10" fill="#18181B" stroke="#3F3F46" stroke-width="1"/>
+  <text x="602" y="108" fill="#F4F4F5" font-size="12" font-weight="600" text-anchor="middle">✨ Generate</text>
+  <text x="602" y="127" fill="#A1A1AA" font-size="10" font-weight="400" text-anchor="middle">Synthesis / Refusal</text>
+
+  <!-- END -->
+  <rect x="725" y="100" width="46" height="30" rx="15" fill="#18181B" stroke="#3F3F46" stroke-width="1"/>
+  <text x="748" y="119" fill="#F4F4F5" font-size="10.5" font-weight="600" text-anchor="middle">END</text>
+
+  <!-- Animated Mode Lights with Halo and Fading Trail -->
+  <!-- 1. Turbo Mode Light (Blue #38bdf8, 4s duration, begins at 0s) -->
+  <g id="lightTurbo">
+    <!-- Halo -->
+    <circle r="9" fill="#38bdf8" fill-opacity="0.18">
+      <animateMotion dur="4s" repeatCount="indefinite" begin="0s" rotate="auto">
+        <mpath href="#pathTurbo"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 3 (delay +0.18s) -->
+    <circle r="2.0" fill="#38bdf8" fill-opacity="0.14" opacity="0">
+      <set attributeName="opacity" to="1" begin="0.18s" fill="freeze"/>
+      <animateMotion dur="4s" repeatCount="indefinite" begin="0.18s" rotate="auto">
+        <mpath href="#pathTurbo"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 2 (delay +0.12s) -->
+    <circle r="2.6" fill="#38bdf8" fill-opacity="0.28" opacity="0">
+      <set attributeName="opacity" to="1" begin="0.12s" fill="freeze"/>
+      <animateMotion dur="4s" repeatCount="indefinite" begin="0.12s" rotate="auto">
+        <mpath href="#pathTurbo"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 1 (delay +0.06s) -->
+    <circle r="3.2" fill="#38bdf8" fill-opacity="0.45" opacity="0">
+      <set attributeName="opacity" to="1" begin="0.06s" fill="freeze"/>
+      <animateMotion dur="4s" repeatCount="indefinite" begin="0.06s" rotate="auto">
+        <mpath href="#pathTurbo"/>
+      </animateMotion>
+    </circle>
+    <!-- Head -->
+    <circle r="4" fill="#38bdf8">
+      <animateMotion dur="4s" repeatCount="indefinite" begin="0s" rotate="auto">
+        <mpath href="#pathTurbo"/>
+      </animateMotion>
+    </circle>
+  </g>
+
+  <!-- 2. Balanced Mode Light (Green #10b981, 8s duration, begins at 1s) -->
+  <g id="lightBalanced">
+    <!-- Halo -->
+    <circle r="9" fill="#10b981" fill-opacity="0.18" opacity="0">
+      <set attributeName="opacity" to="1" begin="1s" fill="freeze"/>
+      <animateMotion dur="8s" repeatCount="indefinite" begin="1s" rotate="auto">
+        <mpath href="#pathBalanced"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 3 (delay +0.18s) -->
+    <circle r="2.0" fill="#10b981" fill-opacity="0.14" opacity="0">
+      <set attributeName="opacity" to="1" begin="1.18s" fill="freeze"/>
+      <animateMotion dur="8s" repeatCount="indefinite" begin="1.18s" rotate="auto">
+        <mpath href="#pathBalanced"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 2 (delay +0.12s) -->
+    <circle r="2.6" fill="#10b981" fill-opacity="0.28" opacity="0">
+      <set attributeName="opacity" to="1" begin="1.12s" fill="freeze"/>
+      <animateMotion dur="8s" repeatCount="indefinite" begin="1.12s" rotate="auto">
+        <mpath href="#pathBalanced"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 1 (delay +0.06s) -->
+    <circle r="3.2" fill="#10b981" fill-opacity="0.45" opacity="0">
+      <set attributeName="opacity" to="1" begin="1.06s" fill="freeze"/>
+      <animateMotion dur="8s" repeatCount="indefinite" begin="1.06s" rotate="auto">
+        <mpath href="#pathBalanced"/>
+      </animateMotion>
+    </circle>
+    <!-- Head -->
+    <circle r="4" fill="#10b981" opacity="0">
+      <set attributeName="opacity" to="1" begin="1s" fill="freeze"/>
+      <animateMotion dur="8s" repeatCount="indefinite" begin="1s" rotate="auto">
+        <mpath href="#pathBalanced"/>
+      </animateMotion>
+    </circle>
+  </g>
+
+  <!-- 3. Rigorous Mode Light (Orange #f97316, 12s duration, begins at 2s) -->
+  <g id="lightRigorous">
+    <!-- Halo -->
+    <circle r="9" fill="#f97316" fill-opacity="0.18" opacity="0">
+      <set attributeName="opacity" to="1" begin="2s" fill="freeze"/>
+      <animateMotion dur="12s" repeatCount="indefinite" begin="2s" rotate="auto">
+        <mpath href="#pathRigorous"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 3 (delay +0.18s) -->
+    <circle r="2.0" fill="#f97316" fill-opacity="0.14" opacity="0">
+      <set attributeName="opacity" to="1" begin="2.18s" fill="freeze"/>
+      <animateMotion dur="12s" repeatCount="indefinite" begin="2.18s" rotate="auto">
+        <mpath href="#pathRigorous"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 2 (delay +0.12s) -->
+    <circle r="2.6" fill="#f97316" fill-opacity="0.28" opacity="0">
+      <set attributeName="opacity" to="1" begin="2.12s" fill="freeze"/>
+      <animateMotion dur="12s" repeatCount="indefinite" begin="2.12s" rotate="auto">
+        <mpath href="#pathRigorous"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 1 (delay +0.06s) -->
+    <circle r="3.2" fill="#f97316" fill-opacity="0.45" opacity="0">
+      <set attributeName="opacity" to="1" begin="2.06s" fill="freeze"/>
+      <animateMotion dur="12s" repeatCount="indefinite" begin="2.06s" rotate="auto">
+        <mpath href="#pathRigorous"/>
+      </animateMotion>
+    </circle>
+    <!-- Head -->
+    <circle r="4" fill="#f97316" opacity="0">
+      <set attributeName="opacity" to="1" begin="2s" fill="freeze"/>
+      <animateMotion dur="12s" repeatCount="indefinite" begin="2s" rotate="auto">
+        <mpath href="#pathRigorous"/>
+      </animateMotion>
+    </circle>
+  </g>
+
+  <!-- Legend & Mode Description (2 Columns: Modes on Left, Note on Right) -->
+  <g transform="translate(30, 245)">
+    <!-- Legend Frame -->
+    <rect x="0" y="0" width="780" height="74" rx="10" fill="#111113" stroke="#27272A" stroke-width="1"/>
+
+    <!-- Column 1: Modes Stacked Vertically (Turbo, Balanced, Rigorous) -->
+    <!-- Row 1: Turbo (Blue #38BDF8) -->
+    <circle cx="20" cy="18" r="4" fill="#38bdf8"/>
+    <text x="32" y="21.5" fill="#A1A1AA" font-size="10"><tspan font-weight="600" fill="#38bdf8">Turbo:</tspan> skips grading, 0 rewrites</text>
+
+    <!-- Row 2: Balanced (Green #10B981) -->
+    <circle cx="20" cy="37" r="4" fill="#10b981"/>
+    <text x="32" y="40.5" fill="#A1A1AA" font-size="10"><tspan font-weight="600" fill="#10b981">Balanced:</tspan> skips grading if dist &lt; 0.35, else grades, up to 1 rewrite</text>
+
+    <!-- Row 3: Rigorous (Orange #F97316) -->
+    <circle cx="20" cy="56" r="4" fill="#f97316"/>
+    <text x="32" y="59.5" fill="#A1A1AA" font-size="10"><tspan font-weight="600" fill="#f97316">Rigorous:</tspan> always grades, up to 2 rewrites</text>
+
+    <!-- Column Divider -->
+    <line x1="455" y1="10" x2="455" y2="64" stroke="#27272A" stroke-width="1"/>
+
+    <!-- Column 2: Note on Right (Vertically Centered) -->
+    <text x="475" y="26" fill="#A1A1AA" font-size="9" font-style="italic"><tspan font-weight="600">NOTE: </tspan><tspan font-weight="600">Balanced</tspan> and <tspan font-weight="600">Rigorous</tspan> lights show the worst</text>
+    <text x="475" y="40" fill="#A1A1AA" font-size="9" font-style="italic">case (max rewrites). Exact quote matches skip</text>
+    <text x="475" y="54" fill="#A1A1AA" font-size="9" font-style="italic">grading in every mode.</text>
+  </g>
+</svg>
