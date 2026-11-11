@@ -20,4 +20,4 @@ services:
       - key: LANGSMITH_AGENT_ENVIRONMENT
         value: production
       - key: LANGSMITH_TRACING
-        value: "false"
+        value: "true"
