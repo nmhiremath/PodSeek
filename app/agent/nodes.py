@@ -1,5 +1,6 @@
 """Graph nodes for Corrective RAG: retrieve, grade, rewrite, and generate."""
 
+import logging
 import re
 from typing import Literal
 
@@ -12,6 +13,8 @@ from pydantic import BaseModel, Field
 from app.agent.state import AgentState
 from app.factory import get_chat_model
 from app.vectorstore import get_vectorstore
+
+logger = logging.getLogger(__name__)
 
 
 def _get_chat_llm(temperature: float = 0.0) -> BaseChatModel:
@@ -136,8 +139,13 @@ def grade_documents(state: AgentState) -> dict:
             verdict = scores[i].lower() if i < len(scores) else "no"
             if verdict == "yes":
                 relevant_docs.append(doc)
-    except Exception:
+    except Exception as exc:
         # Defensive fallback: if API call hiccups, preserve chunks so recall is not lost
+        logger.warning(
+            "Batch relevance grading failed for question %r; falling back to ungraded chunks: %s",
+            question,
+            exc,
+        )
         relevant_docs = list(documents)
 
     return {"relevant_documents": relevant_docs}
@@ -184,7 +192,8 @@ def generate(state: AgentState) -> dict:
     # Safe resolution of LangGraph stream writer (handles standalone unit test execution)
     try:
         writer = get_stream_writer()
-    except Exception:
+    except RuntimeError as exc:
+        logger.debug("LangGraph stream writer unavailable outside runtime context: %s", exc)
         writer = None
 
     # If even after retries we have zero relevant chunks
@@ -248,8 +257,12 @@ def generate(state: AgentState) -> dict:
             full_text += token
             if writer:
                 writer({"delta": token})
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.warning(
+            "Token streaming failed during generate for question %r; falling back to invoke(): %s",
+            question,
+            exc,
+        )
 
     if not full_text:
         reply = chain.invoke({"question": question, "context": context_str})

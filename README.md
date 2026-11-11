@@ -8,7 +8,7 @@
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-1.5+-FF6F61?logo=google-cloud&logoColor=white)](https://www.trychroma.com/)
 [![Render](https://img.shields.io/badge/Live_Demo-podseek.onrender.com-2563EB?logo=render&logoColor=white)](https://podseek.onrender.com/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
 
@@ -111,13 +111,13 @@ Rather than splitting text by arbitrary tokens, `app/ingestion/chunking.py` impl
 - Cached analyses persist back into raw storage, ensuring repeated queries incur zero duplicate LLM cost.
 
 ### 3. Real-Time Server-Sent Events (SSE) Streaming
-The `POST /ask/stream` endpoint streams the agent's internal reasoning lifecycle in real time:
+The `POST /ask/stream` endpoint streams both completed LangGraph node state updates (`stream_mode="updates"`) and live token deltas (`stream_mode="custom"` via `get_stream_writer()`) as standard `data: <json>\n\n` frames:
 ```text
-event: node_start     -> {"node": "retrieve"}
-event: node_end       -> {"node": "retrieve", "chunks_retrieved": 5}
-event: node_start     -> {"node": "grade_documents"}
-event: token          -> Real-time token streaming of final answer
-event: citations      -> Array of structured deep-link citations
+data: {"node": "retrieve", "rewrites": 0, "top_distance": 0.3712, "is_exact_match": false, "chunks_retrieved": 4, "mode": "balanced"}
+data: {"node": "grade_documents", "rewrites": 0, "relevant_chunks": 2, "citations": [...], "mode": "balanced"}
+data: {"node": "generate", "delta": "Deliberate ", "mode": "balanced"}
+data: {"node": "generate", "delta": "cold exposure...", "mode": "balanced"}
+data: {"node": "generate", "rewrites": 0, "generation": "Deliberate cold exposure...", "citations": [...], "mode": "balanced"}
 ```
 
 ### 4. Pluggable Multi-Provider Architecture & Safe Collection Partitioning
@@ -297,19 +297,22 @@ curl -X POST http://localhost:8000/ask \
 ```
 
 ### 4. Stream Answers (Server-Sent Events)
-**`POST /ask/stream`** — Stream one JSON object per finished graph node (`data: {json}`). The full answer arrives on the `generate` event. This is not a token stream.
+**`POST /ask/stream`** — Emits `data: {json}\n\n` SSE frames for each completed LangGraph node (`retrieve`, optional `grade_documents` / `rewrite_query`, and final `generate`) plus incremental `{"node": "generate", "delta": "...", "mode": "..."}` token chunks during synthesis (or `"cached": true` node replay on a QA cache hit).
 ```bash
 curl -N -X POST http://localhost:8000/ask/stream \
   -H "Content-Type: application/json" \
   -d '{
-    "question": "What is the relationship between cold exposure and dopamine?"
+    "question": "What is the relationship between cold exposure and dopamine?",
+    "mode": "balanced"
   }'
 ```
 
 ```text
-data: {"node": "retrieve", "rewrites": 0, "chunks_retrieved": 4}
-data: {"node": "grade_documents", "rewrites": 0, "relevant_chunks": 2, "citations": []}
-data: {"node": "generate", "rewrites": 0, "generation": "..."}
+data: {"node": "retrieve", "rewrites": 0, "top_distance": 0.3712, "is_exact_match": false, "chunks_retrieved": 4, "mode": "balanced"}
+data: {"node": "grade_documents", "rewrites": 0, "relevant_chunks": 2, "citations": [{"episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction", "episode_id": "QmOF0crdyRU", "speaker": "Andrew Huberman", "timestamp": "01:04:33", "start_seconds": 3873.0, "url": "https://youtu.be/QmOF0crdyRU?t=3873"}], "mode": "balanced"}
+data: {"node": "generate", "delta": "Deliberate cold exposure ", "mode": "balanced"}
+data: {"node": "generate", "delta": "triggers a sustained rise in dopamine [01:04:33].", "mode": "balanced"}
+data: {"node": "generate", "rewrites": 0, "generation": "Deliberate cold exposure triggers a sustained rise in dopamine [01:04:33].", "citations": [{"episode_title": "Controlling Your Dopamine For Motivation, Focus & Satisfaction", "episode_id": "QmOF0crdyRU", "speaker": "Andrew Huberman", "timestamp": "01:04:33", "start_seconds": 3873.0, "url": "https://youtu.be/QmOF0crdyRU?t=3873"}], "mode": "balanced"}
 ```
 
 ---

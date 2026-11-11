@@ -3,14 +3,31 @@
 from app.ingestion.youtube import is_huberman_channel
 from ui.client import InProcessClient, RemoteClient, make_client, parse_sse_chunk
 from ui.components import (
+    _is_submittable_question,
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
+    render_head_meta_html,
+    render_header_brand_html,
+    render_header_controls_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
     render_mode_slider_html,
     render_workflow_graph_html,
 )
+
+
+def test_is_submittable_question():
+    assert _is_submittable_question("") is False
+    assert _is_submittable_question("   ") is False
+    assert _is_submittable_question("ab") is False
+    assert _is_submittable_question(" ab ") is False
+    assert _is_submittable_question("abc") is True
+    assert _is_submittable_question("  sleep  ") is True
+    assert _is_submittable_question(None) is False
+    notice_chat = render_chat_session_html([], episode_count=23, notice="Enter a question of at least 3 characters.")
+    assert "ap-composer-notice" in notice_chat
+    assert "Enter a question of at least 3 characters." in notice_chat
 
 
 def test_parse_sse_chunk_reads_data_json():
@@ -30,12 +47,13 @@ def test_parse_sse_chunk_ignores_noise():
 def test_make_client_selects_remote_or_inprocess(monkeypatch):
     monkeypatch.delenv("PODSEEK_UI_MODE", raising=False)
     monkeypatch.delenv("ASKPODCAST_UI_MODE", raising=False)
-    monkeypatch.setenv("ASKPODCAST_API_URL", "http://example.test:9000/")
+    monkeypatch.delenv("ASKPODCAST_API_URL", raising=False)
+    monkeypatch.setenv("PODSEEK_API_URL", "http://example.test:9000/")
     remote = make_client()
     assert isinstance(remote, RemoteClient)
     assert remote.base_url == "http://example.test:9000"
 
-    monkeypatch.setenv("ASKPODCAST_UI_MODE", "inprocess")
+    monkeypatch.setenv("PODSEEK_UI_MODE", "inprocess")
     inproc = make_client()
     assert isinstance(inproc, InProcessClient)
     assert inproc.health() == {"status": "ok", "app": "PodSeek"}
@@ -137,6 +155,10 @@ def test_theme_css_and_components_render_without_gradio():
     assert "gai-pill" in chat
     assert "Controlling Your Dopamine · 20:45" in chat
     assert "Controlling Your Dopamine · 01:04:33" in chat
+    assert 'id="ap-last-turn"' in chat
+    assert 'id="ap-last-answer"' in chat
+    assert 'data-turn-count="1"' in chat
+    assert 'data-turn-done="true"' in chat
     assert "<code>" not in chat
     assert ")." not in chat
 
@@ -145,6 +167,17 @@ def test_theme_css_and_components_render_without_gradio():
     assert "23" in empty_chat
     assert "most viewed episodes." in empty_chat
     assert "ap-kb-count-link" in empty_chat
+
+    refusal_chat = render_chat_session_html(
+        [
+            {
+                "question": "What are the optimal sauna heat protocols for growth hormone release?",
+                "answer": "I could not find any relevant information in the podcast transcripts to answer your question.",
+                "citations": [],
+            }
+        ]
+    )
+    assert "Answers come only from indexed episodes." in refusal_chat
 
 
 def test_is_huberman_channel_verifier():
@@ -202,3 +235,14 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert "--ap-studio-h" in css
     assert "--ap-mobile-nav-bottom" in css
     assert "#ap-studio-view .pending" in css
+    assert ".ap-lib-btn-label" in css
+    assert "a.gai-pill > span:not(.gai-yt-circle)" in css
+    assert "ap-lib-btn-label" in render_header_controls_html()
+    assert '<h1 class="ap-brand-title">PodSeek</h1>' in render_header_brand_html()
+    head_meta = render_head_meta_html()
+    assert "maximum-scale" not in head_meta
+    assert 'rel="icon" type="image/svg+xml"' in head_meta
+    assert "%3EPS%3C/text%3E" in head_meta
+    assert 'content="https://podseek.onrender.com/"' in head_meta
+    assert 'content="Corrective RAG over Huberman Lab transcripts with timestamp citations."' in head_meta
+    assert "gradio" not in head_meta.lower()

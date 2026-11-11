@@ -1,6 +1,6 @@
 """Gradio UI controller and layout for PodSeek.
 
-The widgets call AskPodcastClient. View rendering lives in `ui/components.py`
+The widgets call PodSeekClient. View rendering lives in `ui/components.py`
 and stylesheets live in `ui/styles/theme.css`.
 """
 
@@ -22,15 +22,18 @@ if _REPO_ROOT not in sys.path:
 import gradio as gr  # noqa: E402 # pyright: ignore[reportMissingImports]
 
 import ui.components as _ui_components  # noqa: E402
-from ui.client import AskPodcastClient, make_client  # noqa: E402
+from ui.client import PodSeekClient, make_client  # noqa: E402
 
 importlib.reload(_ui_components)
 from ui.components import (  # noqa: E402
+    PS_FAVICON_DATA_URI,
+    _is_submittable_question,
     format_citations,
     format_event,
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
+    render_head_meta_html,
     render_header_brand_html,
     render_header_controls_html,
     render_ingest_status_html,
@@ -78,7 +81,7 @@ SAMPLE_PRESETS: list[dict[str, str]] = [
         "question": "What is the mind-muscle connection and how does it drive hypertrophy?",
     },
     {
-        "topic": "🔥 Sauna & growth hormone",
+        "topic": "🚫 Off-topic: see a refusal",
         "question": "What are the optimal sauna heat protocols for growth hormone release?",
     },
     {
@@ -459,6 +462,12 @@ _INIT_UI_JS_TEMPLATE = """() => {
         };
 
         const colLeft = document.querySelector('.ap-col-left');
+        if (window.innerWidth <= 768 && !window.__podseekMobileDrawerInit) {
+            window.__podseekMobileDrawerInit = true;
+            if (colLeft) colLeft.classList.remove('mobile-drawer-open');
+            document.getElementById('ap-mobile-drawer-backdrop')?.classList.remove('is-open');
+            document.body.classList.remove('ap-drawer-open');
+        }
         if (colLeft && window.innerWidth > 768) {
             try {
                 if (localStorage.getItem('podseek_sidebar_collapsed') !== '0') {
@@ -540,9 +549,16 @@ _INIT_UI_JS_TEMPLATE = """() => {
             });
         }
         let vp = document.querySelector('meta[name="viewport"]');
-        if (vp && !vp.content.includes('interactive-widget')) {
-            vp.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover";
+        if (vp && (!vp.content.includes('interactive-widget') || vp.content.includes('maximum-scale'))) {
+            vp.content = "width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover";
         }
+        document.querySelectorAll('meta[name="twitter:creator"], meta[property="og:url"][content*="gradio"], meta[name="twitter:site"][content*="gradio"]').forEach((m) => m.remove());
+        document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]').forEach((lnk) => {
+            if (!lnk.href || !lnk.href.startsWith('data:image/svg+xml')) {
+                lnk.type = 'image/svg+xml';
+                lnk.href = __PS_FAVICON_URI__;
+            }
+        });
 
         if (window.visualViewport && !window.__podseekViewportBound) {
             window.__podseekViewportBound = true;
@@ -575,10 +591,29 @@ _INIT_UI_JS_TEMPLATE = """() => {
         }
 
         const ta = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
+        const distillBtn = document.getElementById('ap-distill-btn');
+        const syncDistillBtnState = () => {
+            const btn = document.getElementById('ap-distill-btn');
+            const inputEl = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
+            const canSubmit = Boolean(inputEl && inputEl.value && inputEl.value.trim().length >= 3);
+            if (btn) {
+                btn.disabled = !canSubmit;
+                btn.setAttribute('aria-disabled', canSubmit ? 'false' : 'true');
+            }
+            if (canSubmit) {
+                document.getElementById('ap-composer-notice')?.remove();
+            }
+        };
+        if (distillBtn && !ta) {
+            distillBtn.disabled = true;
+            distillBtn.setAttribute('aria-disabled', 'true');
+        }
         if (ta) {
             ta.placeholder = '';
             ta.removeAttribute('placeholder');
             ta.setAttribute('data-placeholder-disabled', 'true');
+            ta.setAttribute('aria-label', 'Ask a question about Huberman Lab episodes');
+            syncDistillBtnState();
         }
         const capsule = document.querySelector('.ap-distill-capsule');
         if (capsule) {
@@ -620,6 +655,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
         if (ta && !ta.dataset.psInputBound) {
             ta.dataset.psInputBound = '1';
             ta.addEventListener('input', () => {
+                syncDistillBtnState();
                 const wrap = document.querySelector('.ap-typewriter-wrap');
                 if (wrap) {
                     if (ta.value && ta.value.trim().length > 0) {
@@ -637,7 +673,9 @@ _INIT_UI_JS_TEMPLATE = """() => {
             ta.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    document.getElementById('ap-distill-btn')?.click();
+                    if (ta.value && ta.value.trim().length >= 3) {
+                        document.getElementById('ap-distill-btn')?.click();
+                    }
                 }
             });
             ta.addEventListener('focus', () => {
@@ -775,7 +813,14 @@ _INIT_UI_JS_TEMPLATE = """() => {
         const chatEl = document.getElementById('ap-chat-scroll');
         if (chatEl && !chatEl.dataset.psScrollBound) {
             chatEl.dataset.psScrollBound = '1';
-            chatEl.addEventListener('scroll', updateScrollNav, { passive: true });
+            chatEl.addEventListener('scroll', () => {
+                if (!window.__podseekProgrammaticScroll) {
+                    const dist = chatEl.scrollHeight - chatEl.scrollTop - chatEl.clientHeight;
+                    window.__podseekFollowBottom = dist <= 120;
+                    window.__podseekSavedScrollTop = chatEl.scrollTop;
+                }
+                updateScrollNav();
+            }, { passive: true });
         }
 
         const handleWheel = (e) => {
@@ -812,7 +857,6 @@ _INIT_UI_JS_TEMPLATE = """() => {
         updateScrollNav();
     };
     setupPodSeekUI();
-    try { window.scrollTo(0, 0); } catch (e) {}
 
     // Animated Typewriter Engine: types character by character, holds for 2 seconds, backspaces, and picks next
     if (!window.__podseekTypewriterStarted) {
@@ -908,18 +952,50 @@ _INIT_UI_JS_TEMPLATE = """() => {
             setupPodSeekUI();
         }, 50);
 
-        // Auto-scroll chat only when actual chat turns or messages change AND user was already near bottom
-        const hasChatMutation = mutations.some(m => {
-            const chat = document.getElementById('ap-chat-scroll');
-            return chat && chat.contains(m.target);
+        // Scroll latest answer into view when content is replaced or a turn finishes; stay pinned while streaming if following
+        const chatEl = document.getElementById('ap-chat-scroll');
+        const hasChatMutation = Boolean(chatEl) && mutations.some(m => {
+            const t = m.target;
+            return t && (chatEl.contains(t) || (t.contains && t.contains(chatEl)));
         });
-        if (hasChatMutation) {
-            const chatEl = document.getElementById('ap-chat-scroll');
-            if (chatEl && !chatEl.classList.contains('ap-chat-empty')) {
-                const distanceFromBottom = chatEl.scrollHeight - chatEl.scrollTop - chatEl.clientHeight;
-                if (distanceFromBottom < 100) {
-                    chatEl.scrollTop = chatEl.scrollHeight;
+        if (hasChatMutation && chatEl) {
+            if (chatEl.classList.contains('ap-chat-empty')) {
+                window.__podseekLastTurnCount = 0;
+                window.__podseekLastTurnDone = true;
+                window.__podseekFollowBottom = true;
+                window.__podseekSavedScrollTop = 0;
+            } else {
+                const turnCount = parseInt(chatEl.dataset.turnCount || '0', 10);
+                const turnDone = chatEl.dataset.turnDone === 'true';
+                const prevCount = window.__podseekLastTurnCount || 0;
+                const prevDone = window.__podseekLastTurnDone !== false;
+                if (typeof window.__podseekFollowBottom === 'undefined') {
+                    window.__podseekFollowBottom = true;
                 }
+                if (turnCount > prevCount) {
+                    window.__podseekFollowBottom = true;
+                }
+                const turnJustFinished = turnDone && (!prevDone || turnCount > prevCount);
+                window.__podseekProgrammaticScroll = true;
+                if (turnJustFinished) {
+                    const lastAns = document.getElementById('ap-last-answer') || document.getElementById('ap-last-turn');
+                    if (lastAns && lastAns.offsetHeight > chatEl.clientHeight * 0.85) {
+                        chatEl.scrollTop = Math.max(0, lastAns.offsetTop - 12);
+                    } else {
+                        chatEl.scrollTop = chatEl.scrollHeight;
+                    }
+                    window.__podseekSavedScrollTop = chatEl.scrollTop;
+                } else if (window.__podseekFollowBottom) {
+                    chatEl.scrollTop = chatEl.scrollHeight;
+                    window.__podseekSavedScrollTop = chatEl.scrollTop;
+                } else if (typeof window.__podseekSavedScrollTop === 'number') {
+                    chatEl.scrollTop = window.__podseekSavedScrollTop;
+                }
+                window.__podseekLastTurnCount = turnCount;
+                window.__podseekLastTurnDone = turnDone;
+                requestAnimationFrame(() => {
+                    window.__podseekProgrammaticScroll = false;
+                });
             }
             if (window.updateChatScrollNav) {
                 window.updateChatScrollNav();
@@ -932,7 +1008,9 @@ _INIT_UI_JS_TEMPLATE = """() => {
     obs.observe(document.body, { childList: true, subtree: true });
 }"""
 
-_INIT_UI_JS = _INIT_UI_JS_TEMPLATE.replace("__TYPEWRITER_PHRASES__", json.dumps(QUIRKY_PLACEHOLDERS))
+_INIT_UI_JS = _INIT_UI_JS_TEMPLATE.replace("__TYPEWRITER_PHRASES__", json.dumps(QUIRKY_PLACEHOLDERS)).replace(
+    "__PS_FAVICON_URI__", json.dumps(PS_FAVICON_DATA_URI)
+)
 
 __all__ = ["build_demo", "format_citations", "format_event"]
 
@@ -942,7 +1020,7 @@ def _demo_fallback_enabled() -> bool:
     return val.strip().lower() in {"1", "true", "yes"}
 
 
-def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.css") -> Any:
+def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css") -> Any:
     if client is None:
         client = make_client()
 
@@ -1121,12 +1199,13 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             if "turbo" in (mode_label or "").lower()
             else ("rigorous" if "rigorous" in (mode_label or "").lower() else "balanced")
         )
-        if len(cleaned) < 3:
+        if not _is_submittable_question(cleaned):
+            short_msg = "Enter a question of at least 3 characters."
             yield (
-                render_chat_session_html(current_history),
+                render_chat_session_html(current_history, episode_count=init_ep_count, notice=short_msg),
                 current_history,
                 render_workflow_graph_html(mode=mode_val),
-                render_sse_log_html([("Enter a question of at least 3 characters.", "var(--retry-stroke)")]),
+                render_sse_log_html([(short_msg, "var(--retry-stroke)")]),
                 question,
                 gr.update(visible=True),
             )
@@ -1385,13 +1464,14 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
             gr.update(visible=True),
         )
 
-    viewport_meta = (
-        '<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover">'
-        '<link rel="preconnect" href="https://fonts.googleapis.com">'
-        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-        '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
-    )
-    with gr.Blocks(title="PodSeek", fill_width=True, css=load_theme_css(stylesheet), head=viewport_meta) as demo:
+    viewport_meta = render_head_meta_html()
+    with gr.Blocks(
+        title="PodSeek",
+        fill_width=True,
+        analytics_enabled=False,
+        css=load_theme_css(stylesheet),
+        head=viewport_meta,
+    ) as demo:
         chat_state = gr.State([])
         p1, p2, p3, p4, p5 = pick_random_presets(5)
         preset_1_state = gr.State(p1["question"])
@@ -1496,7 +1576,7 @@ def build_demo(client: AskPodcastClient | None = None, stylesheet: str = "theme.
                         render_mode_slider_html("balanced"), elem_classes=["ap-mode-capsule-slot"]
                     )
                     question_input = gr.Textbox(
-                        label="",
+                        label="Ask a question about Huberman Lab episodes",
                         show_label=False,
                         container=False,
                         placeholder="",
@@ -1642,8 +1722,9 @@ if __name__ == "__main__":
     print("=" * 64)
 
     # Launch bound to 0.0.0.0 for LAN visibility, with share link fallback
+    favicon_file = Path(__file__).resolve().parent / "styles" / "favicon.svg"
     app = build_demo()
     try:
-        app.launch(server_name="0.0.0.0", server_port=port, share=True, show_api=False)
+        app.launch(server_name="0.0.0.0", server_port=port, share=True, show_api=False, favicon_path=favicon_file)
     except Exception:
-        app.launch(server_name="0.0.0.0", server_port=port, share=False, show_api=False)
+        app.launch(server_name="0.0.0.0", server_port=port, share=False, show_api=False, favicon_path=favicon_file)

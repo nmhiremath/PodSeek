@@ -13,7 +13,7 @@ from langchain_core.runnables import RunnableConfig
 load_dotenv()
 
 _TRUE_VALUES = {"1", "true", "yes"}
-DEFAULT_PROJECT = "askpodcast"
+DEFAULT_PROJECT = "podseek"
 
 
 def configure_tracing() -> bool:
@@ -34,9 +34,9 @@ def configure_tracing() -> bool:
 
 def trace_config(path: str) -> RunnableConfig:
     """LangGraph/LangChain config. Harmless when tracing is disabled."""
-    run_name = "askpodcast_ingest" if path == "/ingest" else "askpodcast_ask"
+    run_name = "podseek_ingest" if path == "/ingest" else "podseek_ask"
     return {
         "run_name": run_name,
-        "tags": ["askpodcast", "crag"],
+        "tags": ["podseek", "crag"],
         "metadata": {"path": path},
     }

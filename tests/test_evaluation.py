@@ -45,7 +45,8 @@ def test_score_example_requires_every_citation_to_be_valid():
 
 def test_offline_fixtures_match_the_golden_file():
     questions = json.loads(Path("evals/questions.json").read_text())
-    assert len(questions) == 4
+    assert len(questions) >= 15
+    assert sum(1 for q in questions if not q["expect_citations"]) >= 3
 
     for item in questions:
         payload = offline_fixture(item)

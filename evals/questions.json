@@ -16,13 +16,97 @@
   {
     "id": "cold-exposure",
     "question": "What is the relationship between cold exposure and dopamine?",
-    "episode_id": "QmOF0crdyRU",
-    "keywords": ["cold", "dopamine"],
+    "episode_id": "pq6WHJzOkno",
+    "keywords": ["cold", "dopamine", "norepinephrine"],
+    "expect_citations": true
+  },
+  {
+    "id": "caffeine-delay",
+    "question": "Why does Huberman recommend delaying caffeine intake for 90 to 120 minutes after waking?",
+    "episode_id": "lIo9FcrljDk",
+    "keywords": ["caffeine", "adenosine", "afternoon"],
+    "expect_citations": true
+  },
+  {
+    "id": "physiological-sigh",
+    "question": "How do you perform a physiological sigh and how does it reduce stress in real time?",
+    "episode_id": "ntfcfJ28eiU",
+    "keywords": ["inhale", "exhale", "lungs"],
+    "expect_citations": true
+  },
+  {
+    "id": "alcohol-brain-gut",
+    "question": "How does regular alcohol consumption affect the gut microbiome, cortisol, and brain structure?",
+    "episode_id": "DkS1pkKpILY",
+    "keywords": ["alcohol", "cortisol", "gut"],
+    "expect_citations": true
+  },
+  {
+    "id": "neuroplasticity-focus",
+    "question": "What neurochemicals are required to trigger adult neuroplasticity during focused learning?",
+    "episode_id": "LG53Vxum0as",
+    "keywords": ["acetylcholine", "plasticity", "sleep"],
+    "expect_citations": true
+  },
+  {
+    "id": "habit-bracketing",
+    "question": "What is task bracketing and how does it help habits stick?",
+    "episode_id": "Wcs2PFz5q6g",
+    "keywords": ["habit", "basal ganglia", "bracketing"],
+    "expect_citations": true
+  },
+  {
+    "id": "time-restricted-eating",
+    "question": "What are the health effects of time-restricted eating and why avoid eating right before sleep?",
+    "episode_id": "9tRohh0gErM",
+    "keywords": ["feeding", "fasting", "sleep"],
+    "expect_citations": true
+  },
+  {
+    "id": "gut-fermented-foods",
+    "question": "How do low-sugar fermented foods affect the gut microbiome and inflammation compared to high fiber?",
+    "episode_id": "ouCWNRvPk20",
+    "keywords": ["fermented", "microbiome", "inflammation"],
+    "expect_citations": true
+  },
+  {
+    "id": "muscle-hypertrophy-galpin",
+    "question": "How do repetition ranges and training volume differ when training for strength versus hypertrophy?",
+    "episode_id": "IAnhFUUCq6c",
+    "keywords": ["strength", "hypertrophy", "sets"],
+    "expect_citations": true
+  },
+  {
+    "id": "sugar-fructose-lustig",
+    "question": "How is fructose metabolized differently from glucose in the liver and why does fiber matter?",
+    "episode_id": "n28W4AmvMDE",
+    "keywords": ["fructose", "glucose", "liver"],
+    "expect_citations": true
+  },
+  {
+    "id": "meditation-interoception",
+    "question": "How should someone choose between interoceptive and exteroceptive meditation based on their state?",
+    "episode_id": "wTBSGgbIvsY",
+    "keywords": ["interoceptive", "exteroceptive", "meditation"],
     "expect_citations": true
   },
   {
     "id": "off-topic-gap",
     "question": "Who won the 1998 FIFA World Cup final?",
+    "episode_id": "QmOF0crdyRU",
+    "keywords": [],
+    "expect_citations": false
+  },
+  {
+    "id": "off-topic-linux-kernel",
+    "question": "How do you write and compile a custom Linux kernel eBPF kprobe module in Rust?",
+    "episode_id": "QmOF0crdyRU",
+    "keywords": [],
+    "expect_citations": false
+  },
+  {
+    "id": "off-topic-sourdough",
+    "question": "What is the exact baker's hydration percentage and oven steam schedule for a classic San Francisco sourdough boule?",
     "episode_id": "QmOF0crdyRU",
     "keywords": [],
     "expect_citations": false

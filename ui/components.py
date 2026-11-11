@@ -20,12 +20,54 @@ _YT_BADGE_SVG = (
 )
 
 
+def _is_submittable_question(text: object) -> bool:
+    """Return True when the stripped question text has at least 3 characters."""
+    if not isinstance(text, str):
+        text = str(getattr(text, "value", text or ""))
+    return len(text.strip()) >= 3
+
+
 def load_theme_css(stylesheet: str = "theme.css") -> str:
     """Load a pluggable CSS stylesheet from ui/styles/."""
     css_path = STYLES_DIR / stylesheet
     if css_path.exists():
         return css_path.read_text(encoding="utf-8")
     return ""
+
+
+PS_FAVICON_DATA_URI = (
+    "data:image/svg+xml,"
+    "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
+    "%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E"
+    "%3Cstop offset='0%25' stop-color='%233B82F6'/%3E"
+    "%3Cstop offset='100%25' stop-color='%231D4ED8'/%3E"
+    "%3C/linearGradient%3E%3C/defs%3E"
+    "%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E"
+    "%3Ctext x='16' y='21.5' text-anchor='middle' fill='%23FFFFFF' "
+    "font-family='ui-monospace,SFMono-Regular,Menlo,monospace' font-weight='800' "
+    "font-size='14' letter-spacing='-0.4'%3EPS%3C/text%3E%3C/svg%3E"
+)
+
+
+def render_head_meta_html() -> str:
+    """Return HTML head tags for viewport, favicon, SEO description, Open Graph, Twitter cards, and fonts."""
+    description = "Corrective RAG over Huberman Lab transcripts with timestamp citations."
+    return (
+        '<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover">'
+        f'<link rel="icon" type="image/svg+xml" href="{PS_FAVICON_DATA_URI}">'
+        f'<meta name="description" content="{description}">'
+        '<meta property="og:title" content="PodSeek">'
+        '<meta property="og:type" content="website">'
+        '<meta property="og:url" content="https://podseek.onrender.com/">'
+        f'<meta property="og:description" content="{description}">'
+        '<meta name="twitter:card" content="summary">'
+        '<meta name="twitter:title" content="PodSeek">'
+        '<meta name="twitter:url" content="https://podseek.onrender.com/">'
+        f'<meta name="twitter:description" content="{description}">'
+        '<link rel="preconnect" href="https://fonts.googleapis.com">'
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+        '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
+    )
 
 
 def format_citations(citations: list[dict]) -> str:
@@ -478,7 +520,7 @@ def render_header_brand_html() -> str:
         f"{toggle_btn}"
         '<div class="ap-brand-badge">PS</div>'
         '<div class="ap-brand-meta">'
-        '<div class="ap-brand-title">PodSeek</div>'
+        '<h1 class="ap-brand-title">PodSeek</h1>'
         '<div class="ap-muted ap-header-subtitle">Huberman Lab Knowledge Engine</div>'
         "</div>"
         "</div>"
@@ -488,10 +530,10 @@ def render_header_brand_html() -> str:
 def render_header_controls_html() -> str:
     """Render the right-aligned header controls: Mobile Library Drawer button + Light/Dark Theme Slider."""
     mobile_lib_btn = (
-        '<button id="ap-mobile-library-btn" type="button" title="Open Knowledge Base" '
+        '<button id="ap-mobile-library-btn" type="button" title="Open Knowledge Base" aria-label="Open Knowledge Base" '
         "onclick=\"if (window.togglePodSeekDrawer) { window.togglePodSeekDrawer(false); } else { const col = document.querySelector('.ap-col-left'); const bd = document.getElementById('ap-mobile-drawer-backdrop'); if (col) { const isOpen = col.classList.toggle('mobile-drawer-open'); if (bd) bd.classList.toggle('is-open', isOpen); document.body.classList.toggle('ap-drawer-open', isOpen); } }\">"
         '<span style="font-size:12px;line-height:1;display:inline-flex;align-items:center;">📚</span>'
-        '<span style="line-height:1;">Library</span>'
+        '<span class="ap-lib-btn-label" style="line-height:1;">Library</span>'
         '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:middle;"><path d="M19 9l-7 7-7-7"/></svg>'
         "</button>"
     )
@@ -694,20 +736,25 @@ def render_spotlight_workflow_html(
         return (
             '<details class="ap-trace-details">'
             f'<summary><span style="color:var(--done-stroke);">✓</span> CRAG Flowchart · {chunks} chunks · {mode_label} <span style="font-size:10px;opacity:0.7;">▾</span></summary>'
-            '<div style="margin-top:6px;max-width:100%;overflow:hidden;" class="modern-scroll">'
+            '<div style="margin-top:6px;max-width:100%;overflow-x:auto;overflow-y:hidden;" class="modern-scroll">'
             + flowchart_svg
             + "</div></details>"
         )
 
     return (
-        '<div class="ap-spotlight-card" style="padding:6px;overflow:hidden;margin-bottom:12px;">'
+        '<div class="ap-spotlight-card" style="padding:6px;overflow-x:auto;overflow-y:hidden;margin-bottom:12px;">'
         + flowchart_svg
         + "</div>"
     )
 
 
-def render_chat_session_html(history: list[dict], episode_count: int = 23) -> str:
+def render_chat_session_html(history: list[dict], episode_count: int = 23, notice: str = "") -> str:
     """Render the ephemeral session chat thread with rendered Markdown, inline pills, and focus-locked spotlight workflow."""
+    notice_html = (
+        f'<div id="ap-composer-notice" class="ap-composer-notice" role="status" aria-live="polite">{html.escape(notice)}</div>'
+        if notice
+        else ""
+    )
     if not history:
         count_display = str(episode_count if episode_count > 0 else 23)
         onclick_js = "if (window.togglePodSeekDrawer) { window.togglePodSeekDrawer(true); } else { const col = document.querySelector('.ap-col-left'); if (col) { col.classList.remove('is-collapsed'); col.classList.add('mobile-drawer-open'); document.getElementById('ap-mobile-drawer-backdrop')?.classList.add('is-open'); document.body.classList.add('ap-drawer-open'); } }"
@@ -720,11 +767,13 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23) -> st
             "</div>"
             '<div class="ap-muted" style="font-size:14px;line-height:1.55;font-weight:400;">'
             "Pick a research-backed topic below or ask any question to distill grounded citations with timestamp deep links."
-            "</div></div></div>"
+            f"</div></div></div>{notice_html}"
             "</div>"
         )
     turns: list[str] = []
-    for item in history:
+    last_done = True
+    for idx, item in enumerate(history):
+        is_last = idx == len(history) - 1
         q = html.escape(str(item.get("question", "")))
         raw_answer = str(item.get("answer", ""))
         cits = list(item.get("citations") or [])
@@ -732,6 +781,10 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23) -> st
         spotlight_block = ""
         if isinstance(wf_info, dict):
             spotlight_block = render_spotlight_workflow_html(**wf_info)
+            if is_last:
+                last_done = bool(wf_info.get("done", False))
+        elif is_last:
+            last_done = raw_answer not in {"Distilling transcripts...", "Distilling grounded response...", ""}
 
         if raw_answer in {"Distilling transcripts...", "Distilling grounded response...", ""}:
             rendered_answer = (
@@ -740,19 +793,35 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23) -> st
             )
         else:
             rendered_answer = render_markdown_with_pills(raw_answer, cits)
+            if (
+                raw_answer.strip()
+                == "I could not find any relevant information in the podcast transcripts to answer your question."
+            ):
+                rendered_answer += (
+                    '<div class="ap-muted ap-refusal-note" style="font-size:12.5px;margin-top:6px;">'
+                    "Answers come only from indexed episodes."
+                    "</div>"
+                )
 
         answer_content = f"{spotlight_block}{rendered_answer}" if spotlight_block else rendered_answer
+        turn_cls = "ap-chat-turn ap-chat-turn-last" if is_last else "ap-chat-turn"
+        turn_id = ' id="ap-last-turn"' if is_last else ""
+        ans_cls = "ap-subtle ap-chat-answer ap-chat-answer-last" if is_last else "ap-subtle ap-chat-answer"
+        ans_id = ' id="ap-last-answer"' if is_last else ""
         turns.append(
+            f'<div{turn_id} class="{turn_cls}">'
             f'<div style="display:flex;justify-content:flex-end;margin-bottom:12px;">'
             f'<div style="max-width:85%;background:var(--accent);color:#fff;padding:10px 16px;'
             f'border-radius:16px 16px 4px 16px;font-size:14.5px;font-weight:500;line-height:1.45;letter-spacing:-0.01em;">'
             f"{q}</div></div>"
-            f'<div class="ap-subtle" style="padding:16px 18px;margin-bottom:16px;font-size:14.5px;line-height:1.65;letter-spacing:-0.005em;border-radius:16px;">'
+            f'<div{ans_id} class="{ans_cls}" style="padding:16px 18px;margin-bottom:16px;font-size:14.5px;line-height:1.65;letter-spacing:-0.005em;border-radius:16px;">'
             f"{answer_content}</div>"
+            f"</div>"
         )
+    done_attr = "true" if last_done else "false"
     return (
         '<div class="ap-chat-viewport-wrap">'
-        '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll" '
+        f'<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll" data-turn-count="{len(history)}" data-turn-done="{done_attr}" '
         'style="overflow-y:auto;padding-right:4px;">' + "".join(turns) + "</div>"
         '<div id="ap-chat-scroll-nav" class="ap-chat-scroll-nav">'
         '<button type="button" id="ap-scroll-top-btn" class="ap-chat-nav-btn" title="Scroll to top" aria-label="Scroll to top" onclick="const c = document.getElementById(\'ap-chat-scroll\'); if (c) c.scrollTo({ top: 0, behavior: \'smooth\' });">'
@@ -761,7 +830,7 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23) -> st
         '<button type="button" id="ap-scroll-bottom-btn" class="ap-chat-nav-btn" title="Scroll to bottom" aria-label="Scroll to bottom" onclick="const c = document.getElementById(\'ap-chat-scroll\'); if (c) c.scrollTo({ top: c.scrollHeight, behavior: \'smooth\' });">'
         '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
         "</button>"
-        "</div>"
+        f"</div>{notice_html}"
         "</div>"
     )
 

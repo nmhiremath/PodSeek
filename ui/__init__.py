@@ -1,1 +1,1 @@
-"""Gradio client for the AskPodcast API."""
+"""Gradio client for the PodSeek API."""
