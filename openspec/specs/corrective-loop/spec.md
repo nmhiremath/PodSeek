@@ -1,7 +1,7 @@
 # Capability Specification: Corrective Loop
 
 ## Purpose
-The corrective loop governs the self-evaluating Corrective RAG (Self-RAG) state machine in LangGraph. It assesses document relevance via structured output, triggers search query rewrites when retrieval misses, enforces deterministic loop bounds, and aborts to a clean refusal when retries are exhausted.
+The corrective loop governs the self-evaluating Corrective RAG (CRAG) state machine in LangGraph. It assesses document relevance via structured output, triggers search query rewrites when retrieval misses, enforces deterministic loop bounds, and aborts to a clean refusal when retries are exhausted.
 
 ## Requirements
 

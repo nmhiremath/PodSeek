@@ -1,7 +1,7 @@
 # PodSeek Project Specification
 
 ## Purpose
-PodSeek is an open-source, reference-quality agentic podcast transcript search engine and Corrective Retrieval-Augmented Generation (Self-RAG / CRAG) system. It provides precise, grounded answers with pinpoint timestamp citations to YouTube podcast episodes (Phase 1: Huberman Lab).
+PodSeek is an open-source, reference-quality agentic podcast transcript search engine and Corrective Retrieval-Augmented Generation (CRAG) system. It provides precise, grounded answers with pinpoint timestamp citations to YouTube podcast episodes (Phase 1: Huberman Lab).
 
 ## Tech Stack
 - **Runtime:** Python 3.13 (`.venv`)
@@ -17,7 +17,7 @@ PodSeek is an open-source, reference-quality agentic podcast transcript search e
 - **Observability:** Optional LangSmith (`langsmith>=0.3`), custom Server-Sent Events (SSE) telemetry
 
 ## Core Architecture Conventions
-1. **Self-RAG / Corrective RAG Workflow:**
+1. **Corrective RAG (CRAG) Workflow:**
    - Graph flow: `START` -> `retrieve` -> `[route_after_retrieve]` -> `grade_documents` (or fast-path bypass) -> `[decide_to_generate]` -> `rewrite_query` (up to max retries) -> `retrieve` OR `generate` -> `END`.
    - Hard circuit breaker: deterministic retry ceiling (`MAX_REWRITES = 2` in `app/agent/graph.py`). No unbounded loops.
    - Refusal contract: When no relevant chunks exist after allowable retries, generate a clean refusal without fabricating citations or hallucinating claims.

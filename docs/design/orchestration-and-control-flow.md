@@ -4,7 +4,7 @@
 Agent orchestration defines how an AI system manages control flow across multiple reasoning, retrieval, and evaluation steps. In production environments, orchestration must guarantee termination, enforce finite resource boundaries, maintain typed state across nodes, and expose intermediate execution events for real-time frontend observability without letting the LLM wander into infinite tool-calling loops.
 
 ## 2. What PodSeek Does
-PodSeek orchestrates its Corrective RAG (Self-RAG) pipeline using a stateful, compiled LangGraph state machine:
+PodSeek orchestrates its Corrective RAG (CRAG) pipeline using a stateful, compiled LangGraph state machine:
 
 ```mermaid
 ---

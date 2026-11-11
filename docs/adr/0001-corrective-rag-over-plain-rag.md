@@ -9,7 +9,7 @@ Accepted
 Standard Retrieval-Augmented Generation (RAG) retrieves top-k chunks from a vector store and immediately injects them into an LLM generation prompt. In podcast audio transcripts, conversational drift, tangents, and sponsor reads frequently produce chunks that match query keywords semantically but contain zero answerable facts. In plain RAG, the generator either hallucinates an answer or synthesizes misleading conclusions based on irrelevant context.
 
 ## Decision
-Implement Corrective RAG (CRAG / Self-RAG), adding a dedicated grading step between retrieval and generation. An LLM relevance evaluator grades retrieved chunks before generation. If retrieved chunks are irrelevant, the system invokes a query rewriter to optimize the search query and retries retrieval.
+Implement Corrective RAG (CRAG), adding a dedicated grading step between retrieval and generation. An LLM relevance evaluator grades retrieved chunks before generation. If retrieved chunks are irrelevant, the system invokes a query rewriter to optimize the search query and retries retrieval.
 
 ## Alternatives Considered
 1. **Plain Naive RAG:** Retrieve top-k chunks and feed directly to synthesis. Rejected because irrelevant podcast banter caused hallucinations and bad citations.

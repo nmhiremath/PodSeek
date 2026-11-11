@@ -1,6 +1,6 @@
 # PodSeek 🎙️
 
-> Reference-quality agentic Corrective RAG (Self-RAG) system and semantic search engine for long-form podcast transcripts, delivering grounded synthesis with second-accurate YouTube timestamp deep-links.
+> Reference-quality agentic Corrective RAG system and semantic search engine for long-form podcast transcripts, delivering grounded synthesis with second-accurate YouTube timestamp deep-links.
 
 [![CI](https://github.com/nmhiremath/PodSeek/actions/workflows/ci.yml/badge.svg)](https://github.com/nmhiremath/PodSeek/actions/workflows/ci.yml)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-podseek.onrender.com-2563EB?logo=render&logoColor=white)](https://podseek.onrender.com/)
@@ -10,6 +10,12 @@
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-1.5+-FF6F61?logo=google-cloud&logoColor=white)](https://www.trychroma.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![OpenSpec](https://img.shields.io/badge/OpenSpec-Validated-8B5CF6)](openspec/)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/crag-loop-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/crag-loop-light.svg">
+  <img alt="Corrective RAG loop: retrieve, then skip or grade, rewrite up to the mode's limit, then generate an answer or a refusal" src="docs/assets/crag-loop-light.svg">
+</picture>
 
 ---
 
@@ -49,13 +55,7 @@ Conversational audio transcripts present three distinct failure modes for conven
 2. **Loss of Temporal Anchors:** Fixed-token or fixed-character splitters segment text arbitrarily across sentences and speaker turns, obliterating exact playback timestamp bounds.
 3. **Hallucination Under Missing Evidence:** When retrieved transcript segments lack answerable facts, standard RAG models synthesize plausible-sounding claims from parametric memory instead of acknowledging retrieval gaps.
 
-**PodSeek** addresses these challenges through a deterministic **Corrective RAG (CRAG)** state machine orchestrated via **LangGraph**, paired with a **speaker-aware sliding-window chunking engine** that preserves exact start and end timestamps. Every claim is strictly grounded in verified excerpts and cited with clickable YouTube deep links (`https://youtu.be/<id>?t=<seconds>`).
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/crag-loop-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="docs/assets/crag-loop-light.svg">
-  <img alt="Corrective RAG loop: retrieve, then skip or grade, rewrite up to the mode's limit, then generate an answer or a refusal" src="docs/assets/crag-loop-light.svg">
-</picture>
+**PodSeek** addresses these challenges through a deterministic **Corrective RAG (CRAG)** state machine orchestrated via **LangGraph**, paired with a **speaker-aware sliding-window chunking engine** that preserves exact start and end timestamps. Answers cite verified transcript excerpts with clickable YouTube deep links (`https://youtu.be/<id>?t=<seconds>`).
 
 ---
 
