@@ -7,17 +7,19 @@ services:
     buildCommand: pip install -r requirements.txt -r requirements-ui.txt
     startCommand: python -m ui.app
     envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GOATCOUNTER_CODE
+        value: podseek
+      - key: LANGSMITH_AGENT_ENVIRONMENT
+        value: production
+      - key: LANGSMITH_AGENT_ID
+        value: podseek
+      - key: LANGSMITH_API_KEY
+        sync: false
+      - key: LANGSMITH_TRACING
+        value: "true"
       - key: PODSEEK_UI_MODE
         value: inprocess
       - key: PYTHON_VERSION
         value: 3.13.0
-      - key: GEMINI_API_KEY
-        sync: false
-      - key: LANGSMITH_API_KEY
-        sync: false
-      - key: LANGSMITH_AGENT_ID
-        value: podseek
-      - key: LANGSMITH_AGENT_ENVIRONMENT
-        value: production
-      - key: LANGSMITH_TRACING
-        value: "true"
