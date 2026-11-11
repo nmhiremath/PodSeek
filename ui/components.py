@@ -44,18 +44,6 @@ def render_ingest_readonly_section_html() -> str:
     )
 
 
-def render_ingest_readonly_note_html() -> str:
-    """Render a single-line muted notice when running in read-only demo mode."""
-    return (
-        '<div class="ap-ingest-readonly-note ap-muted" '
-        'style="font-size:11.5px;line-height:1.45;margin:0 0 12px;color:var(--text-muted);white-space:normal;hyphens:none;-webkit-hyphens:none;">'
-        "Demo is read-only. "
-        '<a href="https://github.com/nmhiremath/PodSeek" target="_blank" rel="noopener noreferrer" '
-        'style="color:var(--accent);text-decoration:underline;text-underline-offset:2px;">Clone the repo</a> to add episodes.'
-        "</div>"
-    )
-
-
 def load_theme_css(stylesheet: str = "theme.css") -> str:
     """Load a pluggable CSS stylesheet from ui/styles/."""
     css_path = STYLES_DIR / stylesheet
@@ -345,13 +333,6 @@ def render_ingest_status_html(state: str, title: str = "", detail: str = "") -> 
             f'<span class="ap-muted" style="font-family:monospace;font-size:11px;">{safe_detail or "Verifying & chunking"}</span>'
             "</div>"
             '<div class="ap-shimmer-track"><div class="ap-shimmer-fill"></div></div>'
-            "</div>"
-        )
-    if state == "info":
-        return (
-            '<div class="ap-status-card" style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.28);">'
-            f'<div style="font-weight:600;color:var(--accent);">ℹ️ {safe_title or "Ingestion disabled"}</div>'
-            f'<div class="ap-muted" style="margin-top:2px;">{safe_detail}</div>'
             "</div>"
         )
     if state == "error":

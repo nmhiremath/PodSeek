@@ -13,7 +13,6 @@ from ui.components import (
     render_head_meta_html,
     render_header_brand_html,
     render_header_controls_html,
-    render_ingest_readonly_note_html,
     render_ingest_readonly_section_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
@@ -296,31 +295,25 @@ def test_is_ingest_enabled_flag(monkeypatch):
         assert is_ingest_enabled() is False
 
 
-def test_render_ingest_readonly_note_and_section():
-    """Verify read-only section and note contain repository link, badge, and copy."""
-    note_html = render_ingest_readonly_note_html()
-    assert "Demo is read-only." in note_html
-    assert "https://github.com/nmhiremath/PodSeek" in note_html
-    assert "Clone the repo" in note_html
-    assert "to add episodes." in note_html
-    assert 'target="_blank"' in note_html
-    assert 'rel="noopener noreferrer"' in note_html
-    assert "hyphens:none" in note_html
-
+def test_render_ingest_readonly_section():
+    """Verify read-only section contains repository link, badge, and copy."""
     section_html = render_ingest_readonly_section_html()
     assert "Ingest Episode" in section_html
     assert "Read-only" in section_html
     assert "Demo is read-only." in section_html
     assert "https://github.com/nmhiremath/PodSeek" in section_html
+    assert "Clone the repo" in section_html
+    assert "to add episodes." in section_html
+    assert 'target="_blank"' in section_html
+    assert 'rel="noopener noreferrer"' in section_html
+    assert "hyphens:none" in section_html
     assert "margin:0 0 4px;" in section_html
     assert "margin:0 0 12px;" in section_html
 
-    info_card = render_ingest_status_html("info", "Ingestion disabled", "Ingestion is disabled on the live demo.")
-    assert "ℹ️" in info_card
-    assert "Ingestion disabled" in info_card
-    assert "Ingestion is disabled on the live demo." in info_card
-    assert "rgba(59,130,246" in info_card
-    assert "⚠️" not in info_card
+    error_card = render_ingest_status_html("error", "Failed link", "Invalid YouTube link")
+    assert "⚠️" in error_card
+    assert "Failed link" in error_card
+    assert "Invalid YouTube link" in error_card
 
 
 def test_ui_ingest_capsule_gating(monkeypatch):
@@ -346,3 +339,9 @@ def test_ui_ingest_capsule_gating(monkeypatch):
     elem_ids_enabled = {b.elem_id for b in demo_enabled.blocks.values() if hasattr(b, "elem_id") and b.elem_id}
     assert "ap-ingest-input" in elem_ids_enabled
     assert "ap-ingest-btn" in elem_ids_enabled
+
+    html_contents_enabled = [
+        b.value for b in demo_enabled.blocks.values() if hasattr(b, "value") and isinstance(b.value, str)
+    ]
+    assert not any("Demo is read-only." in val for val in html_contents_enabled)
+    assert not any("Read-only" in val for val in html_contents_enabled)

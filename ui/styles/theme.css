@@ -914,16 +914,6 @@ button#ap-ingest-btn {
   box-sizing: border-box !important;
 }
 
-button#ap-ingest-btn:disabled,
-button#ap-ingest-btn[disabled],
-button#ap-ingest-btn[aria-disabled="true"] {
-  opacity: 0.45 !important;
-  cursor: not-allowed !important;
-  pointer-events: none !important;
-  box-shadow: none !important;
-  filter: grayscale(0.25) !important;
-}
-
 .ap-ingest-readonly-note {
   font-size: 11.5px !important;
   line-height: 1.45 !important;
@@ -2196,13 +2186,26 @@ button#ap-mode-slider.is-rigorous .cycle-label {
     box-shadow: none !important;
   }
 
-  .ap-col-left .ap-ingest-title,
-  .ap-ingest-title {
+  /* Ingest Episode Title Spacing on Mobile: 8px when enabled, 4px to note when read-only */
+  .ap-col-left:has(.ap-ingest-capsule) .ap-ingest-title,
+  .ap-sidebar-header-wrap > .ap-ingest-title {
     margin: 0 0 8px 0 !important;
     padding: 0 !important;
     font-size: 12.5px !important;
     font-weight: 700 !important;
     color: var(--text-main) !important;
+  }
+
+  .ap-ingest-header-row .ap-ingest-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 12.5px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+  }
+
+  .ap-ingest-header-row {
+    margin: 0 0 4px 0 !important;
   }
 
   /* Backdrop for Mobile Drawer */
