@@ -1448,7 +1448,7 @@ button#ap-mode-slider .cycle-chevron {
   display: none !important;
 }
 
-/* Balanced mode -> Green (WCAG AA: #047857 text has 6.1:1 contrast on light bg) */
+/* Balanced mode -> Green (WCAG AA compliant) */
 button#ap-mode-slider.is-balanced {
   border-color: rgba(16, 185, 129, 0.35) !important;
   background: rgba(16, 185, 129, 0.08) !important;
@@ -1461,7 +1461,7 @@ button#ap-mode-slider.is-balanced .cycle-label {
   color: #047857 !important;
 }
 
-/* Turbo mode -> Blue (WCAG AA: #0369A1 text has 6.5:1 contrast on light bg) */
+/* Turbo mode -> Blue (WCAG AA compliant) */
 button#ap-mode-slider.is-turbo {
   border-color: rgba(14, 165, 233, 0.35) !important;
   background: rgba(14, 165, 233, 0.08) !important;
@@ -1475,7 +1475,7 @@ button#ap-mode-slider.is-turbo .cycle-label {
   color: #0369A1 !important;
 }
 
-/* Rigorous mode -> Orange (WCAG AA: #C2410C text has 5.1:1 contrast on light bg) */
+/* Rigorous mode -> Orange (WCAG AA: #9A3412 text has 6.1:1 contrast on tinted bg) */
 button#ap-mode-slider.is-rigorous {
   border-color: rgba(249, 115, 22, 0.35) !important;
   background: rgba(249, 115, 22, 0.08) !important;
@@ -1485,10 +1485,10 @@ button#ap-mode-slider.is-rigorous .cycle-icon-badge {
   color: #FFF !important;
 }
 button#ap-mode-slider.is-rigorous .cycle-label {
-  color: #C2410C !important;
+  color: #9A3412 !important;
 }
 
-/* Dark Mode Overrides (WCAG AA: text labels >= 7.4:1 contrast on dark bg) */
+/* Dark Mode Overrides (WCAG AA compliant) */
 .ap-dark button#ap-mode-slider,
 .gradio-container.ap-dark button#ap-mode-slider {
   background: #27272A !important;
