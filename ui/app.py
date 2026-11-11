@@ -595,6 +595,16 @@ _INIT_UI_JS_TEMPLATE = """() => {
 
         const ta = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
         const distillBtn = document.getElementById('ap-distill-btn');
+        const syncTextareaAutoGrow = (el) => {
+            if (!el) return;
+            el.style.height = 'auto';
+            const h = Math.min(120, Math.max(24, el.scrollHeight));
+            el.style.height = `${h}px`;
+            el.style.overflowY = el.scrollHeight > 120 ? 'auto' : 'hidden';
+            if (window.syncDesktopViewport) {
+                window.syncDesktopViewport();
+            }
+        };
         const syncDistillBtnState = () => {
             const btn = document.getElementById('ap-distill-btn');
             const inputEl = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
@@ -605,6 +615,9 @@ _INIT_UI_JS_TEMPLATE = """() => {
             }
             if (canSubmit) {
                 document.getElementById('ap-composer-notice')?.remove();
+            }
+            if (inputEl) {
+                syncTextareaAutoGrow(inputEl);
             }
         };
         if (distillBtn && !ta) {
@@ -617,6 +630,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
             ta.setAttribute('data-placeholder-disabled', 'true');
             ta.setAttribute('aria-label', 'Ask a question about Huberman Lab episodes');
             syncDistillBtnState();
+            syncTextareaAutoGrow(ta);
         }
         const capsule = document.querySelector('.ap-distill-capsule');
         if (capsule) {
@@ -1017,6 +1031,11 @@ _INIT_UI_JS_TEMPLATE = """() => {
             if (window.updateChatScrollNav) {
                 window.updateChatScrollNav();
             }
+        }
+
+        const curTa = document.querySelector('#ap-distill-input textarea, #ap-distill-input input');
+        if (curTa) {
+            syncTextareaAutoGrow(curTa);
         }
 
         const sseEl = document.getElementById('ap-sse-scroll');

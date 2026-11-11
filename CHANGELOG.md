@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Runtime QA Cache:** Stopped committing `data/raw/qa_cache.json` and added it to `.gitignore`. The cache now starts empty on each deployment and populates dynamically at runtime, ensuring production requests execute live queries rather than serving pre-committed responses.
 
+### Fixed
+- **Distill Capsule Autogrow & Full-Width Wrapping:** Fixed premature question wrapping at ~230px by styling the `.input-container` wrapper with `flex: 1 1 auto; width: 100%`. Removed `height: 100%` from distill wrappers, allowing the textarea to autogrow from 1 to 5 lines (`max-height: 120px`) with bottom-aligned mode and distill controls and a thin scrollbar.
+
+
 ### Added
 - **GoatCounter Analytics & Outcome Events:** Integrated cookie-free page view analytics via GoatCounter script injection gated on `GOATCOUNTER_CODE`. Added lightweight custom outcome telemetry (`ask/<mode>/<outcome>`) for completed questions (`answered`, `refused`, `cached`) without sending question or answer content.
 - **Agent-Based LangSmith Tracing:** Migrated tracing from project-based to agent-based workspace addressing (`LANGSMITH_AGENT_ID=podseek` and `LANGSMITH_AGENT_ENVIRONMENT`), with unified environment support replacing dev projects, conflicting project environment popping, and an anonymizing client masking email and phone PII.

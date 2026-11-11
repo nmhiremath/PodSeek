@@ -264,3 +264,18 @@ def test_goatcounter_page_analytics(monkeypatch):
     for bad_code in ["podseek app", "podseek_app", "PODSEEK", "bad/code", "<script>alert(1)</script>"]:
         monkeypatch.setenv("GOATCOUNTER_CODE", bad_code)
         assert "data-goatcounter" not in render_head_meta_html()
+
+
+def test_distill_capsule_autogrow_css():
+    css = load_theme_css("theme.css")
+    # Assert distill capsule aligns items to bottom as textarea expands
+    assert ".ap-distill-capsule" in css
+    assert "align-items: flex-end" in css
+    # Assert distill wrappers do not force height: 100% and support auto growth
+    assert ".ap-distill-capsule .input-container" in css
+    assert ".ap-distill-capsule #ap-distill-input" in css
+    assert "height: auto" in css
+    # Assert textarea has max-height: 120px (5 lines at 24px) and content autogrow
+    assert "max-height: 120px" in css
+    assert "field-sizing: content" in css
+    assert "scrollbar-width: thin" in css

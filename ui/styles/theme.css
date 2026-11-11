@@ -584,29 +584,31 @@ div.ap-distill-capsule {
   display: flex !important;
   flex-direction: row !important;
   flex-wrap: nowrap !important;
-  align-items: center !important;
+  align-items: flex-end !important;
   background-color: var(--bg-subtle) !important;
   border: 1px solid var(--border-strong) !important;
-  border-radius: 9999px !important;
+  border-radius: 26px !important;
   min-height: 52px !important;
-  height: 52px !important;
-  padding: 0 112px 0 120px !important;
+  height: auto !important;
+  padding: 7px 8px !important;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
   transition: border-color 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease !important;
   box-sizing: border-box !important;
   overflow: visible !important;
+  gap: 10px !important;
 }
 
 .ap-mode-capsule-slot,
 .ap-distill-capsule .ap-mode-capsule-slot {
-  position: absolute !important;
-  left: 8px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
   display: inline-flex !important;
   align-items: center !important;
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 0 0 3px 2px !important;
   width: auto !important;
   height: auto !important;
   min-width: 0 !important;
@@ -696,19 +698,46 @@ div.ap-distill-capsule {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14) !important;
 }
 
-.ap-capsule-input,
-.ap-capsule-input .block,
-.ap-capsule-input .form,
-.ap-capsule-input label,
-.ap-capsule-input .wrap,
-.ap-distill-capsule > label,
-.ap-distill-capsule > div.gradio-textbox {
-  flex: 1 1 100% !important;
+/* Ingest input wrappers: Single-line 100% height centering */
+.ap-ingest-capsule .ap-capsule-input,
+.ap-ingest-capsule .ap-capsule-input .block,
+.ap-ingest-capsule .ap-capsule-input .form,
+.ap-ingest-capsule .ap-capsule-input label,
+.ap-ingest-capsule .ap-capsule-input .wrap,
+.ap-ingest-capsule .input-container {
+  flex: 1 1 auto !important;
   width: 100% !important;
   min-width: 0 !important;
   height: 100% !important;
   display: flex !important;
   align-items: center !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Distill input wrappers: Auto-growing flex chain without forcing 100% height */
+.ap-distill-capsule #ap-distill-input,
+.ap-distill-capsule .ap-capsule-input,
+.ap-distill-capsule .ap-capsule-input .block,
+.ap-distill-capsule .ap-capsule-input .form,
+.ap-distill-capsule .ap-capsule-input label,
+.ap-distill-capsule .ap-capsule-input .wrap,
+.ap-distill-capsule .input-container,
+.ap-distill-capsule > label,
+.ap-distill-capsule > div.gradio-textbox {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  align-items: stretch !important;
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
@@ -730,13 +759,13 @@ div.ap-distill-capsule {
   border: 0 !important;
 }
 
-/* Distill text input: Clean, large, modern typography (15px) */
+/* Distill text input: Clean, large, modern typography (15px), 1-5 line autogrow (max 120px) */
 .ap-distill-capsule .ap-capsule-input textarea,
 .ap-distill-capsule .ap-capsule-input input {
   background: transparent !important;
   border: none !important;
   color: var(--text-main) !important;
-  padding: 0 !important;
+  padding: 7px 0 !important;
   margin: 0 !important;
   font-family: inherit !important;
   font-size: 15px !important;
@@ -744,6 +773,8 @@ div.ap-distill-capsule {
   line-height: 24px !important;
   letter-spacing: -0.01em !important;
   min-height: 24px !important;
+  max-height: 120px !important;
+  height: auto !important;
   width: 100% !important;
   resize: none !important;
   box-shadow: none !important;
@@ -751,16 +782,32 @@ div.ap-distill-capsule {
   white-space: pre-wrap !important;
   word-break: break-word !important;
   overflow-wrap: anywhere !important;
-  scrollbar-width: none !important;
+  overflow-y: auto !important;
+  field-sizing: content !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--border-strong) transparent !important;
   display: block !important;
-  vertical-align: middle !important;
+  vertical-align: bottom !important;
   box-sizing: border-box !important;
 }
 
 .ap-distill-capsule .ap-capsule-input textarea::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
+  display: block !important;
+  width: 4px !important;
+  height: 4px !important;
+}
+
+.ap-distill-capsule .ap-capsule-input textarea::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.ap-distill-capsule .ap-capsule-input textarea::-webkit-scrollbar-thumb {
+  background: var(--border-strong) !important;
+  border-radius: 9999px !important;
+}
+
+.ap-distill-capsule .ap-capsule-input textarea::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted) !important;
 }
 
 /* Ensure zero native placeholder is ever rendered in Distill input (handled exclusively by .ap-typewriter-wrap) */
@@ -823,14 +870,15 @@ div.ap-distill-capsule {
   transition: opacity 0.14s ease !important;
 }
 
-/* Pill Action Button Vertically Centered Inside the Capsule Container */
+/* Distill Pill Action Button in Flex Flow */
 button.ap-capsule-btn,
 button#ap-distill-btn {
-  position: absolute !important;
-  right: 8px !important;
-  top: 50% !important;
+  position: static !important;
+  right: auto !important;
+  top: auto !important;
   bottom: auto !important;
-  transform: translateY(-50%) !important;
+  transform: none !important;
+  flex: 0 0 auto !important;
   width: auto !important;
   min-width: 0 !important;
   height: 38px !important;
@@ -858,7 +906,7 @@ button#ap-distill-btn {
 button.ap-capsule-btn:hover,
 button#ap-distill-btn:hover {
   filter: brightness(1.07) !important;
-  transform: translateY(-50%) scale(1.02) !important;
+  transform: scale(1.02) !important;
 }
 
 button#ap-distill-btn:disabled,
@@ -869,7 +917,7 @@ button#ap-distill-btn[aria-disabled="true"] {
   pointer-events: none !important;
   box-shadow: none !important;
   filter: grayscale(0.25) !important;
-  transform: translateY(-50%) !important;
+  transform: none !important;
 }
 
 .ap-composer-notice {
@@ -1816,22 +1864,43 @@ button#ap-mode-slider.is-rigorous .cycle-label {
     -webkit-backdrop-filter: blur(16px) !important;
     background-color: var(--bg-card) !important;
     border: 1px solid var(--border-strong) !important;
-    border-radius: 9999px !important;
+    border-radius: 26px !important;
     box-shadow: 0 10px 32px rgba(0, 0, 0, 0.16) !important;
-    padding: 0 92px 0 112px !important;
+    padding: 7px 8px !important;
     margin: 0 !important;
     min-height: 52px !important;
-    height: 52px !important;
+    height: auto !important;
     max-width: calc(100vw - 24px) !important;
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
-    align-items: center !important;
+    align-items: flex-end !important;
+    gap: 8px !important;
   }
 
   .ap-mode-capsule-slot,
   .ap-distill-capsule .ap-mode-capsule-slot {
-    left: 6px !important;
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    flex: 0 0 auto !important;
+    padding: 0 0 3px 2px !important;
+  }
+
+  .ap-distill-capsule button#ap-distill-btn,
+  .ap-col-center .ap-distill-capsule button#ap-distill-btn {
+    position: static !important;
+    transform: none !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    flex: 0 0 auto !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    padding: 0 14px !important;
+    font-size: 13px !important;
   }
 
   .ap-dark .ap-distill-capsule,
@@ -1854,6 +1923,8 @@ button#ap-mode-slider.is-rigorous .cycle-label {
   .ap-distill-capsule .ap-capsule-input textarea,
   .ap-distill-capsule .ap-capsule-input input {
     font-size: 13.5px !important;
+    line-height: 22px !important;
+    padding: 7px 0 !important;
   }
 
   .ap-distill-capsule .ap-capsule-input textarea::placeholder,
@@ -2925,9 +2996,9 @@ a.ap-kb-count-link:hover {
 .ap-typewriter-wrap {
   position: absolute !important;
   left: 120px !important;
-  right: 112px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
+  right: 105px !important;
+  top: 14px !important;
+  transform: none !important;
   pointer-events: none !important;
   display: flex !important;
   flex-direction: row !important;
@@ -2989,15 +3060,18 @@ a.ap-kb-count-link:hover {
 
 @media (max-width: 768px) {
   .ap-typewriter-wrap {
-    left: 112px !important;
-    right: 92px !important;
-    font-size: 13px !important;
+    left: 104px !important;
+    right: 86px !important;
+    top: 14px !important;
+    transform: none !important;
+    font-size: 13.5px !important;
+    line-height: 22px !important;
+    height: 22px !important;
+    max-height: 22px !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
     width: auto !important;
     min-width: 0 !important;
-    height: 24px !important;
-    max-height: 24px !important;
   }
 
   .ap-typewriter-cursor {
