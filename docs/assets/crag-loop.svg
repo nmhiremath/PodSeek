@@ -62,10 +62,10 @@
     <path id="pathTurbo" d="M 50 115 L 175 115 L 175 85 C 175 42, 602 42, 602 81 L 602 115 L 748 115" fill="none" stroke="none"/>
 
     <!-- Balanced (worst case, 1 rewrite): Exactly follows nodes and edges -->
-    <path id="pathBalanced" d="M 50 115 L 175 115 L 340 115 L 452 115 L 452 200 L 302 200 L 175 200 L 175 115 L 340 115 L 452 115 L 452 200 L 472 200 C 530 200, 570 170, 580 147 L 602 115 L 748 115" fill="none" stroke="none"/>
+    <path id="pathBalanced" d="M 50 115 L 175 115 L 340 115 L 452 115 L 452 200 L 302 200 L 240 200 C 190 200, 175 175, 175 147 L 175 115 L 340 115 L 452 115 L 452 200 L 472 200 C 530 200, 570 170, 580 147 L 602 115 L 748 115" fill="none" stroke="none"/>
 
     <!-- Rigorous (worst case, 2 rewrites): Loops twice through rewrite then refusal -->
-    <path id="pathRigorous" d="M 50 115 L 175 115 L 340 115 L 452 115 L 452 200 L 302 200 L 175 200 L 175 115 L 340 115 L 452 115 L 452 200 L 302 200 L 175 200 L 175 115 L 340 115 L 452 115 L 452 200 L 472 200 C 530 200, 570 170, 580 147 L 602 115 L 748 115" fill="none" stroke="none"/>
+    <path id="pathRigorous" d="M 50 115 L 175 115 L 340 115 L 452 115 L 452 200 L 302 200 L 240 200 C 190 200, 175 175, 175 147 L 175 115 L 340 115 L 452 115 L 452 200 L 302 200 L 240 200 C 190 200, 175 175, 175 147 L 175 115 L 340 115 L 452 115 L 452 200 L 472 200 C 530 200, 570 170, 580 147 L 602 115 L 748 115" fill="none" stroke="none"/>
   </defs>
 
   <!-- Title (Dedicated top line, perfectly clear of all elements) -->
@@ -100,8 +100,8 @@
   <path d="M 432 200 L 365 200" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrowAmber)"/>
   <text x="398" y="193" fill="#f59e0b" font-size="9.5" font-weight="600">yes</text>
 
-  <!-- 8. Rewrite Loop back to Retrieve -->
-  <path d="M 240 200 L 175 200 L 175 147" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowAmber)"/>
+  <!-- 8. Rewrite Loop back to Retrieve (Curvy loop) -->
+  <path d="M 240 200 C 190 200, 175 175, 175 147" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowAmber)"/>
 
   <!-- 9. Decision 2 to Generate (no / refusal: Retries ≥ max) -->
   <path d="M 472 200 C 530 200, 570 170, 580 147" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrowRose)"/>
