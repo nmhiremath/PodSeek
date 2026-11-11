@@ -6,12 +6,14 @@ from app.ingestion.youtube import is_huberman_channel
 from ui.client import InProcessClient, RemoteClient, make_client, parse_sse_chunk
 from ui.components import (
     _is_submittable_question,
+    is_ingest_enabled,
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
     render_head_meta_html,
     render_header_brand_html,
     render_header_controls_html,
+    render_ingest_readonly_note_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
     render_mode_slider_html,
@@ -277,3 +279,34 @@ def test_system_theme_early_resolution_script():
     assert "podseek_theme" in head_meta
     assert "podSeekApplyTheme" in render_header_controls_html()
     assert "localStorage.setItem('podseek_theme'" in render_header_controls_html()
+
+
+def test_is_ingest_enabled_flag(monkeypatch):
+    """Verify PODSEEK_INGEST_ENABLED parsing across varied truthy and falsy representations."""
+    monkeypatch.delenv("PODSEEK_INGEST_ENABLED", raising=False)
+    assert is_ingest_enabled() is True
+
+    for truthy in ["true", "True", "TRUE", "1", "yes", "YES", "on"]:
+        monkeypatch.setenv("PODSEEK_INGEST_ENABLED", truthy)
+        assert is_ingest_enabled() is True
+
+    for falsy in ["false", "False", "FALSE", "0", "no", "NO", "off", "  false  "]:
+        monkeypatch.setenv("PODSEEK_INGEST_ENABLED", falsy)
+        assert is_ingest_enabled() is False
+
+
+def test_render_ingest_readonly_note_and_info_status():
+    """Verify read-only note contains repository link and info card styles correctly."""
+    note_html = render_ingest_readonly_note_html()
+    assert "Read-only demo: 50 episodes are pre-indexed." in note_html
+    assert "https://github.com/nmhiremath/PodSeek" in note_html
+    assert "Clone the repo" in note_html
+    assert 'target="_blank"' in note_html
+    assert 'rel="noopener noreferrer"' in note_html
+
+    info_card = render_ingest_status_html("info", "Ingestion disabled", "Ingestion is disabled on the live demo.")
+    assert "ℹ️" in info_card
+    assert "Ingestion disabled" in info_card
+    assert "Ingestion is disabled on the live demo." in info_card
+    assert "rgba(59,130,246" in info_card
+    assert "⚠️" not in info_card

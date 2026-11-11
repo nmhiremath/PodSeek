@@ -33,12 +33,14 @@ from ui.components import (  # noqa: E402
     _is_submittable_question,
     format_citations,
     format_event,
+    is_ingest_enabled,
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
     render_head_meta_html,
     render_header_brand_html,
     render_header_controls_html,
+    render_ingest_readonly_note_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
     render_mode_slider_html,
@@ -604,6 +606,18 @@ _INIT_UI_JS_TEMPLATE = """() => {
                 document.getElementById('ap-composer-notice')?.remove();
             }
         };
+        const syncIngestAriaDisabled = () => {
+            const ingestIn = document.querySelector('#ap-ingest-input textarea, #ap-ingest-input input');
+            const ingestBtn = document.getElementById('ap-ingest-btn');
+            if (ingestIn && (ingestIn.disabled || ingestIn.hasAttribute('disabled'))) {
+                ingestIn.setAttribute('aria-disabled', 'true');
+            }
+            if (ingestBtn && (ingestBtn.disabled || ingestBtn.hasAttribute('disabled'))) {
+                ingestBtn.setAttribute('aria-disabled', 'true');
+            }
+        };
+        syncIngestAriaDisabled();
+
         if (distillBtn && !ta) {
             distillBtn.disabled = true;
             distillBtn.setAttribute('aria-disabled', 'true');
@@ -1016,6 +1030,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
             }
         }
 
+        syncIngestAriaDisabled();
         const sseEl = document.getElementById('ap-sse-scroll');
         if (sseEl) sseEl.scrollTop = sseEl.scrollHeight;
     });
@@ -1073,6 +1088,28 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
     def on_ingest(video_url_or_id: str):
         cleaned = video_url_or_id.strip()
         current_eps = load_episodes_html()
+        if not is_ingest_enabled():
+            info_box = render_ingest_status_html(
+                "info", "Ingestion disabled", "Ingestion is disabled on the live demo."
+            )
+            info_logs = [("ℹ [ingest] Ingestion is disabled on the live demo.", "var(--accent)")]
+            yield (
+                gr.update(value=info_box, visible=True),
+                current_eps,
+                render_ingest_workflow_graph_html(active_step="abort", error=False, abort_reason="Read-only demo"),
+                render_sse_log_html(info_logs, endpoint="POST /ingest"),
+                "",
+            )
+            time.sleep(3.2)
+            yield (
+                gr.update(value="", visible=False),
+                current_eps,
+                render_workflow_graph_html(),
+                render_sse_log_html(info_logs, endpoint="POST /ingest"),
+                "",
+            )
+            return
+
         if not cleaned:
             err_box = render_ingest_status_html(
                 "error", "Missing episode link", "Paste a Huberman Lab YouTube URL or video ID."
@@ -1184,6 +1221,34 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                 )
             except Exception as exc:
                 err_text = str(exc)
+                if (
+                    "Ingestion is disabled on the live demo" in err_text
+                    or "403" in err_text
+                    and "Ingestion is disabled" in err_text
+                ):
+                    info_box = render_ingest_status_html(
+                        "info", "Ingestion disabled", "Ingestion is disabled on the live demo."
+                    )
+                    info_logs = [("ℹ [ingest] Ingestion is disabled on the live demo.", "var(--accent)")]
+                    yield (
+                        gr.update(value=info_box, visible=True),
+                        current_eps,
+                        render_ingest_workflow_graph_html(
+                            active_step="abort", error=False, abort_reason="Read-only demo"
+                        ),
+                        render_sse_log_html(info_logs, endpoint="POST /ingest"),
+                        "",
+                    )
+                    time.sleep(3.2)
+                    yield (
+                        gr.update(value="", visible=False),
+                        current_eps,
+                        render_workflow_graph_html(),
+                        render_sse_log_html(info_logs, endpoint="POST /ingest"),
+                        "",
+                    )
+                    return
+
                 ingest_logs.append((f"✕ [abort] {err_text}", "#EF4444"))
                 if "Only Huberman Lab episodes can be ingested" in err_text:
                     detail = err_text.replace("Only Huberman Lab episodes can be ingested", "").strip(" ().")
@@ -1570,14 +1635,16 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                         '<div class="ap-ingest-title" style="font-size:12.5px;font-weight:700;margin:8px 0 6px;">Ingest Episode</div>',
                         elem_classes=["ap-sidebar-header-wrap"],
                     )
-                    with gr.Row(elem_classes=["ap-ingest-capsule"]):
+                    ingest_active = is_ingest_enabled()
+                    with gr.Row(elem_classes=["ap-ingest-capsule" + ("" if ingest_active else " is-disabled")]):
                         video_input = gr.Textbox(
                             label="",
                             show_label=False,
                             container=False,
-                            placeholder="Paste YouTube link...",
+                            placeholder="Paste YouTube link..." if ingest_active else "Ingestion disabled on demo",
                             lines=1,
                             max_lines=1,
+                            interactive=ingest_active,
                             elem_id="ap-ingest-input",
                             elem_classes=["ap-capsule-input"],
                         )
@@ -1585,9 +1652,16 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                             "✦ Absorb",
                             variant="primary",
                             size="sm",
+                            interactive=ingest_active,
                             elem_id="ap-ingest-btn",
                             elem_classes=["ap-capsule-btn"],
                         )
+                    ingest_readonly_html = render_ingest_readonly_note_html() if not ingest_active else ""
+                    gr.HTML(
+                        ingest_readonly_html,
+                        visible=not ingest_active,
+                        elem_id="ap-ingest-readonly-note",
+                    )
                     ingest_status = gr.HTML("", visible=False, elem_id="ap-ingest-status-wrap")
                     episodes_html = gr.HTML(load_episodes_html(), elem_classes=["ap-episodes-list-block"])
 

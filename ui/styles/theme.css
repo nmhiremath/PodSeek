@@ -914,6 +914,42 @@ button#ap-ingest-btn {
   box-sizing: border-box !important;
 }
 
+button#ap-ingest-btn:disabled,
+button#ap-ingest-btn[disabled],
+button#ap-ingest-btn[aria-disabled="true"] {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  box-shadow: none !important;
+  filter: grayscale(0.25) !important;
+}
+
+.ap-ingest-capsule.is-disabled,
+.ap-ingest-capsule:has(input:disabled),
+.ap-ingest-capsule:has(button:disabled) {
+  opacity: 0.75 !important;
+}
+
+.ap-ingest-capsule input:disabled,
+.ap-ingest-capsule input[disabled],
+.ap-ingest-capsule input[aria-disabled="true"] {
+  cursor: not-allowed !important;
+  color: var(--text-muted) !important;
+}
+
+.ap-ingest-readonly-note {
+  font-size: 11.5px !important;
+  line-height: 1.45 !important;
+  margin: 6px 2px 10px !important;
+  color: var(--text-muted) !important;
+}
+
+.ap-ingest-readonly-note a {
+  color: var(--accent) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+
 button.ap-btn-ghost {
   flex: 0 0 auto !important;
   width: auto !important;

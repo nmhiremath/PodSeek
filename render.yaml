@@ -21,5 +21,7 @@ services:
         value: "true"
       - key: PODSEEK_UI_MODE
         value: inprocess
+      - key: PODSEEK_INGEST_ENABLED
+        value: "false"
       - key: PYTHON_VERSION
         value: 3.13.0

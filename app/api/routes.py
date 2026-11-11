@@ -2,6 +2,7 @@
 
 import json
 import logging
+import os
 import re
 import time
 from collections.abc import Iterator
@@ -361,9 +362,23 @@ def list_episodes() -> list[EpisodeSummary]:
     return episodes
 
 
+def is_ingest_enabled() -> bool:
+    """Return True if episode ingestion is enabled via PODSEEK_INGEST_ENABLED (default: True).
+
+    Parses 'false', '0', 'no', 'off' case-insensitively as False.
+    """
+    raw = os.getenv("PODSEEK_INGEST_ENABLED", "true").strip().lower()
+    return raw not in {"false", "0", "no", "off"}
+
+
 @router.post("/ingest", response_model=IngestResponse)
 def ingest_episode(request: IngestRequest) -> IngestResponse:
     """Ingest a YouTube episode, chunk transcript, analyze, and index into ChromaDB."""
+    if not is_ingest_enabled():
+        raise HTTPException(
+            status_code=403,
+            detail="Ingestion is disabled on the live demo.",
+        )
     video_id = extract_video_id(request.video_url_or_id)
     if not video_id:
         raise HTTPException(status_code=400, detail="Invalid YouTube URL or video ID.")

@@ -45,3 +45,12 @@ The system SHALL synthesize executive summaries, detailed summaries, key takeawa
 - **THEN** `EpisodeAnalysis` structured output extracts a short summary, long summary, 4-6 key takeaways, and 10-15 keywords
 - **AND** raw transcripts and metadata are saved to `data/raw/huberman_lab/<episode_id>.json`
 - **AND** chunks are indexed into ChromaDB.
+
+### Requirement: Ingestion Feature Gating
+The system SHALL support disabling episode ingestion via configuration, refusing new ingestion attempts before network or embedding operations.
+
+#### Scenario: Ingestion disabled refuses with 403
+- **GIVEN** `PODSEEK_INGEST_ENABLED` is set to `"false"`
+- **WHEN** an episode ingestion request is submitted to `POST /ingest` or the in-process ingest handler
+- **THEN** the request is refused with HTTP 403 and detail `"Ingestion is disabled on the live demo."`
+- **AND** no external YouTube network requests, captions fetching, chunking, or ChromaDB modifications are executed.
