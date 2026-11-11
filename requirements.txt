@@ -8,6 +8,7 @@ uvicorn[standard]>=0.54
 # --- LLM orchestration ---
 langchain>=1.4,<2
 langchain-core>=1.6,<2
+langsmith>=0.14.9
 langchain-google-genai>=4.4,<5
 langchain-openai>=0.3,<1
 langchain-anthropic>=0.3,<1

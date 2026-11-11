@@ -76,7 +76,7 @@ def ask_live(api_url: str, question: str, mode: str = "balanced") -> dict:
         start_time = time.perf_counter()
         final_state = corrective_rag_agent.invoke(
             _initial_state(question, mode=mode_val),
-            config=trace_config("/ask"),
+            config=trace_config("/ask", mode=mode_val),
         )
         relevant_docs = final_state.get("relevant_documents", [])
         citations = _build_citations(relevant_docs)

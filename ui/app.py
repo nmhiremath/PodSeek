@@ -24,6 +24,7 @@ import gradio as gr  # noqa: E402 # pyright: ignore[reportMissingImports]
 
 import ui.components as _ui_components  # noqa: E402
 from app.agent.nodes import determine_outcome  # noqa: E402
+from app.observability import configure_tracing  # noqa: E402
 from ui.client import PodSeekClient, make_client  # noqa: E402
 
 importlib.reload(_ui_components)
@@ -1053,6 +1054,7 @@ def _demo_fallback_enabled() -> bool:
 
 
 def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css") -> Any:
+    configure_tracing()
     if client is None:
         client = make_client()
 
