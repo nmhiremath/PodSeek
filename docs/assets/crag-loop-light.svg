@@ -61,15 +61,6 @@
   <rect x="270" y="14" width="244" height="20" rx="10" fill="#f8fafc" stroke="#0369a1" stroke-width="1.25"/>
   <text x="392" y="27.5" fill="#0369a1" font-size="9" font-weight="600" text-anchor="middle">Turbo · exact quote · Balanced dist &lt; 0.35</text>
 
-  <!-- STATIC FAINT MODE TRAILS (Faint dashed visual guides for non-SMIL renderers; offsets: Turbo -6px, Balanced +6px, Rigorous +10px) -->
-  <g id="staticModeTrails">
-    <!-- Turbo faint path (offset -6px) -->
-    <path d="M 50 109 L 169 109 L 169 79 C 169 56, 189 42, 219 42 L 546 42 C 576 42, 596 56, 596 75 L 596 109 L 748 109" fill="none" stroke="#0369a1" stroke-width="2" stroke-opacity="0.45" stroke-dasharray="3,6"/>
-    <!-- Balanced faint path (offset +6px) -->
-    <path d="M 50 121 L 181 121 L 340 121 L 458 121 L 458 206 L 302 206 L 240 206 C 196 206, 181 181, 181 153 L 181 121 L 340 121 L 458 121 L 458 206 L 558 206 C 588 206, 608 181, 608 153 L 608 121 L 748 121" fill="none" stroke="#047857" stroke-width="2" stroke-opacity="0.45" stroke-dasharray="3,6"/>
-    <!-- Rigorous faint path (offset +10px) -->
-    <path d="M 50 125 L 185 125 L 340 125 L 462 125 L 462 210 L 302 210 L 240 210 C 200 210, 185 185, 185 157 L 185 125 L 340 125 L 462 125 L 462 210 L 302 210 L 240 210 C 200 210, 185 185, 185 157 L 185 125 L 340 125 L 462 125 L 462 210 L 562 210 C 592 210, 612 185, 612 157 L 612 125 L 748 125" fill="none" stroke="#9a3412" stroke-width="2" stroke-opacity="0.45" stroke-dasharray="3,6"/>
-  </g>
 
   <!-- EDGES / CONNECTIONS -->
   <!-- 1. START to Retrieve -->
