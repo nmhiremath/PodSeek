@@ -23,7 +23,7 @@ At enterprise scale, organizations manage prompts using:
 ## 4. Why We Didn't Need It Here, and How PodSeek Achieves the Same Intent
 For a focused podcast question-answering assistant:
 - Storing prompts as Python constants within `app/agent/nodes.py` guarantees that prompt changes are tracked directly in Git alongside the code that consumes them.
-- Batch Pydantic structured output (`BatchGradeResult`) collapses $k$ independent LLM grading calls into a single call, eliminating 75% of grading latency and token overhead.
+- Batch Pydantic structured output (`BatchGradeResult`) collapses $k$ independent LLM grading calls into a single call, where one batch grading call replaces four sequential per-chunk calls ($k=4$).
 - Rigorous automated offline unit tests (`tests/test_agent.py`) and keyword evaluation benchmarks (`evals/questions.json`) verify prompt behavior without requiring a complex prompt registry.
 
 ## 5. Where Our Approach Breaks Down

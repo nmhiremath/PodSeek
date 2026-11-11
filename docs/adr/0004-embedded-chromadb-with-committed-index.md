@@ -6,7 +6,7 @@
 Accepted
 
 ## Context
-Deploying PodSeek as a public demonstration on Render.com free tier imposes severe constraints: 512 MB maximum container RAM, ephemeral filesystem on restart, spin-down after 15 minutes of idle, and zero budget for managed external cloud vector databases (e.g. Pinecone, Qdrant Cloud, Weaviate). When the container boots, downloading or embedding 50 multi-hour podcast transcripts at runtime would exceed startup timeouts and deplete API rate limits.
+Deploying PodSeek as a public demonstration on Render.com free tier imposes severe constraints: 512 MB maximum container RAM, ephemeral filesystem on restart, idle spin-down after 15 minutes of inactivity (documented Render free-tier behavior), and zero budget for managed external cloud vector databases (e.g. Pinecone, Qdrant Cloud, Weaviate). When the container boots, downloading or embedding 50 multi-hour podcast transcripts at runtime would exceed startup timeouts and deplete API rate limits.
 
 ## Decision
 Use embedded ChromaDB (`chromadb`) running locally within the application directory (`chroma_db/`). Commit the pre-indexed vector database files directly to the git repository alongside cached raw transcript JSON files in `data/raw/huberman_lab/`.

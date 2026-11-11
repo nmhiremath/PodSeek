@@ -22,7 +22,7 @@ At enterprise scale, organizations deploy:
 For a focused podcast question-answering assistant running on free-tier infrastructure:
 - Complex vector caching layers like GPTCache require running a secondary vector database and embedding every incoming query before checking the cache. PodSeek's normalized string cache is instant, zero-cost, and deterministic.
 - The distance fast-path ($top\_distance < 0.35$) gives the primary latency benefit of speculative routing: clear, obvious queries bypass grading automatically.
-- Pre-indexing and committing `chroma_db/` ensures container startup on Render free tier takes $< 5\text{ seconds}$ without runtime embedding costs.
+- Pre-indexing and committing `chroma_db/` ensures container startup on Render free tier avoids runtime embedding delays (`TODO(measure): measure container startup latency on Render free tier with pre-indexed chroma_db`).
 
 ## 5. Where Our Approach Breaks Down
 PodSeek's latency and cost architecture breaks down under the following triggers:

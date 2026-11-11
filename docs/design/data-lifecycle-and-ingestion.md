@@ -60,7 +60,7 @@ At enterprise scale, organizations deploy:
 ## 4. Why We Didn't Need It Here, and How PodSeek Achieves the Same Intent
 For a 50-episode curated podcast corpus:
 - A straightforward batch script (`scripts/ingest_top_episodes.py`) or API endpoint (`POST /ingest`) completes ingestion in a single pass without Kafka or Airflow overhead.
-- Disk caching in `data/raw/huberman_lab/` ensures complete reproducibility: all 50 episodes can be re-indexed offline in minutes without hitting YouTube rate limits.
+- Disk caching in `data/raw/huberman_lab/` ensures complete reproducibility: all 50 episodes can be re-indexed offline without hitting YouTube rate limits.
 - The `indexed_collections` metadata list tracks which collections contain chunks for each episode, ensuring idempotent ingestion.
 
 ## 5. Where Our Approach Breaks Down
