@@ -842,18 +842,21 @@ def render_mode_slider_html(active_mode: str = "balanced") -> str:
         mode_cls = "is-turbo"
         icon = "⚡"
         label = "Turbo"
+        desc = "skips grading, 0 rewrites"
     elif "rigorous" in clean:
         mode_cls = "is-rigorous"
         icon = "🎯"
         label = "Rigorous"
+        desc = "always grades, up to 2 rewrites"
     else:
         mode_cls = "is-balanced"
         icon = "⚖️"
         label = "Balanced"
+        desc = "skips grading if dist < 0.35, else grades, up to 1 rewrite"
 
     return f"""
     <div class="ap-mode-bar">
-      <button id="ap-mode-slider" class="ap-mode-cycle-btn {mode_cls}" type="button" title="Execution Mode: {label} (Click to cycle modes)" onclick="window.podSeekCycleMode && window.podSeekCycleMode()">
+      <button id="ap-mode-slider" class="ap-mode-cycle-btn {mode_cls}" type="button" title="{label}: {desc} (Click to cycle modes)" onclick="window.podSeekCycleMode && window.podSeekCycleMode()">
         <span class="ms-thumb"></span>
         <span class="cycle-icon-badge">{icon}</span>
         <span class="cycle-label">{label}</span>
