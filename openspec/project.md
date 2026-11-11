@@ -35,4 +35,4 @@ PodSeek is an open-source, reference-quality agentic podcast transcript search e
 - **Committed Pre-Indexed ChromaDB:** The `chroma_db/` directory is committed directly to git (72 MB, 2,052 vectors of dimension 3072 in the active `podcast_chunks_gemini-embedding-2` collection across 50 episodes) so that cold starts on free-tier cloud containers have instant access to indexed episodes without requiring runtime re-indexing or external database network roundtrips.
 - **In-Process UI Mode on Cloud:** On Render, `PODSEEK_UI_MODE=inprocess` executes Gradio and the agent logic in a single unified OS process to stay strictly under the 512 MB memory boundary.
 - **Protected Main Branch:** Direct pushes to `main` are disabled. All changes must go through a feature or doc branch, pass automated GitHub Actions CI (`ruff check .`, offline `pytest -v`), and be merged via Pull Request.
-- **Offline CI Testing:** CI never invokes external LLM APIs, embedding endpoints, or web services. All 41 unit tests execute strictly offline.
+- **Offline CI Testing:** CI never invokes external LLM APIs, embedding endpoints, or web services. All 49 unit tests execute strictly offline.

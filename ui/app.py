@@ -33,12 +33,14 @@ from ui.components import (  # noqa: E402
     _is_submittable_question,
     format_citations,
     format_event,
+    is_ingest_enabled,
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
     render_head_meta_html,
     render_header_brand_html,
     render_header_controls_html,
+    render_ingest_readonly_section_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
     render_mode_slider_html,
@@ -253,28 +255,25 @@ _INIT_UI_JS_TEMPLATE = """() => {
 
         window.podSeekSelectMode(nextMode);
     };
+
     const setupPodSeekUI = () => {
         let isDark = false;
         try {
-            isDark = localStorage.getItem('podseek_theme') === 'dark';
-        } catch (e) {}
-
-        if (isDark) {
-            document.documentElement.classList.add('ap-dark');
-            document.body.classList.add('ap-dark');
-            document.querySelector('.gradio-container')?.classList.add('ap-dark');
-            document.querySelector('gradio-app')?.classList.add('ap-dark');
-        } else {
-            document.documentElement.classList.remove('ap-dark', 'dark');
-            document.body.classList.remove('ap-dark', 'dark');
-            document.querySelector('.gradio-container')?.classList.remove('ap-dark', 'dark');
-            document.querySelector('gradio-app')?.classList.remove('ap-dark', 'dark');
+            const saved = localStorage.getItem('podseek_theme');
+            if (saved === 'dark') {
+                isDark = true;
+            } else if (saved === 'light') {
+                isDark = false;
+            } else {
+                isDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            }
+        } catch (e) {
+            isDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
         }
-        const bg = isDark ? '#111113' : '#F8F9FA';
-        document.documentElement.style.setProperty('background-color', bg, 'important');
-        document.body.style.setProperty('background-color', bg, 'important');
-        const gApp = document.querySelector('gradio-app');
-        if (gApp) gApp.style.setProperty('background-color', bg, 'important');
+
+        if (window.podSeekApplyTheme) {
+            window.podSeekApplyTheme(isDark);
+        }
 
         const epList = document.querySelector('.ap-episodes-list');
         if (epList) {
@@ -636,6 +635,7 @@ _INIT_UI_JS_TEMPLATE = """() => {
             }
             syncTypewriterPosition();
         };
+
         if (distillBtn && !ta) {
             distillBtn.disabled = true;
             distillBtn.setAttribute('aria-disabled', 'true');
@@ -1105,11 +1105,13 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
     if client is None:
         client = make_client()
 
+    ingest_active = is_ingest_enabled()
+
     def load_episodes_html() -> str:
         try:
-            return render_episodes_html(client.episodes())
+            return render_episodes_html(client.episodes(), ingest_enabled=ingest_active)
         except Exception:
-            return render_episodes_html([])
+            return render_episodes_html([], ingest_enabled=ingest_active)
 
     def get_episode_count() -> int:
         try:
@@ -1121,6 +1123,9 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
     init_ep_count = get_episode_count()
 
     def on_ingest(video_url_or_id: str):
+        if not is_ingest_enabled():
+            return
+
         cleaned = video_url_or_id.strip()
         current_eps = load_episodes_html()
         if not cleaned:
@@ -1598,7 +1603,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                     elem_id="ap-bento-accordion",
                     elem_classes=["ap-bento-accordion"],
                 ):
-                    gr.HTML(
+                    mobile_drawer_header_html = (
                         '<div class="ap-mobile-drawer-header">'
                         '<div style="width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;">'
                         '<div style="width:36px;height:4px;border-radius:9999px;background:var(--border-strong);opacity:0.6;"></div>'
@@ -1617,27 +1622,40 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                         "</div>"
                         "</div>"
                         "</div>"
-                        '<div class="ap-ingest-title" style="font-size:12.5px;font-weight:700;margin:8px 0 6px;">Ingest Episode</div>',
-                        elem_classes=["ap-sidebar-header-wrap"],
                     )
-                    with gr.Row(elem_classes=["ap-ingest-capsule"]):
-                        video_input = gr.Textbox(
-                            label="",
-                            show_label=False,
-                            container=False,
-                            placeholder="Paste YouTube link...",
-                            lines=1,
-                            max_lines=1,
-                            elem_id="ap-ingest-input",
-                            elem_classes=["ap-capsule-input"],
+                    if ingest_active:
+                        gr.HTML(
+                            mobile_drawer_header_html
+                            + '<div class="ap-ingest-title" style="font-size:12.5px;font-weight:700;margin:8px 0 6px;">Ingest Episode</div>',
+                            elem_classes=["ap-sidebar-header-wrap"],
                         )
-                        ingest_btn = gr.Button(
-                            "✦ Absorb",
-                            variant="primary",
-                            size="sm",
-                            elem_id="ap-ingest-btn",
-                            elem_classes=["ap-capsule-btn"],
+                        with gr.Row(elem_classes=["ap-ingest-capsule"]):
+                            video_input = gr.Textbox(
+                                label="",
+                                show_label=False,
+                                container=False,
+                                placeholder="Paste YouTube link...",
+                                lines=1,
+                                max_lines=1,
+                                interactive=True,
+                                elem_id="ap-ingest-input",
+                                elem_classes=["ap-capsule-input"],
+                            )
+                            ingest_btn = gr.Button(
+                                "✦ Absorb",
+                                variant="primary",
+                                size="sm",
+                                interactive=True,
+                                elem_id="ap-ingest-btn",
+                                elem_classes=["ap-capsule-btn"],
+                            )
+                    else:
+                        gr.HTML(
+                            mobile_drawer_header_html + render_ingest_readonly_section_html(),
+                            elem_classes=["ap-sidebar-header-wrap"],
                         )
+                        video_input = None
+                        ingest_btn = None
                     ingest_status = gr.HTML("", visible=False, elem_id="ap-ingest-status-wrap")
                     episodes_html = gr.HTML(load_episodes_html(), elem_classes=["ap-episodes-list-block"])
 
@@ -1746,19 +1764,20 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
             show_progress="hidden",
         )
 
-        ingest_outputs = [ingest_status, episodes_html, graph_html, sse_html, video_input]
-        ingest_btn.click(
-            on_ingest,
-            inputs=[video_input],
-            outputs=ingest_outputs,
-            show_progress="hidden",
-        )
-        video_input.submit(
-            on_ingest,
-            inputs=[video_input],
-            outputs=ingest_outputs,
-            show_progress="hidden",
-        )
+        if ingest_active and ingest_btn is not None and video_input is not None:
+            ingest_outputs = [ingest_status, episodes_html, graph_html, sse_html, video_input]
+            ingest_btn.click(
+                on_ingest,
+                inputs=[video_input],
+                outputs=ingest_outputs,
+                show_progress="hidden",
+            )
+            video_input.submit(
+                on_ingest,
+                inputs=[video_input],
+                outputs=ingest_outputs,
+                show_progress="hidden",
+            )
 
         ask_outputs = [chat_html, chat_state, graph_html, sse_html, question_input, presets_row, analytics_tracker]
         ask_ev = ask_btn.click(

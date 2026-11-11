@@ -1,15 +1,19 @@
 """SSE parsing, client mode selection, and pure UI components. Does not import Gradio."""
 
+import re
+
 from app.ingestion.youtube import is_huberman_channel
 from ui.client import InProcessClient, RemoteClient, make_client, parse_sse_chunk
 from ui.components import (
     _is_submittable_question,
+    is_ingest_enabled,
     load_theme_css,
     render_chat_session_html,
     render_episodes_html,
     render_head_meta_html,
     render_header_brand_html,
     render_header_controls_html,
+    render_ingest_readonly_section_html,
     render_ingest_status_html,
     render_ingest_workflow_graph_html,
     render_mode_slider_html,
@@ -162,11 +166,17 @@ def test_theme_css_and_components_render_without_gradio():
     assert "<code>" not in chat
     assert ")." not in chat
 
-    empty_chat = render_chat_session_html([], episode_count=23)
-    assert "Ask across Huberman Lab&#39;s" in empty_chat or "Ask across Huberman Lab's" in empty_chat
-    assert "23" in empty_chat
-    assert "most viewed episodes." in empty_chat
+    empty_chat = render_chat_session_html([], episode_count=50)
+    assert "Find the moment Huberman said it." in empty_chat
+    assert "Andrew Huberman is a Stanford neuroscientist" in empty_chat
+    assert "50 most viewed episodes" in empty_chat
+    assert "Search " in empty_chat and "most viewed episodes" in empty_chat
     assert "ap-kb-count-link" in empty_chat
+    assert "Pick a topic or ask a question" in empty_chat
+    assert "Choose a mode: Turbo is fast, Rigorous checks every source" in empty_chat
+    assert "Tap a timestamp to hear it" in empty_chat
+    assert "If the episodes don't cover it, PodSeek says so instead of guessing" in empty_chat
+    assert "Independent project, not affiliated with Huberman Lab. Not medical advice." in empty_chat
 
     refusal_chat = render_chat_session_html(
         [
@@ -236,6 +246,11 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert "--ap-mobile-nav-bottom" in css
     assert "#ap-studio-view .pending" in css
     assert ".ap-lib-btn-label" in css
+    assert ".ap-empty-hero" in css
+    assert ".ap-empty-title" in css
+    assert ".ap-empty-steps" in css
+    assert ".ap-step-num" in css
+    assert ".ap-empty-footnote" in css
     assert "a.gai-pill > span:not(.gai-yt-circle)" in css
     assert "ap-lib-btn-label" in render_header_controls_html()
     assert '<h1 class="ap-brand-title">PodSeek</h1>' in render_header_brand_html()
@@ -245,7 +260,8 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert "%3EPS%3C/text%3E" in head_meta
     assert 'content="https://podseek.onrender.com/"' in head_meta
     assert 'content="Corrective RAG over Huberman Lab transcripts with timestamp citations."' in head_meta
-    assert "gradio" not in head_meta.lower()
+    meta_tags = "".join(re.findall(r"<meta\b[^>]*>", head_meta, re.IGNORECASE))
+    assert "gradio" not in meta_tags.lower()
 
 
 def test_goatcounter_page_analytics(monkeypatch):
@@ -282,3 +298,158 @@ def test_distill_capsule_autogrow_css():
     assert "max-height: 120px" in css
     assert "field-sizing: content" in css
     assert "scrollbar-width: thin" in css
+def test_system_theme_early_resolution_script():
+    """Verify that head meta includes early theme resolution script supporting system theme and localStorage."""
+    head_meta = render_head_meta_html()
+    assert "podSeekApplyTheme" in head_meta
+    assert "prefers-color-scheme: dark" in head_meta
+    assert "podseek_theme" in head_meta
+    assert "podSeekApplyTheme" in render_header_controls_html()
+    assert "localStorage.setItem('podseek_theme'" in render_header_controls_html()
+
+
+def test_is_ingest_enabled_flag(monkeypatch):
+    """Verify PODSEEK_INGEST_ENABLED parsing across varied truthy and falsy representations."""
+    monkeypatch.delenv("PODSEEK_INGEST_ENABLED", raising=False)
+    assert is_ingest_enabled() is True
+
+    for truthy in ["true", "True", "TRUE", "1", "yes", "YES", "on"]:
+        monkeypatch.setenv("PODSEEK_INGEST_ENABLED", truthy)
+        assert is_ingest_enabled() is True
+
+    for falsy in ["false", "False", "FALSE", "0", "no", "NO", "off", "  false  "]:
+        monkeypatch.setenv("PODSEEK_INGEST_ENABLED", falsy)
+        assert is_ingest_enabled() is False
+
+
+def test_render_ingest_readonly_section():
+    """Verify read-only section contains repository link, badge, and copy."""
+    section_html = render_ingest_readonly_section_html()
+    assert "Ingest Episode" in section_html
+    assert "Read-only" in section_html
+    assert "Demo is read-only." in section_html
+    assert "https://github.com/nmhiremath/PodSeek" in section_html
+    assert "Clone the repo" in section_html
+    assert "to add episodes." in section_html
+    assert 'target="_blank"' in section_html
+    assert 'rel="noopener noreferrer"' in section_html
+    assert "hyphens:none" in section_html
+    assert "margin:0 0 4px;" in section_html
+    assert "margin:0 0 12px;" in section_html
+
+    error_card = render_ingest_status_html("error", "Failed link", "Invalid YouTube link")
+    assert "⚠️" in error_card
+    assert "Failed link" in error_card
+    assert "Invalid YouTube link" in error_card
+
+
+def test_ui_ingest_capsule_gating(monkeypatch):
+    """Verify UI demo build conditionally renders ingest capsule or compact read-only note."""
+    from typing import Any
+    from unittest.mock import MagicMock
+
+    import gradio as gr
+
+    from ui.app import build_demo
+
+    gr_any: Any = gr
+    is_mock = isinstance(gr, MagicMock) or isinstance(getattr(gr, "Blocks", None), MagicMock)
+
+    # Test Disabled Mode
+    monkeypatch.setenv("PODSEEK_INGEST_ENABLED", "false")
+    if is_mock:
+        gr_any.reset_mock()
+    demo_disabled = build_demo(client=InProcessClient())
+
+    if is_mock:
+        textbox_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Textbox.call_args_list if "elem_id" in c.kwargs]
+        button_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Button.call_args_list if "elem_id" in c.kwargs]
+        assert "ap-ingest-input" not in textbox_elem_ids
+        assert "ap-ingest-btn" not in button_elem_ids
+
+        html_strings = [str(c.args[0]) for c in gr_any.HTML.call_args_list if c.args]
+        assert any("Demo is read-only." in val for val in html_strings)
+        assert any("Read-only" in val for val in html_strings)
+    else:
+        elem_ids_disabled = {b.elem_id for b in demo_disabled.blocks.values() if getattr(b, "elem_id", None)}
+        assert "ap-ingest-input" not in elem_ids_disabled
+        assert "ap-ingest-btn" not in elem_ids_disabled
+
+        html_contents_disabled = [
+            b.value for b in demo_disabled.blocks.values() if isinstance(getattr(b, "value", None), str)
+        ]
+        assert any("Demo is read-only." in val for val in html_contents_disabled)
+        assert any("Read-only" in val for val in html_contents_disabled)
+
+    # Test Enabled Mode
+    monkeypatch.setenv("PODSEEK_INGEST_ENABLED", "true")
+    if is_mock:
+        gr_any.reset_mock()
+    demo_enabled = build_demo(client=InProcessClient())
+
+    if is_mock:
+        textbox_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Textbox.call_args_list if "elem_id" in c.kwargs]
+        button_elem_ids = [c.kwargs.get("elem_id") for c in gr_any.Button.call_args_list if "elem_id" in c.kwargs]
+        assert "ap-ingest-input" in textbox_elem_ids
+        assert "ap-ingest-btn" in button_elem_ids
+
+        html_strings = [str(c.args[0]) for c in gr_any.HTML.call_args_list if c.args]
+        assert not any("Demo is read-only." in val for val in html_strings)
+        assert not any("Read-only" in val for val in html_strings)
+    else:
+        elem_ids_enabled = {b.elem_id for b in demo_enabled.blocks.values() if getattr(b, "elem_id", None)}
+        assert "ap-ingest-input" in elem_ids_enabled
+        assert "ap-ingest-btn" in elem_ids_enabled
+
+        html_contents_enabled = [
+            b.value for b in demo_enabled.blocks.values() if isinstance(getattr(b, "value", None), str)
+        ]
+        assert not any("Demo is read-only." in val for val in html_contents_enabled)
+        assert not any("Read-only" in val for val in html_contents_enabled)
+def test_mobile_onboarding_css_structure():
+    """Assert mobile onboarding steps/intro rules are consolidated without absolute positioning."""
+    import re
+
+    css = load_theme_css("theme.css")
+
+    # 1. Assert mobile media query sets flex-direction: column on steps container
+    assert "@media (max-width: 640px)" in css
+    media_idx = css.find("@media (max-width: 640px)")
+    assert media_idx != -1
+
+    # Extract entire @media (max-width: 640px) block by matching braces
+    start_brace = css.find("{", media_idx)
+    assert start_brace != -1
+    brace_count = 0
+    end_brace = -1
+    for i in range(start_brace, len(css)):
+        if css[i] == "{":
+            brace_count += 1
+        elif css[i] == "}":
+            brace_count -= 1
+            if brace_count == 0:
+                end_brace = i
+                break
+    assert end_brace != -1
+    mobile_css = css[start_brace:end_brace]
+
+    assert ".ap-empty-steps" in mobile_css
+    assert "flex-direction: column" in mobile_css
+
+    # 2. Assert no rule on steps or intro uses position: absolute
+    onboarding_patterns = [
+        r"\.ap-empty-hero",
+        r"\.ap-empty-title",
+        r"\.ap-empty-intro",
+        r"\.ap-empty-steps",
+        r"\.ap-empty-step",
+        r"\.ap-step-num",
+        r"\.ap-step-text",
+        r"\.ap-empty-footnote",
+    ]
+    for match in re.finditer(r"([^{]+)\{([^}]+)\}", css):
+        selector, body = match.group(1), match.group(2)
+        if any(re.search(pat, selector) for pat in onboarding_patterns):
+            assert "position: absolute" not in body, (
+                f"Onboarding rule '{selector.strip()}' must not use position: absolute"
+            )

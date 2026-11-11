@@ -11,6 +11,8 @@ import os
 import re
 from pathlib import Path
 
+from app.ingestion import is_ingest_enabled as is_ingest_enabled
+
 STYLES_DIR = Path(__file__).resolve().parent / "styles"
 
 _YT_BADGE_SVG = (
@@ -26,6 +28,20 @@ def _is_submittable_question(text: object) -> bool:
     if not isinstance(text, str):
         text = str(getattr(text, "value", text or ""))
     return len(text.strip()) >= 3
+
+
+def render_ingest_readonly_section_html() -> str:
+    """Render the compact read-only ingest heading row and note when ingestion is disabled."""
+    return (
+        '<div class="ap-ingest-header-row" style="display:flex;align-items:center;justify-content:space-between;margin:0 0 4px;">'
+        '<span class="ap-ingest-title" style="font-size:12.5px;font-weight:700;margin:0;color:var(--text-main);">Ingest Episode</span>'
+        '<span class="ap-readonly-badge ap-muted" style="font-size:10.5px;font-weight:600;line-height:1;padding:2.5px 7px;border-radius:9999px;background:var(--border-hairline);color:var(--text-muted);letter-spacing:0.02em;">Read-only</span>'
+        "</div>"
+        '<div class="ap-ingest-readonly-note ap-muted" style="font-size:11.5px;line-height:1.45;margin:0 0 12px;color:var(--text-muted);white-space:normal;hyphens:none;-webkit-hyphens:none;">'
+        "Demo is read-only. "
+        '<a href="https://github.com/nmhiremath/PodSeek" target="_blank" rel="noopener noreferrer" style="color:var(--accent);text-decoration:underline;text-underline-offset:2px;">Clone the repo</a> to add episodes.'
+        "</div>"
+    )
 
 
 def load_theme_css(stylesheet: str = "theme.css") -> str:
@@ -53,6 +69,53 @@ PS_FAVICON_DATA_URI = (
 def render_head_meta_html() -> str:
     """Return HTML head tags for viewport, favicon, SEO description, Open Graph, Twitter cards, and fonts."""
     description = "Corrective RAG over Huberman Lab transcripts with timestamp citations."
+    early_theme_js = (
+        "<script>"
+        "(() => {"
+        "window.podSeekApplyTheme = (isDark) => {"
+        "const root = document.documentElement;"
+        "if (!root) return;"
+        "const targets = [root, document.body];"
+        "const gC = document.querySelector('.gradio-container');"
+        "const gA = document.querySelector('gradio-app');"
+        "if (gC) targets.push(gC);"
+        "if (gA) targets.push(gA);"
+        "targets.forEach(el => {"
+        "if (!el) return;"
+        "el.classList.toggle('ap-dark', isDark);"
+        "if (!isDark) el.classList.remove('dark');"
+        "});"
+        "const bg = isDark ? '#111113' : '#F8F9FA';"
+        "root.style.setProperty('background-color', bg, 'important');"
+        "if (document.body) document.body.style.setProperty('background-color', bg, 'important');"
+        "if (gA) gA.style.setProperty('background-color', bg, 'important');"
+        "};"
+        "let isDark = false;"
+        "try {"
+        "const saved = localStorage.getItem('podseek_theme');"
+        "if (saved === 'dark') isDark = true;"
+        "else if (saved === 'light') isDark = false;"
+        "else isDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);"
+        "} catch (e) {"
+        "isDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);"
+        "}"
+        "window.podSeekApplyTheme(isDark);"
+        "if (!window._podSeekThemeListenerAttached && window.matchMedia) {"
+        "window._podSeekThemeListenerAttached = true;"
+        "const mq = window.matchMedia('(prefers-color-scheme: dark)');"
+        "const onSysChange = (e) => {"
+        "let s = null;"
+        "try { s = localStorage.getItem('podseek_theme'); } catch (err) {}"
+        "if (s !== 'dark' && s !== 'light') {"
+        "if (window.podSeekApplyTheme) window.podSeekApplyTheme(e.matches);"
+        "}"
+        "};"
+        "if (mq.addEventListener) mq.addEventListener('change', onSysChange);"
+        "else if (mq.addListener) mq.addListener(onSysChange);"
+        "}"
+        "})();"
+        "</script>"
+    )
     tags = (
         '<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover">'
         f'<link rel="icon" type="image/svg+xml" href="{PS_FAVICON_DATA_URI}">'
@@ -68,6 +131,7 @@ def render_head_meta_html() -> str:
         '<link rel="preconnect" href="https://fonts.googleapis.com">'
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
         '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">'
+        f"{early_theme_js}"
     )
     code = (os.getenv("GOATCOUNTER_CODE") or "").strip()
     if code and re.fullmatch(r"^[a-z0-9-]+$", code):
@@ -546,22 +610,8 @@ def render_header_controls_html() -> str:
         '<button id="ap-theme-slider" type="button" title="Toggle Light / Dark theme" '
         'onclick="(() => {'
         "const isDark = !document.documentElement.classList.contains('ap-dark');"
-        "document.documentElement.classList.toggle('ap-dark', isDark);"
-        "document.body.classList.toggle('ap-dark', isDark);"
-        "document.querySelector('.gradio-container')?.classList.toggle('ap-dark', isDark);"
-        "document.querySelector('gradio-app')?.classList.toggle('ap-dark', isDark);"
-        "if (!isDark) {"
-        "document.documentElement.classList.remove('dark');"
-        "document.body.classList.remove('dark');"
-        "document.querySelector('.gradio-container')?.classList.remove('dark');"
-        "document.querySelector('gradio-app')?.classList.remove('dark');"
-        "}"
+        "if (window.podSeekApplyTheme) { window.podSeekApplyTheme(isDark); }"
         "try { localStorage.setItem('podseek_theme', isDark ? 'dark' : 'light'); } catch (e) {}"
-        "const bg = isDark ? '#111113' : '#F8F9FA';"
-        "document.documentElement.style.setProperty('background-color', bg, 'important');"
-        "document.body.style.setProperty('background-color', bg, 'important');"
-        "const gApp = document.querySelector('gradio-app');"
-        "if (gApp) gApp.style.setProperty('background-color', bg, 'important');"
         '})()">'
         '<span class="ts-thumb"></span>'
         '<span class="ts-icon ts-sun">'
@@ -581,12 +631,16 @@ def render_header_controls_html() -> str:
     return f'<div class="ap-slider-wrap">{mobile_lib_btn}{theme_slider}</div>'
 
 
-def render_episodes_html(items: list[dict]) -> str:
+def render_episodes_html(items: list[dict], ingest_enabled: bool = True) -> str:
     """Render the scrollable list of indexed episodes for the desktop regular left pane."""
     count = len(items)
+    divider_style = (
+        "border-top:1px solid var(--border-hairline);margin:0 0 6px;padding-top:12px;"
+        if not ingest_enabled
+        else "border-top:1px solid var(--border-hairline);margin:8px 0 6px;padding-top:8px;"
+    )
     heading_html = (
-        '<div class="ap-episodes-heading" '
-        'style="border-top:1px solid var(--border-hairline);margin:8px 0 6px;padding-top:8px;'
+        f'<div class="ap-episodes-heading" style="{divider_style}'
         f'font-size:12.5px;font-weight:700;color:var(--text-main);">Indexed Episodes ({count})</div>'
     )
     if not items:
@@ -666,16 +720,8 @@ def render_header_library_html(items: list[dict]) -> str:
         '<button id="ap-theme-slider" type="button" title="Toggle Light / Dark theme" '
         'onclick="(() => {'
         "const isDark = !document.documentElement.classList.contains('ap-dark');"
-        "document.documentElement.classList.toggle('ap-dark', isDark);"
-        "document.documentElement.classList.toggle('dark', isDark);"
-        "document.body.classList.toggle('ap-dark', isDark);"
-        "document.body.classList.toggle('dark', isDark);"
-        "document.querySelector('.gradio-container')?.classList.toggle('ap-dark', isDark);"
-        "const bg = isDark ? '#111113' : '#F8F9FA';"
-        "document.documentElement.style.setProperty('background-color', bg, 'important');"
-        "document.body.style.setProperty('background-color', bg, 'important');"
-        "const gApp = document.querySelector('gradio-app');"
-        "if (gApp) gApp.style.setProperty('background-color', bg, 'important');"
+        "if (window.podSeekApplyTheme) { window.podSeekApplyTheme(isDark); }"
+        "try { localStorage.setItem('podseek_theme', isDark ? 'dark' : 'light'); } catch (e) {}"
         '})()">'
         '<span class="ts-thumb"></span>'
         '<span class="ts-icon ts-sun">'
@@ -753,7 +799,7 @@ def render_spotlight_workflow_html(
     )
 
 
-def render_chat_session_html(history: list[dict], episode_count: int = 23, notice: str = "") -> str:
+def render_chat_session_html(history: list[dict], episode_count: int = 50, notice: str = "") -> str:
     """Render the ephemeral session chat thread with rendered Markdown, inline pills, and focus-locked spotlight workflow."""
     notice_html = (
         f'<div id="ap-composer-notice" class="ap-composer-notice" role="status" aria-live="polite">{html.escape(notice)}</div>'
@@ -761,18 +807,60 @@ def render_chat_session_html(history: list[dict], episode_count: int = 23, notic
         else ""
     )
     if not history:
-        count_display = str(episode_count if episode_count > 0 else 23)
-        onclick_js = "if (window.togglePodSeekDrawer) { window.togglePodSeekDrawer(true); } else { const col = document.querySelector('.ap-col-left'); if (col) { col.classList.remove('is-collapsed'); col.classList.add('mobile-drawer-open'); document.getElementById('ap-mobile-drawer-backdrop')?.classList.add('is-open'); document.body.classList.add('ap-drawer-open'); } }"
+        count_display = str(episode_count if episode_count > 0 else 50)
+        onclick_js = (
+            "if (window.togglePodSeekDrawer) { "
+            "if (window.innerWidth <= 768) { window.togglePodSeekDrawer(true); } "
+            "else { window.togglePodSeekDrawer(); } "
+            "} else { "
+            "const col = document.querySelector('.ap-col-left'); "
+            "if (col) { "
+            "if (window.innerWidth <= 768) { "
+            "col.classList.remove('is-collapsed'); "
+            "col.classList.add('mobile-drawer-open'); "
+            "document.getElementById('ap-mobile-drawer-backdrop')?.classList.add('is-open'); "
+            "document.body.classList.add('ap-drawer-open'); "
+            "} else { "
+            "col.classList.toggle('is-collapsed'); "
+            "} "
+            "} "
+            "}"
+        )
         return (
             '<div class="ap-chat-viewport-wrap">'
             '<div id="ap-chat-scroll" class="modern-scroll ap-chat-scroll ap-chat-empty">'
-            '<div style="max-width:560px;margin:0 auto;text-align:center;padding:16px 20px;">'
-            '<div style="font-size:21px;font-weight:700;margin-bottom:8px;letter-spacing:-0.025em;color:var(--text-main);line-height:1.3;">'
-            f'Ask across Huberman Lab\'s <button type="button" onclick="{onclick_js}" class="ap-kb-count-link" title="Open Knowledge Base">{count_display}</button> most viewed episodes.'
+            '<div class="ap-empty-hero">'
+            '<h1 class="ap-empty-title">Find the moment Huberman said it.</h1>'
+            '<p class="ap-empty-intro ap-empty-intro-desktop ap-muted">'
+            "Andrew Huberman is a Stanford neuroscientist whose Huberman Lab podcast covers sleep, focus, stress, and health in multi-hour episodes. "
+            f'PodSeek searches the transcripts of his <button type="button" onclick="{onclick_js}" class="ap-kb-count-link" title="Toggle episode library">{count_display} most viewed episodes</button> '
+            "and answers with citations that jump to the exact second on YouTube."
+            "</p>"
+            '<p class="ap-empty-intro ap-empty-intro-mobile ap-muted">'
+            f'Search <button type="button" onclick="{onclick_js}" class="ap-kb-count-link" title="Toggle episode library">{count_display} of Andrew Huberman\'s most viewed episodes</button> '
+            "and jump to the exact second he said it."
+            "</p>"
+            '<div class="ap-empty-steps">'
+            '<div class="ap-empty-step">'
+            '<span class="ap-step-num">1</span>'
+            '<span class="ap-step-text">Pick a topic or ask a question</span>'
             "</div>"
-            '<div class="ap-muted" style="font-size:14px;line-height:1.55;font-weight:400;">'
-            "Pick a research-backed topic below or ask any question to distill grounded citations with timestamp deep links."
-            f"</div></div></div>{notice_html}"
+            '<div class="ap-empty-step">'
+            '<span class="ap-step-num">2</span>'
+            '<span class="ap-step-text">Choose a mode: Turbo is fast, Rigorous checks every source</span>'
+            "</div>"
+            '<div class="ap-empty-step">'
+            '<span class="ap-step-num">3</span>'
+            '<span class="ap-step-text">Tap a timestamp to hear it</span>'
+            "</div>"
+            "</div>"
+            '<div class="ap-empty-footnote ap-empty-footnote-desktop ap-muted">'
+            "If the episodes don't cover it, PodSeek says so instead of guessing. Independent project, not affiliated with Huberman Lab. Not medical advice."
+            "</div>"
+            '<div class="ap-empty-footnote ap-empty-footnote-mobile ap-muted">'
+            "Independent project, not affiliated with Huberman Lab. Not medical advice."
+            "</div>"
+            f"</div></div>{notice_html}"
             "</div>"
         )
     turns: list[str] = []

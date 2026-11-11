@@ -65,7 +65,7 @@ Conversational audio transcripts present three distinct failure modes for conven
 
 **Public Web Service:** [https://podseek.onrender.com/](https://podseek.onrender.com/?utm_source=github-readme)
 
-The public demonstration runs on Render.com free tier using the PodSeek Gradio 5 Bento Studio interface (`ui/app.py`). It executes in `inprocess` mode (`PODSEEK_UI_MODE=inprocess`), running the agent workflow and embedded ChromaDB directly inside a single 512 MB container without external database network hops.
+The public demonstration runs on Render.com free tier using the PodSeek Gradio 5 Bento Studio interface (`ui/app.py`). It executes in `inprocess` mode (`PODSEEK_UI_MODE=inprocess`), running the agent workflow and embedded ChromaDB directly inside a single 512 MB container without external database network hops. Note that the hosted demo is read-only (episode ingestion is disabled via `PODSEEK_INGEST_ENABLED=false` to protect container memory and prevent arbitrary write side effects); clone the repository to ingest custom episodes.
 
 ---
 
@@ -357,6 +357,7 @@ docker-compose up --build
 | `EMBEDDING_PROVIDER` | `google_genai` | Embedding provider selector. |
 | `EMBEDDING_MODEL` | `models/gemini-embedding-2` | Text embedding model identifier. |
 | `PODSEEK_UI_MODE` | `inprocess` | UI client mode: `inprocess` (direct handler invocation) or `remote` (HTTP/SSE). |
+| `PODSEEK_INGEST_ENABLED` | `true` | Enable episode ingestion (`true`/`false`). Set to `false` on hosted demos to run read-only. |
 | `PODSEEK_API_URL` | `http://localhost:8000` | Target FastAPI server URL when running in `remote` mode. |
 | `GOATCOUNTER_CODE` | _None_ | Optional GoatCounter code (`^[a-z0-9-]+$`) for cookie-free page and outcome analytics. |
 | `LANGSMITH_TRACING` | `false` | Enable agent-based LangSmith tracing (`true`, `1`, `yes`). Requires API key and agent variables. |
@@ -395,7 +396,7 @@ The test suite validates data schemas, YouTube parsing adapters, sliding-window 
 # Run Ruff linter
 ruff check .
 
-# Run offline Pytest suite (47 tests, fast offline execution)
+# Run offline Pytest suite (49 tests, fast offline execution)
 pytest -v
 
 # Validate OpenSpec specifications strictly

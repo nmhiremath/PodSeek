@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- /ask/stream no longer blocks the event loop during streaming.
+
 ### Changed
 - **Runtime QA Cache:** Stopped committing `data/raw/qa_cache.json` and added it to `.gitignore`. The cache now starts empty on each deployment and populates dynamically at runtime, ensuring production requests execute live queries rather than serving pre-committed responses.
 
@@ -19,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### Added
+- **Read-Only Demo Ingestion Gating (`PODSEEK_INGEST_ENABLED`):** Added server-side gating on `POST /ingest` and UI in-process handler `on_ingest` with HTTP 403 refusal (`"Ingestion is disabled on the live demo."`) before any network or ChromaDB calls. Consolidated `is_ingest_enabled()` into a canonical helper in `app.ingestion` imported across API and UI. In read-only mode, replaced the disabled ingest capsule with a compact "Ingest Episode" heading row, "Read-only" pill badge, and repository clone note with streamlined vertical spacing. Configured `PODSEEK_INGEST_ENABLED=false` in `render.yaml`.
+- **Onboarding Empty State Hero:** Redesigned initial chat empty state with authoritative headline ("Find the moment Huberman said it."), concise intro with episode library toggle, a 3-step guide (horizontal card row on desktop, borderless stacked rows on mobile), and an honest refusal footnote. Optimized vertical whitespace so the entire onboarding block, topic preset chips, and input capsule fit without scrolling on 1280x800 desktop and 390x844 mobile viewports.
+- **System Theme Auto-Detection:** Studio UI now resolves to the user's OS color scheme (`prefers-color-scheme: dark`) when no saved preference exists in `localStorage`, updates dynamically on OS theme changes, avoids theme flash via early head resolution script, and centralizes theme toggle logic in `window.podSeekApplyTheme(isDark)`.
 - **GoatCounter Analytics & Outcome Events:** Integrated cookie-free page view analytics via GoatCounter script injection gated on `GOATCOUNTER_CODE`. Added lightweight custom outcome telemetry (`ask/<mode>/<outcome>`) for completed questions (`answered`, `refused`, `cached`) without sending question or answer content.
 - **Agent-Based LangSmith Tracing:** Migrated tracing from project-based to agent-based workspace addressing (`LANGSMITH_AGENT_ID=podseek` and `LANGSMITH_AGENT_ENVIRONMENT`), with unified environment support replacing dev projects, conflicting project environment popping, and an anonymizing client masking email and phone PII.
 - **Root Traceable Chain:** Wrapped ask endpoints (`ask_question`, `iter_agent_events`) and QA-cache hits under an anonymized `@traceable(name="podseek_ask", run_type="chain")` root span with dynamic outcome metadata and tags.
