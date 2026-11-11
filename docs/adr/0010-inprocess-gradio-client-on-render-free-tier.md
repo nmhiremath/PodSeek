@@ -16,12 +16,12 @@ Support dual client architectures via `ui/client.py`:
 On Render (`render.yaml`), `PODSEEK_UI_MODE` is set to `inprocess`, and the entrypoint executes `python -m ui.app`. When `make_client()` detects `inprocess` mode (or no remote URL is configured), it selects `InProcessClient`. The Dockerfile remains dedicated to running the standalone FastAPI API container.
 
 ## Alternatives Considered
-1. **Supervisord / Dual Process in Docker:** Run Uvicorn on port 8000 and Gradio on port 7860 in the same container. Rejected because two concurrent Python runtimes with LangGraph and ChromaDB loaded simultaneously exceeded 512 MB RAM, triggering OOM kills on Render.
+1. **Supervisord / Dual Process in Docker:** Run Uvicorn on port 8000 and Gradio on port 7860 in the same container. Rejected because two concurrent Python runtimes with LangGraph and ChromaDB loaded simultaneously increase memory consumption towards Render's 512 MB ceiling.
 2. **Separate Render Services:** Deploy one web service for FastAPI and another for Gradio. Rejected because Render free tier allows only one active free web service per account without payment.
 
 ## Consequences
 ### Good
-- Fits comfortably within 512 MB RAM: memory footprint remains at ~280–350 MB on Render free tier.
+- Fits comfortably within 512 MB RAM: running a single unified process avoids duplicate runtime and model overhead.
 - Eliminates internal HTTP network overhead and serialization latency on single-service deployments.
 - Maintains complete API parity: `InProcessClient` and `RemoteClient` share the exact same schemas, serialization, and event iterator logic.
 

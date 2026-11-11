@@ -1,9 +1,9 @@
 # PodSeek Architecture Diagram (D2)
 # Re-render with:
-#   d2 --layout=elk --theme=4 docs/diagrams/architecture.d2 docs/assets/architecture-light.svg
-#   d2 --layout=elk --theme=200 docs/diagrams/architecture.d2 docs/assets/architecture-dark.svg
+#   d2 --layout=dagre --theme=4 docs/diagrams/architecture.d2 docs/assets/architecture-light.svg
+#   d2 --layout=dagre --theme=200 docs/diagrams/architecture.d2 docs/assets/architecture-dark.svg
 
-direction: right
+direction: down
 
 classes: {
   container: {
@@ -96,7 +96,7 @@ service: "PodSeek Application (FastAPI & LangGraph)" {
 
 storage: "Embedded Storage Layer" {
   class: container
-  chroma: "ChromaDB (chroma_db/)\n50 Huberman Episodes\n3072-dim Vectors" {
+  chroma: "ChromaDB (chroma_db/)\n50 Huberman Episodes\n72 MB / 2,052 Vectors" {
     class: storageNode
   }
   transcripts: "Raw Transcripts (data/raw/)\n50 JSON Files\nCached Captions" {

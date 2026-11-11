@@ -22,26 +22,24 @@ flowchart TD
     classDef fastpath fill:#0F172A,stroke:#38BDF8,stroke-width:2px,stroke-dasharray: 4 4,color:#38BDF8
     classDef rewrite fill:#451A03,stroke:#F59E0B,stroke-width:2px,color:#FEF3C7
     classDef success fill:#064E3B,stroke:#10B981,stroke-width:2px,color:#ECFDF5
-    classDef refusal fill:#881337,stroke:#F43F5E,stroke-width:2px,color:#FFE4E6
     classDef router fill:#0F172A,stroke:#94A3B8,stroke-width:1.5px,color:#F8FAFC
 
     START([START]) --> retrieve["1. Retrieve<br/>(k=4 Chunks + Cosine Dist)"]:::agent
 
-    retrieve -->|Fast-path: Turbo / dist < 0.35 / Quote| generate["4. Generate<br/>(Grounded Synthesis + Citations)"]:::success
+    retrieve -->|Fast-path: Turbo / dist < 0.35 / Quote| generate["4. Generate<br/>(Grounded Synthesis / Refusal)"]:::success
     retrieve -->|Standard: dist ≥ 0.35| grade["2. Grade Documents<br/>(Batch LLM Classifier)"]:::agent
 
     grade --> checkValid{"≥1 Relevant Chunk?"}:::router
 
     checkValid -->|Yes| generate
-    checkValid -->|No| checkRetries{"Retries < MAX_REWRITES (2)?"}:::router
+    checkValid -->|No| checkRetries{"Retries < max_retries?<br/>(Turbo: 0, Balanced: 1, Rigorous: 2)"}:::router
 
-    checkRetries -->|Yes: retries < 2| rewrite["3. Rewrite Query<br/>(Query Optimizer)"]:::rewrite
+    checkRetries -->|Yes| rewrite["3. Rewrite Query<br/>(Query Optimizer)"]:::rewrite
     rewrite -->|Increment rewrite_count| retrieve
 
-    checkRetries -->|No: Circuit Breaker| refuse["Circuit Breaker Abort<br/>(Standard Refusal)"]:::refusal
+    checkRetries -->|No: Max Retries Reached| generate
 
     generate --> END_OK([END]):::success
-    refuse --> END_REFUSE([END]):::refusal
 ```
 
 - **Compiled State Graph (`app/agent/graph.py:build_graph`):** The workflow defines four nodes (`retrieve`, `grade_documents`, `rewrite_query`, `generate`) operating on a strongly typed `AgentState` schema (`app/agent/state.py`).
@@ -73,8 +71,8 @@ PodSeek's orchestration breaks down under the following triggers:
 - **Strict Hardcoded Retry Limits:** Accepted a maximum of 2 query rewrites rather than dynamically calculating retry budgets based on remaining latency SLAs.
 
 ## 7. Pitfalls Encountered
-- **Unbounded Rewriting on Off-Topic Queries:** Early prototypes without a hard circuit breaker continually rephrased off-topic questions, triggering rate limits. Fixed in commit `a57c9ce` with `MAX_REWRITES = 2` and formal circuit-breaker refusal routing.
-- **Redundant Grading on Exact Matches:** When a user searched for an exact quote, the system still spent 3–5 seconds running batch LLM grading. Fixed in commit `9a36aea` by adding `route_after_retrieve` fast-path bypass.
+- **Deterministic Loop Termination:** The circuit breaker was introduced alongside the LangGraph state machine in commit `a57c9ce`, enforcing `MAX_REWRITES = 2` to mathematically guarantee loop termination rather than relying on open-ended model self-direction.
+- **Redundant Grading on Exact Matches:** When a user searched for an exact quote, the system still executed batch LLM grading until commit `9a36aea` introduced `route_after_retrieve` to bypass grading and fast-path to generation.
 
 ## 8. Next Steps (Candidate OpenSpec Changes)
 - `multi-turn-memory`: Introduce a thread-scoped checkpointer to support multi-turn conversational follow-ups with contextual query reformulation.

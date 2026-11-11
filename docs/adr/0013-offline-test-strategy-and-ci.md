@@ -21,7 +21,7 @@ Enforce a 100% offline testing strategy for automated continuous integration:
 
 ## Consequences
 ### Good
-- Lightning-fast CI execution: full test suite of 41 tests runs in under 1 second.
+- Fast CI execution: the full test suite of 41 tests executes offline without network delays or third-party service dependencies.
 - 100% deterministic builds: zero flakiness from network disruptions or external model provider outages.
 - Free and accessible: anyone can clone the repository and run `pytest -v` immediately without creating Google AI Studio or OpenAI developer accounts.
 

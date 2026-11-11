@@ -18,14 +18,14 @@ At enterprise scale, organizations typically deploy:
 - **Hierarchical Parent-Document Retrieval:** Indexing small sentences for retrieval while injecting larger surrounding parent paragraphs into the generation prompt.
 
 ## 4. Why We Didn't Need It Here, and How PodSeek Achieves the Same Intent
-For a focused podcast corpus of 50 episodes (~35,000 chunks) hosted on a 512 MB RAM free-tier container:
-- Embedded ChromaDB operates entirely in-process using local sqlite/HNSW files, incurring 0 network roundtrip overhead and 0 dollar cost.
+For a focused podcast corpus of 50 episodes (2,052 chunks in the active `podcast_chunks_gemini-embedding-2` collection) hosted on a 512 MB RAM free-tier container:
+- Embedded ChromaDB operates entirely in-process using local sqlite/HNSW files (72 MB in `chroma_db/`), incurring 0 network roundtrip overhead and 0 dollar cost.
 - Cosine distance scores from `gemini-embedding-2` provide sufficient semantic separation that an external re-ranker was unnecessary.
 - Speaker-boundary splitting and exact quote hoisting provide the primary benefits of hybrid search (finding verbatim statements) without running a full BM25 search daemon.
 
 ## 5. Where Our Approach Breaks Down
 PodSeek's retrieval architecture breaks down under the following triggers:
-- **Corpus Growth (> 500 Episodes):** Storing HNSW indices for > 350,000 chunks in embedded ChromaDB will exceed the 512 MB container RAM ceiling on free-tier Render.
+- **Corpus Growth:** Storing expanded HNSW indices in embedded ChromaDB will eventually challenge the 512 MB container RAM ceiling on free-tier Render (`TODO(measure):` profile resident memory as corpus size increases).
 - **Concurrent Writes:** Embedded ChromaDB SQLite backends experience file-lock contention when multiple concurrent ingestion workers attempt to index episodes simultaneously.
 - **Vocabulary Mismatch on Obscure Jargon:** Without sparse BM25 keyword indexing, pure semantic retrieval occasionally misses uncommon medical or chemical names that have low semantic density in general embeddings.
 

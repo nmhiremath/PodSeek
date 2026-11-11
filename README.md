@@ -5,7 +5,7 @@
 [![CI](https://github.com/nmhiremath/PodSeek/actions/workflows/ci.yml/badge.svg)](https://github.com/nmhiremath/PodSeek/actions/workflows/ci.yml)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-podseek.onrender.com-2563EB?logo=render&logoColor=white)](https://podseek.onrender.com/)
 [![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.142+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![LangGraph](https://img.shields.io/badge/LangGraph-1.2+-1C3C3C?logo=langchain&logoColor=white)](https://langchain-ai.github.io/langgraph/)
 [![ChromaDB](https://img.shields.io/badge/ChromaDB-1.5+-FF6F61?logo=google-cloud&logoColor=white)](https://www.trychroma.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -27,6 +27,7 @@
 - [Design at a Glance](#design-at-a-glance)
 - [OpenSpec Specification-Driven Development](#openspec-specification-driven-development)
 - [System Architecture & Workflow](#system-architecture--workflow)
+  - [System Context (Architecture Beta)](#system-context-architecture-beta)
   - [Corrective RAG State Machine](#corrective-rag-state-machine)
   - [Execution Modes & Distance Fast-Path](#execution-modes--distance-fast-path)
 - [Benchmark Evaluation](#benchmark-evaluation)
@@ -67,11 +68,10 @@ Conversational audio transcripts present three distinct failure modes for conven
 │                                        │                                │              │
 │                                    (0 Valid)                            │              │
 │                                        ▼                                │              │
-│                              [Retries < 2?] ──(Yes)──> [Rewrite Query]  │              │
+│                        [Retries < max_retries?] ──(Yes)──> [Rewrite]    │              │
 │                                        │                       │        │              │
-│                                       (No)                     └────────┘              │
-│                                        ▼                                               │
-│                            [Circuit Breaker Abort] ─────────────────────> [Refusal]    │
+│                    (No: Max Retries / Refusal)                 └────────┘              │
+│                                        └────────────────────────────────┘              │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -93,7 +93,7 @@ PodSeek's engineering practices are documented across 12 focused design pillars 
 
 | Pillar | Focus | Implementation | Code Citations |
 | :--- | :--- | :--- | :--- |
-| **[1. Retrieval & Chunking](docs/design/retrieval-and-chunking.md)** | Chunk segmentation & vector search | Speaker-aware sliding windows (~200w/40w), embedded ChromaDB, exact quote hoisting | `app/ingestion/chunking.py`, `app/vectorstore.py` |
+| **[1. Retrieval & Chunking](docs/design/retrieval-and-chunking.md)** | Chunk segmentation & vector search | Speaker-aware sliding windows (~200w/40w), embedded ChromaDB (72 MB, 2,052 vectors), exact quote hoisting | `app/ingestion/chunking.py`, `app/vectorstore.py` |
 | **[2. Orchestration & Control Flow](docs/design/orchestration-and-control-flow.md)** | State graph execution & loop bounds | LangGraph compiled state machine, typed `AgentState`, hard retry ceiling (`MAX_REWRITES=2`) | `app/agent/graph.py`, `app/agent/state.py` |
 | **[3. Prompt Engineering](docs/design/prompt-engineering.md)** | Structured outputs & role boundaries | Batch Pydantic relevance grader (`BatchGradeResult`), search query optimizer, grounded synthesis | `app/agent/nodes.py`, `app/api/routes.py` |
 | **[4. Inference & Model Abstraction](docs/design/inference-and-model-abstraction.md)** | Pluggable providers & dimension safety | LRU-cached factory supporting Gemini, OpenAI, Anthropic, Grok, Ollama; dynamic collection naming | `app/factory.py` |
@@ -137,6 +137,37 @@ npx @fission-ai/openspec validate --all --strict --no-interactive
 
 ## System Architecture & Workflow
 
+### System Context (Architecture Beta)
+
+```mermaid
+architecture-beta
+    group client(internet)[Client Layer]
+    service ui(server)[Studio UI] in client
+    service browser(internet)[Web Browser] in client
+
+    group service(server)[PodSeek Service]
+    service api(server)[FastAPI Router] in service
+    service agent(server)[LangGraph CRAG] in service
+
+    group storage(database)[Storage Layer]
+    service chroma(database)[ChromaDB] in storage
+    service raw(disk)[Transcript Store] in storage
+
+    group external(cloud)[External Providers]
+    service llm(cloud)[Google GenAI] in external
+    service yt(cloud)[YouTube oEmbed] in external
+    service langsmith(cloud)[LangSmith] in external
+
+    browser:R -- L:ui
+    ui:B -- T:api
+    api:R -- L:agent
+    agent:B -- T:chroma
+    agent:R -- L:llm
+    api:B -- T:raw
+    api:R -- L:yt
+    agent:T -- B:langsmith
+```
+
 ### Corrective RAG State Machine
 
 ```mermaid
@@ -154,32 +185,30 @@ flowchart TD
     classDef agent fill:#1E293B,stroke:#3B82F6,stroke-width:2px,color:#F8FAFC
     classDef rewrite fill:#451A03,stroke:#F59E0B,stroke-width:2px,color:#FEF3C7
     classDef success fill:#064E3B,stroke:#10B981,stroke-width:2px,color:#ECFDF5
-    classDef refusal fill:#881337,stroke:#F43F5E,stroke-width:2px,color:#FFE4E6
     classDef router fill:#0F172A,stroke:#94A3B8,stroke-width:1.5px,color:#F8FAFC
 
     START([START]) --> retrieve["1. Retrieve<br/>(k=4 Chunks + Cosine Dist)"]:::agent
 
-    retrieve -->|Fast-path: Turbo / dist < 0.35 / Quote| generate["4. Generate<br/>(Grounded Synthesis + Citations)"]:::success
+    retrieve -->|Fast-path: Turbo / dist < 0.35 / Quote| generate["4. Generate<br/>(Grounded Synthesis / Refusal)"]:::success
     retrieve -->|Standard: dist ≥ 0.35| grade["2. Grade Documents<br/>(Batch LLM Classifier)"]:::agent
 
     grade --> checkValid{"≥1 Relevant Chunk?"}:::router
 
     checkValid -->|Yes| generate
-    checkValid -->|No| checkRetries{"Retries < max_retries?"}:::router
+    checkValid -->|No| checkRetries{"Retries < max_retries?<br/>(Turbo: 0, Balanced: 1, Rigorous: 2)"}:::router
 
     checkRetries -->|Yes| rewrite["3. Rewrite Query<br/>(Query Optimizer)"]:::rewrite
     rewrite -->|Increment rewrite_count| retrieve
 
-    checkRetries -->|No: Circuit Breaker| refuse["Circuit Breaker Abort<br/>(Standard Refusal)"]:::refusal
+    checkRetries -->|No: Max Retries Reached| generate
 
     generate --> END_OK([END]):::success
-    refuse --> END_REFUSE([END]):::refusal
 ```
 
 ### Execution Modes & Distance Fast-Path
 
 PodSeek supports three execution modes configured via `AskRequest.mode`:
-1. **Turbo Mode (`mode="turbo"`):** Bypasses LLM document grading and disables query rewrites (0 retries). Passes top-3 retrieved chunks directly to generation for minimum latency.
+1. **Turbo Mode (`mode="turbo"`):** Bypasses LLM document grading and disables query rewrites (0 retries). Passes all retrieved chunks ($k=4$) directly to generation for minimum latency.
 2. **Balanced Mode (`mode="balanced"`, default):** Inspects cosine distance $top\_distance$. If $top\_distance < 0.35$ or an exact quote match is found, it takes the fast path directly to generation. Otherwise, it grades documents and allows up to 1 query rewrite.
 3. **Rigorous Mode (`mode="rigorous"`):** Always executes LLM batch document grading regardless of distance and permits up to 2 query rewrites (`MAX_REWRITES = 2`).
 
@@ -187,7 +216,7 @@ PodSeek supports three execution modes configured via `AskRequest.mode`:
 
 ## Benchmark Evaluation
 
-PodSeek includes an automated evaluation suite (`scripts/evaluate.py`) that evaluates answers against `evals/questions.json`: 13 in-scope scientific questions and 3 out-of-scope refusal questions.
+PodSeek includes an automated evaluation suite (`scripts/evaluate.py`) that evaluates answers against `evals/questions.json`: 13 in-scope scientific questions and 3 out-of-scope refusal questions (the 1998 FIFA World Cup final, a custom Linux kernel eBPF kprobe module in Rust, and a classic San Francisco sourdough boule schedule).
 
 ### Live Benchmark Results (PR #2)
 
@@ -202,11 +231,11 @@ Measured on 2026-11-10 across the 50-episode indexed corpus via `python -m scrip
 ### Methodology & Boundaries
 - **What It Measures:** Keyword overlap with expected scientific terms, syntax correctness of citation timestamps (`HH:MM:SS`), deep-link validity (`https://youtu.be/<id>?t=<sec>`), refusal enforcement on out-of-scope questions, and p50/p95 turnaround latency.
 - **What It Does Not Measure:** It is not an exhaustive semantic entailment benchmark (like Ragas Faithfulness) and does not evaluate multi-turn conversational reasoning.
-- **Turbo Citation Miss Note:** In Turbo mode, document grading is skipped. For 1 out of the 16 questions (an out-of-scope query), the generator synthesized an answer using retrieved tangential excerpts rather than issuing a clean refusal, resulting in 15/16 (93.8%) citation validity.
+- **Turbo Citation Miss Note:** In Turbo mode, document grading is skipped. For 1 out of the 16 questions (an out-of-scope query), the generator synthesized an answer using retrieved excerpts rather than issuing a clean refusal, resulting in 15/16 (93.8%) citation validity. `TODO(identify): name the Turbo citation failure from the PR #2 live eval output (one of the three off-topic questions). Do not invent it.`
 
 Run evaluation locally:
 ```bash
-# Offline evaluation using static fixture answers (0ms latency, zero API calls)
+# Offline evaluation using static fixture answers (zero API calls)
 python -m scripts.evaluate
 
 # Live evaluation against running API
@@ -342,7 +371,7 @@ The test suite validates data schemas, YouTube parsing adapters, sliding-window 
 # Run Ruff linter
 ruff check .
 
-# Run offline Pytest suite (41 tests, sub-second execution)
+# Run offline Pytest suite (41 tests, fast offline execution)
 pytest -v
 
 # Validate OpenSpec specifications strictly
@@ -363,7 +392,7 @@ Key architectural decisions are preserved in [`docs/adr/`](docs/adr/README.md) f
 - **[ADR 0006](docs/adr/0006-multi-tier-execution-modes-and-distance-fast-path.md):** Multi-Tier Execution Modes & Distance Fast-Path (`9a36aea`, `d4c0068`)
 - **[ADR 0007](docs/adr/0007-in-repo-provider-factory-vs-proxy-gateway.md):** In-Repo Provider Factory vs Proxy Gateway (`56aaa0b`)
 - **[ADR 0008](docs/adr/0008-sse-streaming-contract-with-token-deltas.md):** SSE Streaming Contract with Token Deltas (`bfe747c`, `d4c0068`)
-- **[ADR 0009](docs/adr/0009-normalized-qa-cache.md):** Normalized QA Cache with Composite Keys (`43ad054`)
+- **[ADR 0009](docs/adr/0009-normalized-qa-cache.md):** Normalized QA Cache with Composite Keys (`9a36aea`)
 - **[ADR 0010](docs/adr/0010-inprocess-gradio-client-on-render-free-tier.md):** In-Process Gradio Client on Render Free Tier (`986dfb1`, `826fa6e`)
 - **[ADR 0011](docs/adr/0011-strict-opt-in-langsmith-tracing.md):** Strict Opt-In LangSmith Tracing (`d4c0068`)
 - **[ADR 0012](docs/adr/0012-channel-gated-youtube-ingestion.md):** Channel-Gated YouTube Ingestion (`4d0697c`)
@@ -374,11 +403,11 @@ Key architectural decisions are preserved in [`docs/adr/`](docs/adr/README.md) f
 
 ## Known Limitations
 
-- **Free-Tier 50-Episode Ceiling:** The vector index is committed to Git (~45 MB) and loaded in-memory. Indexing > 200 episodes exceeds Render's 512 MB memory boundary.
+- **Corpus Scale on Free Tier:** The vector index is committed to Git (72 MB, 2,052 vectors of dimension 3072 in `chroma_db/`) and loaded in-memory. Expanding the index to a much larger corpus will challenge Render's 512 MB memory boundary.
 - **Single-Replica Deployment:** Embedded ChromaDB SQLite backends and disk caches cannot be concurrently mounted across multiple load-balanced web replicas.
 - **Single-Turn Stateless Context:** Queries are evaluated independently; multi-turn conversational memory is not yet supported.
 - **Phase 1 Huberman Channel Gate:** Non-Huberman podcast channels are rejected at ingestion by design.
-- **Cold-Start Latency on Render Free Tier:** Idle containers spin down after 15 minutes, requiring 30–50s to wake up on the first request.
+- **Free-Tier Cold Starts:** Idle containers spin down after inactivity (documented Render platform behavior), requiring startup time on the initial request.
 
 See [`docs/design/limitations.md`](docs/design/limitations.md) for the complete analysis and scale roadmap.
 

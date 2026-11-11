@@ -14,7 +14,7 @@ This directory documents the key architectural and design decisions made in PodS
 | [0006](0006-multi-tier-execution-modes-and-distance-fast-path.md) | Multi-Tier Execution Modes & Distance Fast-Path | Accepted | `9a36aea`, `d4c0068` | `app/agent/graph.py`, `app/agent/nodes.py` |
 | [0007](0007-in-repo-provider-factory-vs-proxy-gateway.md) | In-Repo Provider Factory vs Proxy Gateway | Accepted | `56aaa0b` | `app/factory.py` |
 | [0008](0008-sse-streaming-contract-with-token-deltas.md) | SSE Streaming Contract with Token Deltas | Accepted | `bfe747c`, `d4c0068` | `app/api/routes.py`, `ui/client.py` |
-| [0009](0009-normalized-qa-cache.md) | Normalized QA Cache with Composite Keys | Accepted | `43ad054` | `app/api/routes.py`, `data/raw/qa_cache.json` |
+| [0009](0009-normalized-qa-cache.md) | Normalized QA Cache with Composite Keys | Accepted | `9a36aea` | `app/api/routes.py`, `data/raw/qa_cache.json` |
 | [0010](0010-inprocess-gradio-client-on-render-free-tier.md) | In-Process Gradio Client on Render Free Tier | Accepted | `986dfb1`, `826fa6e` | `render.yaml`, `ui/client.py`, `ui/app.py` |
 | [0011](0011-strict-opt-in-langsmith-tracing.md) | Strict Opt-In LangSmith Tracing | Accepted | `d4c0068` | `app/observability.py`, `tests/` |
 | [0012](0012-channel-gated-youtube-ingestion.md) | Channel-Gated YouTube Ingestion | Accepted | `4d0697c` | `app/ingestion/youtube.py`, `app/api/` |

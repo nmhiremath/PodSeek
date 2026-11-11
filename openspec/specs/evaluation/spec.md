@@ -26,7 +26,7 @@ The system SHALL verify that every citation produced contains a valid `HH:MM:SS`
 The system SHALL verify that questions designated as out-of-scope produce zero citations.
 
 #### Scenario: Refusal evaluation for off-topic query
-- **WHEN** an off-topic question (e.g. Linux kernel, corporate board quotas, sourdough starter) is evaluated
+- **WHEN** an off-topic question (e.g. 1998 FIFA World Cup, Linux eBPF kprobe module in Rust, or classic San Francisco sourdough boule) is evaluated
 - **AND** `expect_citations` is `false`
 - **THEN** the status passes if and only if no citations are returned (`citations == []`).
 

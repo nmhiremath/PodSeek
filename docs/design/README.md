@@ -6,6 +6,39 @@ Every pillar document follows an identical 8-part structure: definition, impleme
 
 ---
 
+## System Context (Architecture Beta)
+
+```mermaid
+architecture-beta
+    group client(internet)[Client Layer]
+    service ui(server)[Studio UI] in client
+    service browser(internet)[Web Browser] in client
+
+    group service(server)[PodSeek Service]
+    service api(server)[FastAPI Router] in service
+    service agent(server)[LangGraph CRAG] in service
+
+    group storage(database)[Storage Layer]
+    service chroma(database)[ChromaDB] in storage
+    service raw(disk)[Transcript Store] in storage
+
+    group external(cloud)[External Providers]
+    service llm(cloud)[Google GenAI] in external
+    service yt(cloud)[YouTube oEmbed] in external
+    service langsmith(cloud)[LangSmith] in external
+
+    browser:R -- L:ui
+    ui:B -- T:api
+    api:R -- L:agent
+    agent:B -- T:chroma
+    agent:R -- L:llm
+    api:B -- T:raw
+    api:R -- L:yt
+    agent:T -- B:langsmith
+```
+
+---
+
 ## Architecture Pillars
 
 | Pillar | Focus | Implementation | Code Citations |

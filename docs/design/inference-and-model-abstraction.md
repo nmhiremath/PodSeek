@@ -1,7 +1,7 @@
 # Pillar 4: Inference & Model Abstraction
 
 ## 1. What This Pillar Means in Production AI Systems
-Inference and model abstraction provides an isolated boundary between application business logic and underlying foundation model providers. In production AI systems, this pillar insulates the codebase from provider API breaking changes, manages API authentication securely, enables seamless switching between cloud and self-hosted models, and prevents vector dimension mismatches across embedding model switches.
+Inference and model abstraction provides an isolated boundary between application business logic and underlying foundation model providers. In production AI systems, this pillar insulates the codebase from provider API breaking changes, manages API authentication securely, enables straightforward switching between cloud and self-hosted models, and prevents vector dimension mismatches across embedding model switches.
 
 ## 2. What PodSeek Does
 PodSeek consolidates all LLM and embedding instantiation into a centralized factory module (`app/factory.py`):

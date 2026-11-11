@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Added
+- **OpenSpec Baseline:** Adopted OpenSpec specification-driven development across 9 baseline capabilities in `openspec/specs/` (`retrieval`, `corrective-loop`, `answer-generation`, `inference-providers`, `streaming-api`, `ingestion`, `studio-ui`, `evaluation`, `observability`) with strict validation.
+- **Architectural Decision Records (ADRs):** Authored 14 retroactive MADR-style architectural decision records (`docs/adr/`) documenting technical decisions from project inception through PR #2.
+- **Agentic System Design Documentation:** Authored 12 design pillar documents (`docs/design/`), an enterprise tooling comparison matrix (`enterprise-mapping.md`), and a scale limitations roadmap (`limitations.md`).
+- **Architecture Diagrams:** Authored D2 architecture source (`docs/diagrams/architecture.d2`), light/dark rendered SVGs, and a hand-authored SMIL animated Corrective RAG loop diagram (`docs/assets/crag-loop.svg`).
+
+---
+
 ## [0.4.0] - 2026-11-10
 
 ### Added
@@ -16,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Automated CI Workflow:** GitHub Actions workflow (`.github/workflows/ci.yml`) running Python 3.13 Ruff linter and offline Pytest suite on push and PR to `main` (`1ad5ae6`, merged in `d4c0068`).
 - **Open Graph & Twitter Previews:** Added meta tags and social card preview headers for `https://podseek.onrender.com/` (`cedca74`, merged in `d4c0068`).
 - **Browser Favicon:** SVG brand badge favicon added to Gradio Studio (`a61e932`, merged in `d4c0068`).
-- **OpenSpec Baseline:** Adopted OpenSpec specification-driven development across 9 capabilities in `openspec/` with strict validation.
 
 ### Changed
 - **AskPodcast to PodSeek Completion:** Completed project rename across Docker Compose, package docstrings, LangSmith tags, eval help text, and test fixtures with full backward compatibility (`ecfda39`, merged in `d4c0068`).
@@ -47,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Channel Verification Guardrail:** Added YouTube oEmbed channel author validation (`is_huberman_channel`) to protect `/ingest` against non-Huberman videos (`4d0697c`).
 - **Circuit-Breaker Flowchart:** Coordinate-locked SVG diagrams for both Episode Ingestion and Corrective RAG with visual circuit-breaker abort nodes (`4d0697c`).
 - **Render Deployment Blueprint:** Automated cloud deployment configuration via `render.yaml` with in-process UI client support (`986dfb1`, `826fa6e`).
-- **Persistent QA Cache:** Composite-keyed disk cache (`data/raw/qa_cache.json`) for instant sub-10ms responses on benchmark and preset questions (`43ad054`).
+- **Persistent QA Cache:** Composite-keyed disk cache (`data/raw/qa_cache.json`) for immediate responses on benchmark and preset questions (`9a36aea`).
 
 ---
 

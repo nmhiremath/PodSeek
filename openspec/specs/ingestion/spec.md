@@ -17,7 +17,7 @@ The system SHALL parse 11-character YouTube video IDs from URLs and verify that 
 #### Scenario: Non-Huberman video rejection
 - **WHEN** a video from a non-Huberman channel is submitted
 - **THEN** `is_huberman_channel` evaluates to `False`
-- **AND** the API rejects the request with HTTP 400 and detail message `"PodSeek Phase 1 only indexes Huberman Lab episodes."`
+- **AND** the API rejects the request with HTTP 400 and detail message `"Only Huberman Lab episodes can be ingested (detected channel: {author_name or 'Unknown'})."`
 
 ### Requirement: Captions Fetching and Noise Cleaning
 The system SHALL retrieve YouTube captions prioritizing creator-provided manual English transcripts over auto-generated transcripts, stripping non-speech audio cues.

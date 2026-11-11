@@ -19,7 +19,7 @@ Enforce a hard circuit-breaker ceiling on query rewrites via `MAX_REWRITES = 2` 
 ## Consequences
 ### Good
 - Guarantees termination: max 3 retrieval attempts and 2 rewrites in rigorous mode, max 1 in balanced, max 0 in turbo.
-- Eliminates hallucinations on out-of-domain questions: benchmark evals confirm 100% adherence on out-of-scope refusals (`evals/questions.json`).
+- Eliminates hallucinations on out-of-domain questions: benchmark evals confirm 100% adherence on out-of-scope refusals in Balanced and Rigorous modes (`evals/questions.json`). (Turbo mode achieved 93.8% citation validity overall, as it skips grading).
 - Prevents spurious citations on negative answers.
 
 ### Bad

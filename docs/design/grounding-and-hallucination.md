@@ -22,8 +22,8 @@ At enterprise scale, organizations deploy:
 
 ## 4. Why We Didn't Need It Here, and How PodSeek Achieves the Same Intent
 For a focused podcast question-answering assistant:
-- Heavy guardrail frameworks add 1–2 seconds of latency and substantial memory requirements unsuitable for free-tier hosting.
-- PodSeek's combination of pre-generation batch grading, low synthesis temperature (`temperature=0.1`), hard circuit-breaker refusal, and post-generation regex inspection achieves 100% adherence on out-of-scope refusals in benchmark evals (`evals/questions.json`).
+- Heavy guardrail frameworks add latency and substantial memory requirements unsuitable for free-tier hosting.
+- PodSeek's combination of pre-generation batch grading, low synthesis temperature (`temperature=0.1`), hard circuit-breaker refusal, and post-generation regex inspection achieves 100% adherence on out-of-scope refusals in Balanced and Rigorous modes in benchmark evals (`evals/questions.json`). In Turbo mode, where grading is bypassed, citation validity reached 93.8% (15/16).
 - Timestamp-bound sliding chunks ensure that every citation links to the exact second the statement was spoken.
 
 ## 5. Where Our Approach Breaks Down
@@ -37,8 +37,8 @@ PodSeek's grounding architecture breaks down under the following triggers:
 - **Fixed Refusal Message:** Accepted a standardized, rigid refusal text to guarantee zero spurious citations.
 
 ## 7. Pitfalls Encountered
-- **Phantom Citations on Refusal Answers:** In early versions, when the LLM answered "I don't know based on these clips", the citation builder still grabbed `relevant_documents` metadata and displayed clickable YouTube chips for an unhelpful answer. Fixed in commit `4d0697c` with `is_refusal` regex matching that empties `relevant_documents` before building citations.
-- **Off-Topic Topic Drift:** Out-of-scope questions about cooking or software engineering originally retrieved irrelevant health clips and attempted to answer them metaphorically. Fixed in commit `a57c9ce` with batch grading and `d4c0068` with expanded benchmark test cases.
+- **Phantom Citations on Refusal Answers:** In early versions, when the LLM answered "I don't know based on these clips", the citation builder still grabbed `relevant_documents` metadata and displayed clickable YouTube chips for an unhelpful answer. Fixed in commit `9a36aea` with `is_refusal` regex matching that empties `relevant_documents` before building citations.
+- **Off-Topic Topic Drift:** Out-of-scope questions originally retrieved irrelevant clips and attempted to answer them metaphorically. Addressed in commit `a57c9ce` with batch grading and `d4c0068` with expanded benchmark test cases.
 
 ## 8. Next Steps (Candidate OpenSpec Changes)
 - `sentence-level-citation-verification`: Verify that each inline `[HH:MM:SS]` timestamp corresponds directly to the sentence it is attached to using token-span alignment.

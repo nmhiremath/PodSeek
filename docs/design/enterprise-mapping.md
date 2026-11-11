@@ -4,7 +4,7 @@ This document provides a direct, honest comparison between typical enterprise AI
 
 | Concern | Typical Enterprise Tool | PodSeek Equivalent | Key Files | Gap / What PodSeek Lacks |
 | :--- | :--- | :--- | :--- | :--- |
-| **Vector Database** | Pinecone, Qdrant Cloud, Weaviate | Embedded ChromaDB on persistent disk | `app/vectorstore.py`, `chroma_db/` | Single-replica only; no horizontal sharding, dynamic partitioning, or cross-region replication. |
+| **Vector Database** | Pinecone, Qdrant Cloud, Weaviate | Embedded ChromaDB on persistent disk (72 MB, 2,052 vectors) | `app/vectorstore.py`, `chroma_db/` | Single-replica only; no horizontal sharding, dynamic partitioning, or cross-region replication. |
 | **Hybrid Search** | Elasticsearch / OpenSearch + BM25 + Vector RRF | Cosine similarity + exact regex quote hoisting | `app/agent/nodes.py:retrieve` | No inverted index (BM25/SPLADE); cannot perform fuzzy keyword search on rare terms without exact quotes. |
 | **Re-Ranking** | Cohere Rerank, BGE-Reranker-Large | LLM Batch Relevance Grader (`BatchGradeResult`) | `app/agent/nodes.py:grade_documents` | Uses generative LLM rather than a cross-encoder model; higher latency and token cost per grading operation. |
 | **Agent Orchestration** | Temporal.io, AWS Step Functions, LangGraph Cloud | In-memory compiled LangGraph StateGraph | `app/agent/graph.py`, `app/agent/state.py` | In-memory state only; no durable pause/resume, human-in-the-loop approvals, or distributed task queues. |

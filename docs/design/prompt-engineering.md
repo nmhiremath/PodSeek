@@ -38,8 +38,8 @@ PodSeek's prompt architecture breaks down under the following triggers:
 - **Fixed Refusal Phrasing:** Accepted an exact standardized refusal sentence rather than letting the LLM invent creative apologies.
 
 ## 7. Pitfalls Encountered
-- **Sequential Grading Latency:** Initial implementations called the LLM once per retrieved chunk (4 calls per retrieval), taking 8–12 seconds just to grade. Fixed in commit `4d0697c` by switching to `BatchGradeResult`, grading all 4 chunks in a single prompt.
-- **Hallucinated Citations on Partial Refusals:** When the LLM apologized for missing info, it occasionally cited irrelevant chunks in its bibliography. Fixed in commit `4d0697c` by implementing post-generation refusal regex detection in `generate()`, which clears `relevant_documents = []` if refusal phrasing is detected.
+- **Sequential Grading Overhead:** Initial implementations called the LLM once per retrieved chunk (4 sequential calls per retrieval), multiplying grading latency and token overhead. Fixed in commit `9a36aea` by switching to `BatchGradeResult`, grading all retrieved chunks in a single batch prompt.
+- **Hallucinated Citations on Partial Refusals:** When the LLM apologized for missing info, it occasionally cited irrelevant chunks in its bibliography. Fixed in commit `9a36aea` by implementing post-generation refusal regex detection in `generate()`, which clears `relevant_documents = []` if refusal phrasing is detected.
 
 ## 8. Next Steps (Candidate OpenSpec Changes)
 - `externalized-prompt-templates`: Move prompt strings to YAML template files under `app/prompts/` for cleaner separation from node logic.

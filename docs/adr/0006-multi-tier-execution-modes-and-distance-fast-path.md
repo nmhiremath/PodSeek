@@ -20,8 +20,8 @@ Introduce three explicit execution modes (`turbo`, `balanced`, `rigorous`) and a
 
 ## Consequences
 ### Good
-- Significant latency savings: queries matching closely in Balanced mode bypass grading, cutting response time by 40–50%.
-- Turbo mode provides ultra-fast responses (measured p50 latency ~7,024 ms vs 12,577 ms in Balanced and 15,106 ms in Rigorous during live evals).
+- Significant latency savings: queries matching closely in Balanced mode bypass grading, reducing turn latency (live evals measured p50 of 12,577 ms for Balanced vs 15,106 ms for Rigorous).
+- Turbo mode provides minimal-latency responses (measured p50 latency of 7,024 ms vs 12,577 ms in Balanced and 15,106 ms in Rigorous during live evals).
 - Exact quote searches (e.g. searching for a verbatim sentence in quotes) hoist the match and fast-path immediately.
 
 ### Bad

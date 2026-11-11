@@ -1,6 +1,6 @@
 # 9. Normalized QA Cache with Composite Keys
 
-> Recorded retroactively on 2026-11-10; decision originally made in commit `43ad054`.
+> Recorded retroactively on 2026-11-10; decision originally made in commit `9a36aea`.
 
 ## Status
 Accepted
@@ -24,7 +24,7 @@ If a query hits the cache, both `/ask` and `/ask/stream` return the precomputed 
 
 ## Consequences
 ### Good
-- Instantaneous demo response times (< 10 ms) for pre-seeded questions.
+- Immediate response times for pre-seeded questions without executing retrieval or model calls.
 - Automatic invalidation: ingesting a new episode alters the sorted episode ID list, automatically preventing stale cache hits without needing manual cache flushes.
 - Normalization prevents trivial misses caused by trailing punctuation, casing, or extra whitespace.
 
@@ -35,4 +35,4 @@ If a query hits the cache, both `/ask` and `/ask/stream` return the precomputed 
 ## Evidence
 - `app/api/routes.py`: `_QA_CACHE`, `_qa_cache_key()`, `_get_cached_qa()`, `_set_cached_qa()`.
 - `data/raw/qa_cache.json`: Pre-seeded responses for top benchmark and demo questions.
-- Git commit: `43ad054`.
+- Git commit: `9a36aea`.

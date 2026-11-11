@@ -5,7 +5,7 @@ Evaluation is the rigorous, repeatable measurement of an AI system's performance
 
 ## 2. What PodSeek Does
 PodSeek provides a deterministic, offline-first evaluation harness paired with live multi-mode benchmarking:
-- **16-Question Curated Benchmark (`evals/questions.json`):** 13 in-scope scientific questions across indexed Huberman episodes (dopamine, sunlight, cold exposure, caffeine delay, physiological sigh, alcohol, neuroplasticity, habit bracketing, time-restricted eating, gut health, hypertrophy, sugar/fructose, meditation) plus 3 out-of-scope refusal test cases (corporate board quotas, Linux kernel latency, sourdough starter schedule).
+- **16-Question Curated Benchmark (`evals/questions.json`):** 13 in-scope scientific questions across indexed Huberman episodes (dopamine, sunlight, cold exposure, caffeine delay, physiological sigh, alcohol, neuroplasticity, habit bracketing, time-restricted eating, gut health, hypertrophy, sugar/fructose, meditation) plus 3 out-of-scope refusal test cases: the 1998 FIFA World Cup final (`off-topic-gap`), a custom Linux kernel eBPF kprobe module in Rust (`off-topic-linux-kernel`), and a classic San Francisco sourdough boule schedule (`off-topic-sourdough`).
 - **Offline Evaluation Suite (`scripts/evaluate.py`, `app/evaluation.py`):** Scores static fixture answers without external network calls or API keys. Measures:
   1. **In-Scope Keyword Hit Rate:** Fraction of expected domain keywords present in the generated answer.
   2. **Citation Format Validity:** Verifies every returned citation has a valid `HH:MM:SS` timestamp and a valid `https://youtu.be/{id}?t={sec}` deep link where `{sec}` matches the timestamp.
@@ -22,7 +22,7 @@ Executed via `python -m scripts.evaluate --live --mode <mode>` against the 50-ep
 | `balanced` | 89.7% | 100.0% (16/16) | 12,577 ms | 21,438 ms | 100% citation format & refusal pass |
 | `rigorous` | 87.2% | 100.0% (16/16) | 15,106 ms | 22,761 ms | Full grading on all chunks, 100% pass |
 
-> Note: Turbo mode failed 1 of 16 citation checks because skipping LLM grading allowed an out-of-scope question to return unverified excerpts rather than cleanly refusing.
+> Note: Turbo mode failed 1 of 16 citation checks because skipping LLM grading allowed an out-of-scope question to return unverified excerpts rather than cleanly refusing. `TODO(identify): name the Turbo citation failure from the PR #2 live eval output (one of the three off-topic questions). Do not invent it.`
 
 ## 3. Enterprise Approach
 At enterprise scale, organizations implement:
@@ -43,7 +43,7 @@ PodSeek's evaluation architecture breaks down under the following triggers:
 - **No Multi-Turn or Conversational Evals:** The harness only evaluates single-turn question-answering.
 
 ## 6. Trade-Offs Accepted
-- **Offline Keyword Heuristics vs Heavy Ragas Frameworks:** Accepted keyword matching in exchange for sub-second, zero-cost CI test execution.
+- **Offline Keyword Heuristics vs Heavy Ragas Frameworks:** Accepted keyword matching in exchange for fast, zero-cost CI test execution.
 - **16-Question Curated Set vs Synthetic 1,000-Question Datasets:** Accepted a small, hand-curated gold set that can be manually inspected and verified.
 - **Binary Format Checks vs Semantic Entailment:** Accepted checking citation URL syntax and timestamps rather than running multi-stage NLI validation on every citation.
 

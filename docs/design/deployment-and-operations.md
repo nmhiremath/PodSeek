@@ -80,9 +80,9 @@ At enterprise scale, organizations deploy:
 
 ## 4. Why We Didn't Need It Here, and How PodSeek Achieves the Same Intent
 For a focused reference implementation and public demonstration:
-- Kubernetes and Terraform add significant hosting costs ($100+/mo) and operational complexity completely unnecessary for a single web service.
+- Kubernetes and Terraform add significant operational complexity completely unnecessary for a single web service.
 - Render's declarative `render.yaml` blueprint provides zero-cost automated Git-push deployments with HTTPS certificates managed automatically.
-- The dual-mode client design (`InProcessClient` on Render vs `RemoteClient` in Docker Compose) allows seamless switching between zero-cost in-process hosting and production microservice containerization.
+- The dual-mode client design (`InProcessClient` on Render vs `RemoteClient` in Docker Compose) allows straightforward switching between zero-cost in-process hosting and production microservice containerization.
 
 ## 5. Where Our Approach Breaks Down
 PodSeek's deployment architecture breaks down under the following triggers:
@@ -91,13 +91,13 @@ PodSeek's deployment architecture breaks down under the following triggers:
 - **Ephemeral Storage Loss on Free Tier:** File writes to `data/raw/` or `chroma_db/` performed at runtime on Render are lost when the ephemeral container spins down or redeploys, which is why all core data is committed to Git.
 
 ## 6. Trade-Offs Accepted
-- **Free-Tier Spin-Down vs Always-Warm Concurrency:** Accepted a 30–50s cold-start delay after 15 minutes of idle rather than paying for a persistent cloud instance.
-- **Git-Committed Database vs External Storage:** Accepted storing the vector database in Git to enable instant zero-cost deployments on ephemeral containers.
+- **Free-Tier Spin-Down vs Always-Warm Concurrency:** Accepted container spin-down after inactivity (documented Render platform behavior) rather than paying for a persistent cloud instance.
+- **Git-Committed Database vs External Storage:** Accepted storing the vector database in Git (72 MB in `chroma_db/`) to enable instant zero-cost deployments on ephemeral containers.
 - **In-Process UI vs Microservice Separation:** Accepted in-process coupling on cloud hosting to respect the 512 MB memory ceiling.
 
 ## 7. Pitfalls Encountered
-- **Render OOM Kill on Boot:** Attempting to run Uvicorn and Gradio as separate processes or building vector indices on boot exceeded 512 MB RAM, causing immediate container crash loops. Fixed in commits `986dfb1` and `826fa6e` by adopting `InProcessClient` and committing pre-built indices.
-- **Dockerfile Role Confusion:** Reviewers were initially unclear whether `Dockerfile` ran the API or the UI. Fixed in commit `d4c0068` by adding clarifying documentation in the Dockerfile header.
+- **Render Free-Tier Memory Boundary:** Running Uvicorn and Gradio as separate processes or building vector indices on boot consumed excess RAM on 512 MB containers. Resolved in commits `986dfb1` and `826fa6e` by adopting `InProcessClient` and committing pre-built indices.
+- **Dockerfile Role Confusion:** Reviewers were initially unclear whether `Dockerfile` ran the API or the UI. Clarified in commit `d4c0068` by adding explicit documentation in the Dockerfile header.
 
 ## 8. Next Steps (Candidate OpenSpec Changes)
 - `multi-container-compose-profile`: Add Docker Compose profiles for running API and Gradio as separate decoupled containers locally.

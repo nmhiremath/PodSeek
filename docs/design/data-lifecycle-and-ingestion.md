@@ -4,7 +4,7 @@
 The data lifecycle and ingestion pipeline governs the ingestion, transformation, deduplication, indexing, and lifecycle management of knowledge corpora. In production AI systems, ingestion pipelines must be idempotent, resilient to schema migrations, maintain clear data provenance, and provide deterministic re-indexing capabilities when models or chunking parameters change.
 
 ## 2. What PodSeek Does
-PodSeek implements a four-stage ingestion pipeline (`✦ Absorb`) accessible via CLI or REST API:
+PodSeek implements a four-stage ingestion pipeline accessible via CLI or REST API:
 
 ```mermaid
 ---
@@ -70,13 +70,13 @@ PodSeek's ingestion architecture breaks down under the following triggers:
 - **Atomic Blue/Green Vector Store Swaps:** Switching to a new embedding model requires rebuilding the entire ChromaDB collection before pointing production traffic to it.
 
 ## 6. Trade-Offs Accepted
-- **Synchronous Ingest Endpoint vs Asynchronous Task Queues:** Accepted long-running HTTP POST requests (~15–30s for full episode ingest) rather than provisioning a Celery worker.
+- **Synchronous Ingest Endpoint vs Asynchronous Task Queues:** Accepted long-running HTTP POST requests during episode ingestion rather than provisioning an asynchronous Celery worker.
 - **Local JSON File Metadata vs Relational Database:** Accepted storing episode summaries in individual JSON files on disk rather than running a PostgreSQL instance.
 - **Disk Space Duplication:** Accepted caching both raw caption segments and embedded chunks to allow rapid offline re-indexing.
 
 ## 7. Pitfalls Encountered
-- **Duplicate Chunks on Re-Ingest:** Re-ingesting an already indexed episode originally duplicated chunks in ChromaDB. Fixed in commit `3574708` and `4d0697c` by tracking indexed collections in episode cache files and using deterministic chunk IDs (`{episode_id}_c{chunk_index:04d}`).
-- **YouTube Captions 429 Block:** Rapid automated ingestion triggered YouTube IP blocks during batch seeding. Fixed in commit `43ad054` by supporting exported Netscape `cookies.txt` sessions in `_create_youtube_session()`.
+- **Idempotent Ingestion & Collection Tracking:** To prevent re-ingesting an already indexed episode from duplicating chunks in ChromaDB, commit `9a36aea` introduced `indexed_collections` tracking in local episode JSON payloads. Deterministic chunk IDs (`{episode_id}_c{chunk_index:04d}`, originating in `d6b1795`) ensure stable segment mapping.
+- **YouTube Captions Throttling:** Rapid automated ingestion triggered YouTube IP blocks during batch seeding. Handled in commit `622c240` by introducing `_create_youtube_session()` with support for exported Netscape `cookies.txt` sessions.
 
 ## 8. Next Steps (Candidate OpenSpec Changes)
 - `async-background-ingestion`: Shift `/ingest` to return an accepted status immediately and process chunking and summarization in an async background task.

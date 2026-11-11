@@ -7,9 +7,9 @@ This document consolidates PodSeek's acknowledged design boundaries, operational
 ## Current Known Limitations
 
 ### 1. Corpus Scale & Hosting Boundaries
-- **50-Episode Ceiling on Free Tier:** The vector database is committed to Git (~45 MB) and loaded into RAM. Expanding the index beyond ~200 episodes (~150,000 chunks) will exceed Render's 512 MB container memory limit, triggering OOM kills.
+- **Corpus Scale on Free Tier:** The vector database is committed to Git (72 MB, 2,052 vectors of dimension 3072 in `chroma_db/`) and loaded into RAM. Expanding the index to a much larger corpus will challenge Render's 512 MB container memory limit (`TODO(measure):` profile resident memory footprint under expanded vector indices).
 - **Single-Replica Deployment:** Embedded ChromaDB SQLite backends and the local `data/raw/qa_cache.json` disk file cannot be safely mounted or concurrently modified by multiple load-balanced web server replicas.
-- **Free-Tier Cold Starts:** Because PodSeek is hosted on Render's free tier, the container spins down after 15 minutes of inactivity. The initial wake-up request takes 30–50 seconds before the service begins responding.
+- **Free-Tier Cold Starts:** Because PodSeek is hosted on Render's free tier, the container spins down after inactivity (documented platform behavior). The initial wake-up request incurs container initialization latency before the service begins responding.
 
 ### 2. Conversational Capabilities
 - **Single-Turn Stateless Queries:** The LangGraph state machine operates on an ephemeral, single-turn state (`AgentState["question"]`). Follow-up queries (e.g. "What did he say about that?") require the user to repeat the full context.
@@ -17,7 +17,7 @@ This document consolidates PodSeek's acknowledged design boundaries, operational
 
 ### 3. Retrieval & Ingestion Limitations
 - **Pure Semantic Search without Sparse Inverted Index:** PodSeek relies on dense vector search with exact phrase regex hoisting. It lacks a sparse BM25 / SPLADE lexical index, which can cause misses on rare chemical or anatomical terminology if semantic embedding similarity is weak.
-- **Synchronous Ingestion:** `POST /ingest` runs synchronously inside the API worker. Ingesting a 3-hour episode takes 15–30 seconds, blocking other operations on single-worker deployments.
+- **Synchronous Ingestion:** `POST /ingest` runs synchronously inside the API worker, blocking other operations on single-worker deployments until chunking and summarization complete.
 - **Public Cloud YouTube IP Throttles:** Fetching transcripts for dozens of new videos in quick succession can trigger YouTube bot detection, requiring manual export of browser session cookies to `cookies.txt`.
 
 ### 4. Cache & Evaluation Gaps

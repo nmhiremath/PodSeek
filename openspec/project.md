@@ -10,7 +10,7 @@ PodSeek is an open-source, reference-quality agentic podcast transcript search e
 - **Default Embeddings:** Google GenAI (`models/gemini-embedding-2`, 3072 dimensions)
 - **Alternative Providers:** OpenAI, Anthropic, xAI (Grok), Ollama
 - **Vector Database:** ChromaDB (`chromadb>=1.5`, `langchain-chroma>=1.1`) embedded persistent on disk (`chroma_db/`)
-- **Web API:** FastAPI (`fastapi>=0.115`), Uvicorn (`uvicorn>=0.34`)
+- **Web API:** FastAPI (`fastapi>=0.142,<1`), Uvicorn (`uvicorn>=0.34`)
 - **Web UI:** Gradio 5 Bento Studio (`gradio>=5,<6`), httpx (`httpx>=0.28`)
 - **Data Validation:** Pydantic v2 (`pydantic>=2.10`)
 - **Code Quality & Testing:** Pytest (`pytest>=8.0`), Ruff (`ruff>=0.8.0`), Pyright (`pyright>=1.1.390`)
@@ -32,7 +32,7 @@ PodSeek is an open-source, reference-quality agentic podcast transcript search e
 
 ## Operational Constraints
 - **Hosting Environment:** Render.com free-tier web service (`podseek.onrender.com`, 512 MB RAM limit, ephemeral disk, spin-down after 15 minutes of inactivity).
-- **Committed Pre-Indexed ChromaDB:** The `chroma_db/` directory is committed directly to git (under 100 MB) so that cold starts on free-tier cloud containers have instant access to indexed episodes without requiring runtime re-indexing or external database network roundtrips.
+- **Committed Pre-Indexed ChromaDB:** The `chroma_db/` directory is committed directly to git (72 MB, 2,052 vectors of dimension 3072 in the active `podcast_chunks_gemini-embedding-2` collection across 50 episodes) so that cold starts on free-tier cloud containers have instant access to indexed episodes without requiring runtime re-indexing or external database network roundtrips.
 - **In-Process UI Mode on Cloud:** On Render, `PODSEEK_UI_MODE=inprocess` executes Gradio and the agent logic in a single unified OS process to stay strictly under the 512 MB memory boundary.
 - **Protected Main Branch:** Direct pushes to `main` are disabled. All changes must go through a feature or doc branch, pass automated GitHub Actions CI (`ruff check .`, offline `pytest -v`), and be merged via Pull Request.
 - **Offline CI Testing:** CI never invokes external LLM APIs, embedding endpoints, or web services. All 41 unit tests execute strictly offline.

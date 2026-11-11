@@ -19,8 +19,8 @@ PodSeek implements defensive programming across all pipeline stages, prioritizin
 | **Grading Structured Output Parse Error** | `try...except Exception` in `grade_documents()` | Logs warning; falls back to treating all retrieved chunks as relevant to preserve continuity. |
 | **Token Streaming Interruption** | `try...except Exception` during token iteration | Logs warning; falls back to synchronous `chain.invoke()` and emits full generation. |
 | **Empty Semantic Retrieval** | `relevant_documents == []` after max retries | Router breaks loop; `generate` outputs standardized refusal without citations. |
-| **Non-Huberman Ingestion Attempt** | `is_huberman_channel()` evaluates to `False` | Ingestion endpoint rejects with HTTP 400 and clear error message before downloading. |
-| **Render Free-Tier Cold Start** | Initial request latency spike (> 30s) | In-process client and committed ChromaDB ensure fast initialization once container wakes. |
+| **Non-Huberman Ingestion Attempt** | `is_huberman_channel()` evaluates to `False` | Ingestion endpoint rejects with HTTP 400 and detail: `Only Huberman Lab episodes can be ingested (detected channel: ...)` before downloading captions. |
+| **Render Free-Tier Cold Start** | Initial request latency after idle spin-down | Documented Render platform behavior; in-process client and committed ChromaDB ensure fast initialization once container wakes. |
 | **Empty or Short User Input** | Input length $< 3$ non-whitespace characters | Gradio UI disables Distill button; client validation prevents submitting query. |
 | **Missing LangSmith Credentials** | `configure_tracing()` checks env vars | Automatically forces `LANGCHAIN_TRACING_V2="false"`, preventing telemetry crashes. |
 
