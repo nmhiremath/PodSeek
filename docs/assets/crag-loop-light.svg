@@ -95,29 +95,121 @@
   <rect x="725" y="100" width="46" height="30" rx="15" fill="#FFFFFF" stroke="#D4D4D8" stroke-width="1"/>
   <text x="748" y="119" fill="#18181B" font-size="10.5" font-weight="600" text-anchor="middle">END</text>
 
-  <!-- Animated Mode Lights (Solid r=4 circles, no glow or halo) -->
-  <!-- Turbo Mode Light (Blue #0369A1, 4s duration, begins at 0s) -->
-  <circle r="4" fill="#0369a1">
-    <animateMotion dur="4s" repeatCount="indefinite" begin="0s" rotate="auto">
-      <mpath href="#pathTurbo"/>
-    </animateMotion>
-  </circle>
+  <!-- Animated Mode Lights with Halo and Fading Trail -->
+  <!-- 1. Turbo Mode Light (Blue #0369A1, 4s duration, begins at 0s) -->
+  <g id="lightTurbo">
+    <!-- Halo -->
+    <circle r="9" fill="#0369a1" fill-opacity="0.12">
+      <animateMotion dur="4s" repeatCount="indefinite" begin="0s" rotate="auto">
+        <mpath href="#pathTurbo"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 3 (delay +0.18s) -->
+    <circle r="2.0" fill="#0369a1" fill-opacity="0.14" opacity="0">
+      <set attributeName="opacity" to="1" begin="0.18s" fill="freeze"/>
+      <animateMotion dur="4s" repeatCount="indefinite" begin="0.18s" rotate="auto">
+        <mpath href="#pathTurbo"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 2 (delay +0.12s) -->
+    <circle r="2.6" fill="#0369a1" fill-opacity="0.28" opacity="0">
+      <set attributeName="opacity" to="1" begin="0.12s" fill="freeze"/>
+      <animateMotion dur="4s" repeatCount="indefinite" begin="0.12s" rotate="auto">
+        <mpath href="#pathTurbo"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 1 (delay +0.06s) -->
+    <circle r="3.2" fill="#0369a1" fill-opacity="0.45" opacity="0">
+      <set attributeName="opacity" to="1" begin="0.06s" fill="freeze"/>
+      <animateMotion dur="4s" repeatCount="indefinite" begin="0.06s" rotate="auto">
+        <mpath href="#pathTurbo"/>
+      </animateMotion>
+    </circle>
+    <!-- Head -->
+    <circle r="4" fill="#0369a1">
+      <animateMotion dur="4s" repeatCount="indefinite" begin="0s" rotate="auto">
+        <mpath href="#pathTurbo"/>
+      </animateMotion>
+    </circle>
+  </g>
 
-  <!-- Balanced Mode Light (Green #047857, 8s duration, begins at 1s) -->
-  <circle r="4" fill="#047857" opacity="0">
-    <set attributeName="opacity" to="1" begin="1s" fill="freeze"/>
-    <animateMotion dur="8s" repeatCount="indefinite" begin="1s" rotate="auto">
-      <mpath href="#pathBalanced"/>
-    </animateMotion>
-  </circle>
+  <!-- 2. Balanced Mode Light (Green #047857, 8s duration, begins at 1s) -->
+  <g id="lightBalanced">
+    <!-- Halo -->
+    <circle r="9" fill="#047857" fill-opacity="0.12" opacity="0">
+      <set attributeName="opacity" to="1" begin="1s" fill="freeze"/>
+      <animateMotion dur="8s" repeatCount="indefinite" begin="1s" rotate="auto">
+        <mpath href="#pathBalanced"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 3 (delay +0.18s) -->
+    <circle r="2.0" fill="#047857" fill-opacity="0.14" opacity="0">
+      <set attributeName="opacity" to="1" begin="1.18s" fill="freeze"/>
+      <animateMotion dur="8s" repeatCount="indefinite" begin="1.18s" rotate="auto">
+        <mpath href="#pathBalanced"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 2 (delay +0.12s) -->
+    <circle r="2.6" fill="#047857" fill-opacity="0.28" opacity="0">
+      <set attributeName="opacity" to="1" begin="1.12s" fill="freeze"/>
+      <animateMotion dur="8s" repeatCount="indefinite" begin="1.12s" rotate="auto">
+        <mpath href="#pathBalanced"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 1 (delay +0.06s) -->
+    <circle r="3.2" fill="#047857" fill-opacity="0.45" opacity="0">
+      <set attributeName="opacity" to="1" begin="1.06s" fill="freeze"/>
+      <animateMotion dur="8s" repeatCount="indefinite" begin="1.06s" rotate="auto">
+        <mpath href="#pathBalanced"/>
+      </animateMotion>
+    </circle>
+    <!-- Head -->
+    <circle r="4" fill="#047857" opacity="0">
+      <set attributeName="opacity" to="1" begin="1s" fill="freeze"/>
+      <animateMotion dur="8s" repeatCount="indefinite" begin="1s" rotate="auto">
+        <mpath href="#pathBalanced"/>
+      </animateMotion>
+    </circle>
+  </g>
 
-  <!-- Rigorous Mode Light (Orange #9A3412, 12s duration, begins at 2s) -->
-  <circle r="4" fill="#9a3412" opacity="0">
-    <set attributeName="opacity" to="1" begin="2s" fill="freeze"/>
-    <animateMotion dur="12s" repeatCount="indefinite" begin="2s" rotate="auto">
-      <mpath href="#pathRigorous"/>
-    </animateMotion>
-  </circle>
+  <!-- 3. Rigorous Mode Light (Orange #9A3412, 12s duration, begins at 2s) -->
+  <g id="lightRigorous">
+    <!-- Halo -->
+    <circle r="9" fill="#9a3412" fill-opacity="0.12" opacity="0">
+      <set attributeName="opacity" to="1" begin="2s" fill="freeze"/>
+      <animateMotion dur="12s" repeatCount="indefinite" begin="2s" rotate="auto">
+        <mpath href="#pathRigorous"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 3 (delay +0.18s) -->
+    <circle r="2.0" fill="#9a3412" fill-opacity="0.14" opacity="0">
+      <set attributeName="opacity" to="1" begin="2.18s" fill="freeze"/>
+      <animateMotion dur="12s" repeatCount="indefinite" begin="2.18s" rotate="auto">
+        <mpath href="#pathRigorous"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 2 (delay +0.12s) -->
+    <circle r="2.6" fill="#9a3412" fill-opacity="0.28" opacity="0">
+      <set attributeName="opacity" to="1" begin="2.12s" fill="freeze"/>
+      <animateMotion dur="12s" repeatCount="indefinite" begin="2.12s" rotate="auto">
+        <mpath href="#pathRigorous"/>
+      </animateMotion>
+    </circle>
+    <!-- Trail 1 (delay +0.06s) -->
+    <circle r="3.2" fill="#9a3412" fill-opacity="0.45" opacity="0">
+      <set attributeName="opacity" to="1" begin="2.06s" fill="freeze"/>
+      <animateMotion dur="12s" repeatCount="indefinite" begin="2.06s" rotate="auto">
+        <mpath href="#pathRigorous"/>
+      </animateMotion>
+    </circle>
+    <!-- Head -->
+    <circle r="4" fill="#9a3412" opacity="0">
+      <set attributeName="opacity" to="1" begin="2s" fill="freeze"/>
+      <animateMotion dur="12s" repeatCount="indefinite" begin="2s" rotate="auto">
+        <mpath href="#pathRigorous"/>
+      </animateMotion>
+    </circle>
+  </g>
 
   <!-- Legend & Mode Description (2 Columns: Modes on Left, Note on Right) -->
   <g transform="translate(30, 245)">
