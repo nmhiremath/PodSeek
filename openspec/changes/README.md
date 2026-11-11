@@ -2,6 +2,8 @@
 
 This directory contains active and archived OpenSpec change proposals for PodSeek.
 
+Install the OpenSpec slash commands locally with `openspec init --tools <your-tool>`; they are not committed.
+
 ## OpenSpec Workflow
 
 All non-trivial feature additions, architectural refactors, and behavioral modifications must follow the OpenSpec specification-driven development workflow:
