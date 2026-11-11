@@ -3096,3 +3096,10 @@ a.ap-kb-count-link:hover {
     height: 36px !important;
   }
 }
+
+#ap-analytics-tracker {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+}

@@ -11,7 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Runtime QA Cache:** Stopped committing `data/raw/qa_cache.json` and added it to `.gitignore`. The cache now starts empty on each deployment and populates dynamically at runtime, ensuring production requests execute live queries rather than serving pre-committed responses.
+
 ### Added
+- **GoatCounter Analytics & Outcome Events:** Integrated cookie-free page view analytics via GoatCounter script injection gated on `GOATCOUNTER_CODE`. Added lightweight custom outcome telemetry (`ask/<mode>/<outcome>`) for completed questions (`answered`, `refused`, `cached`) without sending question or answer content.
+- **Agent-Based LangSmith Tracing:** Migrated tracing from project-based to agent-based workspace addressing (`LANGSMITH_AGENT_ID=podseek` and `LANGSMITH_AGENT_ENVIRONMENT`), with unified environment support replacing dev projects, conflicting project environment popping, and an anonymizing client masking email and phone PII.
+- **Root Traceable Chain:** Wrapped ask endpoints (`ask_question`, `iter_agent_events`) and QA-cache hits under an anonymized `@traceable(name="podseek_ask", run_type="chain")` root span with dynamic outcome metadata and tags.
+- **Test Telemetry Isolation:** Added `tests/conftest.py` with top-level false flags and an autouse `tracing_context(enabled=False)` fixture to ensure tests never emit network traces to LangSmith.
+- **Named Runnables:** Named all runnable sequences (`grade_documents_llm`, `rewrite_query_llm`, `generate_answer_llm`, `summarize_episode`) and added trace flushing on exit for CLI evaluation scripts.
+- **Referrer-Tagged Links & Privacy Notice:** Updated public demo links to `https://podseek.onrender.com/?utm_source=github-readme` in `README.md` and `https://podseek.onrender.com/?utm_source=github-repo-about` on repository homepage, and added an explicit privacy note covering cookie-free analytics and opt-in tracing.
+- **OpenSpec Change Proposal:** Created and validated proposal `add-usage-analytics` specifying GoatCounter tracking and LangSmith agent-based tracing requirements.
 - **OpenSpec Baseline:** Adopted OpenSpec specification-driven development across 9 baseline capabilities in `openspec/specs/` (`retrieval`, `corrective-loop`, `answer-generation`, `inference-providers`, `streaming-api`, `ingestion`, `studio-ui`, `evaluation`, `observability`) with strict validation.
 - **Architectural Decision Records (ADRs):** Authored 14 retroactive MADR-style architectural decision records (`docs/adr/`) documenting technical decisions from project inception through PR #2.
 - **Agentic System Design Documentation:** Authored 12 design pillar documents (`docs/design/`), an enterprise tooling comparison matrix (`enterprise-mapping.md`), and a scale limitations roadmap (`limitations.md`).

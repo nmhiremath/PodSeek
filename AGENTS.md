@@ -25,7 +25,7 @@ PodSeek/
 ├── pyproject.toml             # Pytest, Ruff, and Pyright configuration
 ├── render.yaml                # Render.com free-tier deployment blueprint
 ├── .env.example               # Environment variable template
-├── data/raw/                  # Cached transcript JSON files & QA cache
+├── data/raw/                  # Cached transcript JSON files & runtime QA cache
 ├── chroma_db/                 # Committed ChromaDB SQLite index (72 MB, 2,052 vectors)
 ├── app/
 │   ├── factory.py             # LLM/embedding provider factory with LRU caching
@@ -40,13 +40,13 @@ PodSeek/
 ├── scripts/                   # CLI ingestion, query, and benchmark scripts
 ├── evals/                     # Benchmark questions (evals/questions.json)
 ├── openspec/                  # OpenSpec baseline capability specifications & changes
-└── tests/                     # Offline pytest test suite (41 tests)
+└── tests/                     # Offline pytest test suite (47 tests)
 ```
 
 ---
 
 ## 3. Engineering Rules & Invariants
-1. **Isolated I/O & Offline Tests:** Network I/O (YouTube fetching, oEmbed, external APIs) must remain isolated from pure business logic (chunking, scoring, formatting). All 41 unit tests run offline without network access or API keys.
+1. **Isolated I/O & Offline Tests:** Network I/O (YouTube fetching, oEmbed, external APIs) must remain isolated from pure business logic (chunking, scoring, formatting). All 47 unit tests run offline without network access or API keys.
 2. **Scalar Metadata Only:** ChromaDB accepts only scalar metadata (`str`, `int`, `float`, `bool`). Always use `Chunk.to_metadata()`.
 3. **No Hardcoded Models or Secrets:** Models and API keys are loaded exclusively from environment variables (`CHAT_MODEL`, `EMBEDDING_MODEL`), never hardcoded in application logic.
 4. **Strong Typing & Error Handling:** Use strict type hints (`AgentState`, Pydantic models). Never catch bare exceptions (`except:`); catch specific exceptions with clean error surfaces.
@@ -69,7 +69,7 @@ python -m ui.app
 ruff check .
 pyright
 
-# Run full offline unit test suite (41 tests)
+# Run full offline unit test suite (47 tests)
 pytest -v
 
 # Run offline benchmark evaluation

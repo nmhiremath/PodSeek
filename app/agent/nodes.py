@@ -22,6 +22,26 @@ def _get_chat_llm(temperature: float = 0.0) -> BaseChatModel:
     return get_chat_model(temperature=temperature)
 
 
+def is_refusal(answer: str) -> bool:
+    """Return True if the generated answer is a refusal due to missing information."""
+    lowered = (answer or "").lower()
+    return (
+        "could not find any relevant information" in lowered
+        or "cannot find any relevant information" in lowered
+        or "no relevant information" in lowered
+        or "not mentioned in the" in lowered
+    )
+
+
+def determine_outcome(answer: str, cached: bool = False, aborted: bool = False) -> str:
+    """Determine outcome status for metrics and analytics: 'cached', 'refused', or 'answered'."""
+    if cached:
+        return "cached"
+    if aborted or is_refusal(answer):
+        return "refused"
+    return "answered"
+
+
 # ==============================================================================
 # Node 1: Retrieve (with Cosine Distance Scoring & Exact Substring Detection)
 # ==============================================================================
@@ -117,7 +137,7 @@ def grade_documents(state: AgentState) -> dict:
         ]
     )
 
-    grader_chain = grader_prompt | structured_grader
+    grader_chain = (grader_prompt | structured_grader).with_config(run_name="grade_documents_llm")
     numbered_excerpts = "\n\n".join(f"[Excerpt {i + 1}]\n{doc.page_content}" for i, doc in enumerate(documents))
 
     relevant_docs: list[Document] = []
@@ -174,7 +194,7 @@ def rewrite_query(state: AgentState) -> dict:
         ]
     )
 
-    chain = prompt | llm
+    chain = (prompt | llm).with_config(run_name="rewrite_query_llm")
     response = chain.invoke({"question": question})
     new_query = str(getattr(response, "text", getattr(response, "content", response))).strip()
 
@@ -198,12 +218,13 @@ def generate(state: AgentState) -> dict:
 
     # If even after retries we have zero relevant chunks
     if not docs:
-        refusal = "I could not find any relevant information in the podcast transcripts to answer your question."
+        refusal_msg = "I could not find any relevant information in the podcast transcripts to answer your question."
         if writer:
-            writer({"delta": refusal})
+            writer({"delta": refusal_msg})
         return {
-            "generation": refusal,
+            "generation": refusal_msg,
             "relevant_documents": [],
+            "is_refusal": True,
         }
 
     # Format each chunk with its timestamp for easy citation
@@ -249,7 +270,7 @@ def generate(state: AgentState) -> dict:
         ]
     )
 
-    chain = prompt | llm
+    chain = (prompt | llm).with_config(run_name="generate_answer_llm")
     full_text = ""
     try:
         for chunk in chain.stream({"question": question, "context": context_str}):
@@ -271,11 +292,9 @@ def generate(state: AgentState) -> dict:
             writer({"delta": full_text})
 
     answer = full_text.strip()
-
-    is_refusal = (
-        "could not find any relevant information" in answer.lower()
-        or "cannot find any relevant information" in answer.lower()
-        or "no relevant information" in answer.lower()
-        or "not mentioned in the" in answer.lower()
-    )
-    return {"generation": answer, "relevant_documents": [] if is_refusal else docs}
+    refusal = is_refusal(answer)
+    return {
+        "generation": answer,
+        "relevant_documents": [] if refusal else docs,
+        "is_refusal": refusal,
+    }

@@ -4,6 +4,7 @@ The widgets call PodSeekClient. View rendering lives in `ui/components.py`
 and stylesheets live in `ui/styles/theme.css`.
 """
 
+import html
 import importlib
 import json
 import os
@@ -22,6 +23,8 @@ if _REPO_ROOT not in sys.path:
 import gradio as gr  # noqa: E402 # pyright: ignore[reportMissingImports]
 
 import ui.components as _ui_components  # noqa: E402
+from app.agent.nodes import determine_outcome  # noqa: E402
+from app.observability import configure_tracing  # noqa: E402
 from ui.client import PodSeekClient, make_client  # noqa: E402
 
 importlib.reload(_ui_components)
@@ -952,6 +955,20 @@ _INIT_UI_JS_TEMPLATE = """() => {
             setupPodSeekUI();
         }, 50);
 
+        const evtEl = document.getElementById('ap-analytics-event');
+        if (evtEl && !evtEl.dataset.counted) {
+            evtEl.dataset.counted = 'true';
+            const m = evtEl.dataset.mode;
+            const o = evtEl.dataset.outcome;
+            if (m && o) {
+                window.goatcounter?.count({
+                    path: 'ask/' + m + '/' + o,
+                    title: 'Question ' + o,
+                    event: true
+                });
+            }
+        }
+
         // Scroll latest answer into view when content is replaced or a turn finishes; stay pinned while streaming if following
         const chatEl = document.getElementById('ap-chat-scroll');
         const hasChatMutation = Boolean(chatEl) && mutations.some(m => {
@@ -1014,6 +1031,22 @@ _INIT_UI_JS = _INIT_UI_JS_TEMPLATE.replace("__TYPEWRITER_PHRASES__", json.dumps(
 
 __all__ = ["build_demo", "format_citations", "format_event"]
 
+_FIRE_GOATCOUNTER_JS = """() => {
+    const el = document.getElementById('ap-analytics-event');
+    if (el && !el.dataset.counted) {
+        el.dataset.counted = 'true';
+        const m = el.dataset.mode;
+        const o = el.dataset.outcome;
+        if (m && o) {
+            window.goatcounter?.count({
+                path: 'ask/' + m + '/' + o,
+                title: 'Question ' + o,
+                event: true
+            });
+        }
+    }
+}"""
+
 
 def _demo_fallback_enabled() -> bool:
     val = os.getenv("PODSEEK_DEMO_FALLBACK") or os.getenv("ASKPODCAST_DEMO_FALLBACK", "false")
@@ -1021,6 +1054,7 @@ def _demo_fallback_enabled() -> bool:
 
 
 def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css") -> Any:
+    configure_tracing()
     if client is None:
         client = make_client()
 
@@ -1208,6 +1242,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                 render_sse_log_html([(short_msg, "var(--retry-stroke)")]),
                 question,
                 gr.update(visible=True),
+                "",
             )
             return
 
@@ -1242,6 +1277,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
             render_sse_log_html(logs),
             "",
             gr.update(visible=True),
+            "",
         )
 
         try:
@@ -1276,6 +1312,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                         no_change,
                         "",
                         gr.update(visible=True),
+                        "",
                     )
                     continue
 
@@ -1374,6 +1411,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                     render_sse_log_html(logs),
                     "",
                     gr.update(visible=True),
+                    "",
                 )
         except Exception as exc:
             if _demo_fallback_enabled():
@@ -1402,6 +1440,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                     render_sse_log_html(logs),
                     "",
                     gr.update(visible=True),
+                    "",
                 )
                 return
             logs.append((f"✕ Error: {exc}", "var(--retry-stroke)"))
@@ -1414,6 +1453,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
                 render_sse_log_html(logs),
                 "",
                 gr.update(visible=True),
+                "",
             )
             return
 
@@ -1445,6 +1485,8 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
         final_history = current_history + [
             {"question": cleaned, "answer": answer, "citations": citations, "workflow": wf_final}
         ]
+        outcome = determine_outcome(answer, cached=is_cached, aborted=aborted)
+        tracker_html = f'<div id="ap-analytics-event" data-mode="{html.escape(mode_val)}" data-outcome="{html.escape(outcome)}" style="display:none;"></div>'
         yield (
             render_chat_session_html(final_history),
             final_history,
@@ -1462,6 +1504,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
             render_sse_log_html(logs),
             "",
             gr.update(visible=True),
+            tracker_html,
         )
 
     viewport_meta = render_head_meta_html()
@@ -1473,6 +1516,7 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
         head=viewport_meta,
     ) as demo:
         chat_state = gr.State([])
+        analytics_tracker = gr.HTML("", visible=True, elem_id="ap-analytics-tracker")
         p1, p2, p3, p4, p5 = pick_random_presets(5)
         preset_1_state = gr.State(p1["question"])
         preset_2_state = gr.State(p2["question"])
@@ -1669,19 +1713,22 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
             show_progress="hidden",
         )
 
-        ask_outputs = [chat_html, chat_state, graph_html, sse_html, question_input, presets_row]
-        ask_btn.click(
+        ask_outputs = [chat_html, chat_state, graph_html, sse_html, question_input, presets_row, analytics_tracker]
+        ask_ev = ask_btn.click(
             on_ask,
             inputs=[question_input, chat_state, mode_radio],
             outputs=ask_outputs,
             show_progress="hidden",
         )
-        question_input.submit(
+        ask_ev.then(None, inputs=[analytics_tracker], js=_FIRE_GOATCOUNTER_JS)
+
+        sub_ev = question_input.submit(
             on_ask,
             inputs=[question_input, chat_state, mode_radio],
             outputs=ask_outputs,
             show_progress="hidden",
         )
+        sub_ev.then(None, inputs=[analytics_tracker], js=_FIRE_GOATCOUNTER_JS)
 
         for p_btn, p_st in [
             (preset_1, preset_1_state),
@@ -1690,12 +1737,13 @@ def build_demo(client: PodSeekClient | None = None, stylesheet: str = "theme.css
             (preset_4, preset_4_state),
             (preset_5, preset_5_state),
         ]:
-            p_btn.click(
+            p_ev = p_btn.click(
                 on_ask,
                 inputs=[p_st, chat_state, mode_radio],
                 outputs=ask_outputs,
                 show_progress="hidden",
             )
+            p_ev.then(None, inputs=[analytics_tracker], js=_FIRE_GOATCOUNTER_JS)
 
     return demo
 

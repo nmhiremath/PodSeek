@@ -14,7 +14,7 @@ app = FastAPI(
 app.include_router(router)
 
 # Dotenv has already been loaded by the vector store import inside the router.
-# Tracing stays off unless LANGCHAIN_TRACING_V2 and LANGCHAIN_API_KEY are both set.
+# Tracing stays off unless LANGSMITH_TRACING, LANGSMITH_API_KEY, and agent variables are set.
 configure_tracing()
 
 __all__ = ["app"]

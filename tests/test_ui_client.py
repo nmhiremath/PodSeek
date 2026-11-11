@@ -246,3 +246,21 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert 'content="https://podseek.onrender.com/"' in head_meta
     assert 'content="Corrective RAG over Huberman Lab transcripts with timestamp citations."' in head_meta
     assert "gradio" not in head_meta.lower()
+
+
+def test_goatcounter_page_analytics(monkeypatch):
+    monkeypatch.delenv("GOATCOUNTER_CODE", raising=False)
+    assert "data-goatcounter" not in render_head_meta_html()
+
+    monkeypatch.setenv("GOATCOUNTER_CODE", "")
+    assert "data-goatcounter" not in render_head_meta_html()
+
+    monkeypatch.setenv("GOATCOUNTER_CODE", "podseek")
+    html_out = render_head_meta_html()
+    assert 'data-goatcounter="https://podseek.goatcounter.com/count"' in html_out
+    assert 'src="//gc.zgo.at/count.js"' in html_out
+    assert "{code}" not in html_out
+
+    for bad_code in ["podseek app", "podseek_app", "PODSEEK", "bad/code", "<script>alert(1)</script>"]:
+        monkeypatch.setenv("GOATCOUNTER_CODE", bad_code)
+        assert "data-goatcounter" not in render_head_meta_html()

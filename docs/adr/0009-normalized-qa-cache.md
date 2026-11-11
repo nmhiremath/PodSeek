@@ -1,9 +1,10 @@
 # 9. Normalized QA Cache with Composite Keys
 
 > Recorded retroactively on 2026-11-10; decision originally made in commit `9a36aea`.
+> 2026-11-11 update: no longer committed; cache starts empty on each deploy.
 
 ## Status
-Accepted
+Accepted (2026-11-11 update: no longer committed; cache starts empty on each deploy)
 
 ## Context
 Frequently asked questions (e.g. preset demo buttons in the UI like "What causes a dopamine crash?" or "How does morning sunlight affect cortisol?") are triggered repeatedly by visitors to the public demo. Running the full CRAG workflow on repeated questions drains free-tier API quotas and incurs redundant latency. However, a naive string-keyed cache risks serving stale answers if new episodes are ingested or if the embedding model changes.
@@ -24,7 +25,7 @@ If a query hits the cache, both `/ask` and `/ask/stream` return the precomputed 
 
 ## Consequences
 ### Good
-- Immediate response times for pre-seeded questions without executing retrieval or model calls.
+- Immediate response times for repeated questions within a deployment without executing retrieval or model calls.
 - Automatic invalidation: ingesting a new episode alters the sorted episode ID list, automatically preventing stale cache hits without needing manual cache flushes.
 - Normalization prevents trivial misses caused by trailing punctuation, casing, or extra whitespace.
 
@@ -34,5 +35,5 @@ If a query hits the cache, both `/ask` and `/ask/stream` return the precomputed 
 
 ## Evidence
 - `app/api/routes.py`: `_QA_CACHE`, `_qa_cache_key()`, `_get_cached_qa()`, `_set_cached_qa()`.
-- `data/raw/qa_cache.json`: Pre-seeded responses for top benchmark and demo questions.
+- `data/raw/qa_cache.json`: Runtime JSON cache populated dynamically on each deploy (untracked; no longer committed as of 2026-11-11).
 - Git commit: `9a36aea`.

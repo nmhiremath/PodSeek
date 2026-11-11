@@ -25,6 +25,7 @@ from typing import Literal, cast
 
 import httpx
 from dotenv import load_dotenv
+from langchain_core.tracers.langchain import wait_for_all_tracers
 
 from app.evaluation import offline_fixture, score_example
 from app.observability import configure_tracing
@@ -76,7 +77,7 @@ def ask_live(api_url: str, question: str, mode: str = "balanced") -> dict:
         start_time = time.perf_counter()
         final_state = corrective_rag_agent.invoke(
             _initial_state(question, mode=mode_val),
-            config=trace_config("/ask"),
+            config=trace_config("/ask", mode=mode_val),
         )
         relevant_docs = final_state.get("relevant_documents", [])
         citations = _build_citations(relevant_docs)
@@ -203,49 +204,52 @@ def main(argv: list[str] | None = None) -> int:
 
     _print_header()
 
-    for item in questions:
-        judge: int | None = None
-        try:
-            if args.live:
-                payload = ask_live(args.api_url, item["question"], mode=args.mode)
-            else:
-                payload = offline_fixture(item)
-        except Exception as exc:
-            print(f"{item['id']:<26} request failed: {exc}", flush=True)
-            failed = True
-            continue
+    try:
+        for item in questions:
+            judge: int | None = None
+            try:
+                if args.live:
+                    payload = ask_live(args.api_url, item["question"], mode=args.mode)
+                else:
+                    payload = offline_fixture(item)
+            except Exception as exc:
+                print(f"{item['id']:<26} request failed: {exc}", flush=True)
+                failed = True
+                continue
 
-        scored = score_example(
-            str(payload.get("answer", "")),
-            list(payload.get("citations", [])),
-            list(item.get("keywords", [])),
-        )
-        if args.live and args.llm_judge:
-            judge = llm_relevance(item["question"], str(payload.get("answer", "")))
+            scored = score_example(
+                str(payload.get("answer", "")),
+                list(payload.get("citations", [])),
+                list(item.get("keywords", [])),
+            )
+            if args.live and args.llm_judge:
+                judge = llm_relevance(item["question"], str(payload.get("answer", "")))
 
-        expect_citations = bool(item.get("expect_citations", True))
-        passed = bool(scored["citations_valid"]) == expect_citations
-        if not passed:
-            failed = True
+            expect_citations = bool(item.get("expect_citations", True))
+            passed = bool(scored["citations_valid"]) == expect_citations
+            if not passed:
+                failed = True
 
-        raw_lat = payload.get("latency_ms")
-        row = {
-            "id": item["id"],
-            "keyword_score": scored["keyword_score"],
-            "citations_valid": scored["citations_valid"],
-            "rewrites": int(payload.get("rewrites_attempted", 0)),
-            "latency_ms": float(raw_lat) if raw_lat is not None else None,
-            "judge": judge,
-            "expect_citations": expect_citations,
-            "passed": passed,
-        }
-        rows.append(row)
-        _print_row(row)
+            raw_lat = payload.get("latency_ms")
+            row = {
+                "id": item["id"],
+                "keyword_score": scored["keyword_score"],
+                "citations_valid": scored["citations_valid"],
+                "rewrites": int(payload.get("rewrites_attempted", 0)),
+                "latency_ms": float(raw_lat) if raw_lat is not None else None,
+                "judge": judge,
+                "expect_citations": expect_citations,
+                "passed": passed,
+            }
+            rows.append(row)
+            _print_row(row)
 
-    if rows:
-        _print_legend(rows, mode=args.mode if args.live else "offline")
+        if rows:
+            _print_legend(rows, mode=args.mode if args.live else "offline")
 
-    return 1 if failed else 0
+        return 1 if failed else 0
+    finally:
+        wait_for_all_tracers()
 
 
 if __name__ == "__main__":

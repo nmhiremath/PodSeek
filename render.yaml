@@ -13,3 +13,11 @@ services:
         value: 3.13.0
       - key: GEMINI_API_KEY
         sync: false
+      - key: LANGSMITH_API_KEY
+        sync: false
+      - key: LANGSMITH_AGENT_ID
+        value: podseek
+      - key: LANGSMITH_AGENT_ENVIRONMENT
+        value: production
+      - key: LANGSMITH_TRACING
+        value: "false"

@@ -37,5 +37,8 @@ class AgentState(TypedDict, total=False):
     # Whether an exact substring/quote match was detected
     is_exact_match: bool
 
+    # Whether the final answer is a refusal
+    is_refusal: bool
+
     # Execution latency in milliseconds
     latency_ms: float

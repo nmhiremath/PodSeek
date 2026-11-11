@@ -3,7 +3,7 @@
 > Reference-quality agentic Corrective RAG system and semantic search engine for long-form podcast transcripts, delivering grounded synthesis with second-accurate YouTube timestamp deep-links.
 
 <a href="https://github.com/nmhiremath/PodSeek/actions/workflows/ci.yml"><picture><source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/github/actions/workflow/status/nmhiremath/PodSeek/ci.yml?branch=main&label=CI&logo=github&logoColor=white"><source media="(prefers-color-scheme: light)" srcset="https://img.shields.io/github/actions/workflow/status/nmhiremath/PodSeek/ci.yml?branch=main&label=CI&labelColor=F4F4F5&logo=github&logoColor=18181B"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/nmhiremath/PodSeek/ci.yml?branch=main&label=CI&labelColor=F4F4F5&logo=github&logoColor=18181B"></picture></a>
-<a href="https://podseek.onrender.com/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/Live_Demo-podseek.onrender.com-2563EB?logo=render&logoColor=white"><source media="(prefers-color-scheme: light)" srcset="https://img.shields.io/badge/Live_Demo-podseek.onrender.com-2563EB?labelColor=F4F4F5&logo=render&logoColor=2563EB"><img alt="Live Demo" src="https://img.shields.io/badge/Live_Demo-podseek.onrender.com-2563EB?labelColor=F4F4F5&logo=render&logoColor=2563EB"></picture></a>
+<a href="https://podseek.onrender.com/?utm_source=github-readme"><picture><source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/Demo-podseek-2563EB?logo=render&logoColor=white"><source media="(prefers-color-scheme: light)" srcset="https://img.shields.io/badge/Demo-podseek-2563EB?labelColor=F4F4F5&logo=render&logoColor=2563EB"><img alt="Demo podseek" src="https://img.shields.io/badge/Demo-podseek-2563EB?labelColor=F4F4F5&logo=render&logoColor=2563EB"></picture></a>
 <a href="https://www.python.org/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white"><source media="(prefers-color-scheme: light)" srcset="https://img.shields.io/badge/Python-3.13-3776AB?labelColor=F4F4F5&logo=python&logoColor=3776AB"><img alt="Python" src="https://img.shields.io/badge/Python-3.13-3776AB?labelColor=F4F4F5&logo=python&logoColor=3776AB"></picture></a>
 <a href="https://fastapi.tiangolo.com/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/FastAPI-0.142+-00796B?logo=fastapi&logoColor=white"><source media="(prefers-color-scheme: light)" srcset="https://img.shields.io/badge/FastAPI-0.142+-00796B?labelColor=F4F4F5&logo=fastapi&logoColor=00796B"><img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.142+-00796B?labelColor=F4F4F5&logo=fastapi&logoColor=00796B"></picture></a>
 <a href="https://langchain-ai.github.io/langgraph/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://img.shields.io/badge/LangGraph-1.2+-047857?logo=langchain&logoColor=white"><source media="(prefers-color-scheme: light)" srcset="https://img.shields.io/badge/LangGraph-1.2+-047857?labelColor=F4F4F5&logo=langchain&logoColor=18181B"><img alt="LangGraph" src="https://img.shields.io/badge/LangGraph-1.2+-047857?labelColor=F4F4F5&logo=langchain&logoColor=18181B"></picture></a>
@@ -41,6 +41,8 @@
   - [Local Installation](#local-installation)
   - [Docker Compose Deployment](#docker-compose-deployment)
   - [Environment Variables](#environment-variables)
+  - [Agent Tracing & Observability](#agent-tracing--observability)
+- [Privacy](#privacy)
 - [Testing & Quality Gates](#testing--quality-gates)
 - [Architecture Decision Records (ADRs)](#architecture-decision-records-adrs)
 - [Known Limitations](#known-limitations)
@@ -61,7 +63,7 @@ Conversational audio transcripts present three distinct failure modes for conven
 
 ## Live Demo
 
-**Public Web Service:** [https://podseek.onrender.com/](https://podseek.onrender.com/)
+**Public Web Service:** [https://podseek.onrender.com/](https://podseek.onrender.com/?utm_source=github-readme)
 
 The public demonstration runs on Render.com free tier using the PodSeek Gradio 5 Bento Studio interface (`ui/app.py`). It executes in `inprocess` mode (`PODSEEK_UI_MODE=inprocess`), running the agent workflow and embedded ChromaDB directly inside a single 512 MB container without external database network hops.
 
@@ -356,9 +358,32 @@ docker-compose up --build
 | `EMBEDDING_MODEL` | `models/gemini-embedding-2` | Text embedding model identifier. |
 | `PODSEEK_UI_MODE` | `inprocess` | UI client mode: `inprocess` (direct handler invocation) or `remote` (HTTP/SSE). |
 | `PODSEEK_API_URL` | `http://localhost:8000` | Target FastAPI server URL when running in `remote` mode. |
-| `LANGCHAIN_TRACING_V2`| `false` | Enable LangSmith tracing (requires `LANGCHAIN_API_KEY`). |
-| `LANGCHAIN_API_KEY` | _None_ | Optional API key for LangSmith trace export. |
+| `GOATCOUNTER_CODE` | _None_ | Optional GoatCounter code (`^[a-z0-9-]+$`) for cookie-free page and outcome analytics. |
+| `LANGSMITH_TRACING` | `false` | Enable agent-based LangSmith tracing (`true`, `1`, `yes`). Requires API key and agent variables. |
+| `LANGSMITH_API_KEY` | _None_ | LangSmith API key for trace export. |
+| `LANGSMITH_AGENT_ID` | `podseek` | The agent's ID copied from the ID field on the agent's Overview (not the display name). |
+| `LANGSMITH_AGENT_ENVIRONMENT` | `local` | Agent environment (`local`, `development`, `staging`, `production`). |
+| `LANGSMITH_ENDPOINT` | _None_ | Optional LangSmith endpoint URL (for non-US regions). |
+| `LANGSMITH_WORKSPACE_ID` | _None_ | Optional workspace ID if the API key spans multiple workspaces. |
+| `LANGSMITH_TRACING_SAMPLING_RATE` | _None_ | Optional trace sampling rate from `0` to `1` (e.g. `0.25` for 25% sampling). |
+| `LANGSMITH_HIDE_INPUTS` | _None_ | Optional operator switch (`true`) to fully redact input questions from traces. |
+| `LANGSMITH_HIDE_OUTPUTS` | _None_ | Optional operator switch (`true`) to fully redact output answers from traces. |
 </details>
+
+### Agent Tracing & Observability
+
+PodSeek uses an agent-based LangSmith workspace where traces route directly to an agent ID and environment rather than a legacy project name.
+
+- **Agent Addressing Contract:** Tracing is strictly opt-in and requires all four of `LANGSMITH_TRACING=true`, `LANGSMITH_API_KEY`, `LANGSMITH_AGENT_ID=podseek`, and `LANGSMITH_AGENT_ENVIRONMENT` (`local`, `development`, `staging`, or `production`).
+- **Environments Replace Dev Projects:** Agent environments replace legacy separate projects like `podseek-dev`. Local developer runs use `LANGSMITH_AGENT_ENVIRONMENT=local` and Render deployments use `LANGSMITH_AGENT_ENVIRONMENT=production`, all routed under the same unified `podseek` agent ID. Do not create a second agent or project for development.
+- **No Conflicting Project Settings:** Never set `LANGSMITH_PROJECT`, `LANGCHAIN_PROJECT`, or `LANGCHAIN_SESSION` alongside agent variables. When destination settings conflict, the LangSmith SDK logs a warning and drops traces.
+- **Sampling & Redaction Switches:** Set `LANGSMITH_TRACING_SAMPLING_RATE` between `0` and `1` to downsample recorded traces. To prevent user questions or model answers from appearing in traces, set `LANGSMITH_HIDE_INPUTS=true` or `LANGSMITH_HIDE_OUTPUTS=true`.
+
+---
+
+## Privacy
+
+Page analytics use GoatCounter (cookie-free, no personal data); only mode and answered/refused/cached counts are sent, never question text. Optional LangSmith tracing, when enabled by the operator, records full runs including questions in a private LangSmith workspace (emails and phone numbers are masked).
 
 ---
 
@@ -370,7 +395,7 @@ The test suite validates data schemas, YouTube parsing adapters, sliding-window 
 # Run Ruff linter
 ruff check .
 
-# Run offline Pytest suite (41 tests, fast offline execution)
+# Run offline Pytest suite (47 tests, fast offline execution)
 pytest -v
 
 # Validate OpenSpec specifications strictly

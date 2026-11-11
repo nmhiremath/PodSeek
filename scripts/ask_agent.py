@@ -5,6 +5,8 @@ Run:  python -m scripts.ask_agent "What causes a dopamine crash and how do I pre
 
 import sys
 
+from langchain_core.tracers.langchain import wait_for_all_tracers
+
 from app.agent.graph import corrective_rag_agent
 from app.agent.state import AgentState
 from app.observability import configure_tracing, trace_config
@@ -29,26 +31,29 @@ initial_state: AgentState = {
 
 final_answer = ""
 
-# Stream node execution events so we can watch the state machine in real-time
-for event in corrective_rag_agent.stream(initial_state, config=trace_config("cli")):
-    for node_name, node_output in event.items():
-        print(f"--> [Node: {node_name}]")
-        if node_name == "retrieve":
-            docs = node_output.get("documents", [])
-            print(f"    Fetched {len(docs)} chunks from ChromaDB.")
-        elif node_name == "grade_documents":
-            rel = node_output.get("relevant_documents", [])
-            print(f"    Evaluated chunks: {len(rel)} passed relevance grading.")
-        elif node_name == "rewrite_query":
-            new_q = node_output.get("question", "")
-            count = node_output.get("rewrite_count", 0)
-            print(f"    [Fallback] Rewrote query ({count}): {new_q!r}")
-        elif node_name == "generate":
-            final_answer = node_output.get("generation", "")
-            print("    Answer generated.")
-        print()
-print("=" * 60)
-print("FINAL ANSWER WITH CITATIONS:")
-print("=" * 60)
-print(final_answer)
-print("=" * 60)
+try:
+    # Stream node execution events so we can watch the state machine in real-time
+    for event in corrective_rag_agent.stream(initial_state, config=trace_config("cli")):
+        for node_name, node_output in event.items():
+            print(f"--> [Node: {node_name}]")
+            if node_name == "retrieve":
+                docs = node_output.get("documents", [])
+                print(f"    Fetched {len(docs)} chunks from ChromaDB.")
+            elif node_name == "grade_documents":
+                rel = node_output.get("relevant_documents", [])
+                print(f"    Evaluated chunks: {len(rel)} passed relevance grading.")
+            elif node_name == "rewrite_query":
+                new_q = node_output.get("question", "")
+                count = node_output.get("rewrite_count", 0)
+                print(f"    [Fallback] Rewrote query ({count}): {new_q!r}")
+            elif node_name == "generate":
+                final_answer = node_output.get("generation", "")
+                print("    Answer generated.")
+            print()
+    print("=" * 60)
+    print("FINAL ANSWER WITH CITATIONS:")
+    print("=" * 60)
+    print(final_answer)
+    print("=" * 60)
+finally:
+    wait_for_all_tracers()

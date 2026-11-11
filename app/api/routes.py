@@ -12,9 +12,11 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.prompts import ChatPromptTemplate
+from langsmith import get_current_run_tree, traceable
 from pydantic import BaseModel, Field, ValidationError
 
 from app.agent.graph import corrective_rag_agent
+from app.agent.nodes import determine_outcome
 from app.agent.state import AgentState
 from app.factory import get_chat_model, get_collection_name
 from app.ingestion import (
@@ -24,7 +26,7 @@ from app.ingestion import (
     fetch_raw_captions,
 )
 from app.ingestion.youtube import fetch_video_metadata, is_huberman_channel
-from app.observability import trace_config
+from app.observability import anonymizer_client, trace_config, with_anonymized_client
 from app.schemas import (
     AskRequest,
     AskResponse,
@@ -74,7 +76,7 @@ def _analyze_episode(full_text: str, title: str) -> EpisodeAnalysis:
         ]
     )
 
-    chain = prompt | structured_analyzer
+    chain = (prompt | structured_analyzer).with_config(run_name="summarize_episode")
     # Cap transcript at ~40,000 words to ensure rapid execution within token bounds
     trimmed = " ".join(full_text.split()[:40000])
     result = chain.invoke({"title": title, "transcript": trimmed}, config=trace_config("/ingest"))
@@ -202,10 +204,63 @@ def _node_event(node_name: str, node_output: dict) -> dict:
     return event_data
 
 
+def _process_ask_inputs(inputs: dict[str, Any]) -> dict[str, Any]:
+    req = inputs.get("request")
+    if req is not None:
+        q = getattr(req, "question", "")
+        m = getattr(req, "mode", "balanced") or "balanced"
+        return {"question": q, "mode": m}
+    return {
+        "question": inputs.get("question", ""),
+        "mode": inputs.get("mode", "balanced") or "balanced",
+    }
+
+
+def _reduce_agent_events(events: Any) -> dict[str, Any]:
+    answer = ""
+    citations_count = 0
+    cached = False
+    aborted = False
+    if hasattr(events, "__iter__"):
+        for ev in events:
+            if not isinstance(ev, dict):
+                continue
+            if ev.get("cached"):
+                cached = True
+            if ev.get("aborted"):
+                aborted = True
+            if "generation" in ev and ev["generation"]:
+                answer = str(ev["generation"])
+            elif "delta" in ev and ev["delta"]:
+                answer += str(ev["delta"])
+            if "citations" in ev and isinstance(ev["citations"], list):
+                citations_count = len(ev["citations"])
+    outcome = determine_outcome(answer, cached=cached, aborted=aborted)
+    return {
+        "answer": answer,
+        "outcome": outcome,
+        "citations": citations_count,
+    }
+
+
+@with_anonymized_client
+@traceable(
+    name="podseek_ask",
+    run_type="chain",
+    client=anonymizer_client,
+    process_inputs=_process_ask_inputs,
+    reduce_fn=_reduce_agent_events,
+)
 def iter_agent_events(question: str, mode: str = "balanced"):
     """Yield the same node payloads as POST /ask/stream, serving from QA cache when available."""
     cached = _get_cached_qa(question, mode=mode)
     if cached and isinstance(cached.get("events"), list):
+        rewrites = int(cached.get("rewrites") or 0)
+        top_dist = cached.get("top_distance")
+        rt = get_current_run_tree()
+        if rt:
+            rt.add_metadata({"outcome": "cached", "cached": True, "rewrites": rewrites, "top_distance": top_dist})
+            rt.add_tags([mode])
         for ev in cached["events"]:
             yield {**ev, "cached": True, "mode": mode}
         return
@@ -219,7 +274,7 @@ def iter_agent_events(question: str, mode: str = "balanced"):
 
     for mode_type, payload in corrective_rag_agent.stream(
         _initial_state(question, mode=mode),
-        config=trace_config("/ask/stream"),
+        config=trace_config("/ask/stream", mode=mode),
         stream_mode=["updates", "custom"],
     ):
         if mode_type == "custom" and isinstance(payload, dict) and "delta" in payload:
@@ -243,6 +298,12 @@ def iter_agent_events(question: str, mode: str = "balanced"):
                 elif node_name == "generate":
                     last_answer = str(shaped.get("generation") or last_answer)
                 yield shaped
+
+    outcome = determine_outcome(last_answer, cached=False)
+    rt = get_current_run_tree()
+    if rt:
+        rt.add_metadata({"outcome": outcome, "cached": False, "rewrites": last_rewrites, "top_distance": top_distance})
+        rt.add_tags([mode])
 
     if last_answer and (last_relevant > 0 or mode == "turbo"):
         _set_cached_qa(
@@ -467,9 +528,19 @@ def ingest_episode(request: IngestRequest) -> IngestResponse:
         raise HTTPException(status_code=500, detail=f"Failed to ingest episode: {e}")
 
 
-@router.post("/ask", response_model=AskResponse)
-def ask_question(request: AskRequest) -> AskResponse:
-    """Submit a question and receive a complete answer with clickable timestamp citations."""
+@with_anonymized_client
+@traceable(
+    name="podseek_ask",
+    run_type="chain",
+    client=anonymizer_client,
+    process_inputs=_process_ask_inputs,
+    process_outputs=lambda r: {
+        "answer": r[0].answer,
+        "outcome": r[1],
+        "citations": len(r[0].citations),
+    },
+)
+def _ask_traced(request: AskRequest) -> tuple[AskResponse, str]:
     start_time = time.perf_counter()
     req_mode = request.mode or "balanced"
     try:
@@ -477,19 +548,26 @@ def ask_question(request: AskRequest) -> AskResponse:
         if cached and cached.get("answer"):
             raw_cits = cached.get("citations") or []
             latency = round((time.perf_counter() - start_time) * 1000, 1)
-            return AskResponse(
+            rewrites = int(cached.get("rewrites") or 0)
+            top_dist = cached.get("top_distance")
+            rt = get_current_run_tree()
+            if rt:
+                rt.add_metadata({"outcome": "cached", "cached": True, "rewrites": rewrites, "top_distance": top_dist})
+                rt.add_tags([req_mode])
+            resp = AskResponse(
                 question=request.question,
                 answer=str(cached["answer"]),
                 citations=[Citation.model_validate(c) for c in raw_cits],
-                rewrites_attempted=int(cached.get("rewrites") or 0),
+                rewrites_attempted=rewrites,
                 relevant_chunks_used=int(cached.get("relevant_chunks") or len(raw_cits)),
                 mode=req_mode,
-                top_distance=cached.get("top_distance"),
+                top_distance=top_dist,
                 latency_ms=latency,
             )
+            return resp, "cached"
 
         final_state = corrective_rag_agent.invoke(
-            _initial_state(request.question, mode=req_mode), config=trace_config("/ask")
+            _initial_state(request.question, mode=req_mode), config=trace_config("/ask", mode=req_mode)
         )
         relevant_docs = final_state.get("relevant_documents", [])
         citations = _build_citations(relevant_docs)
@@ -497,6 +575,11 @@ def ask_question(request: AskRequest) -> AskResponse:
         rewrites = final_state.get("rewrite_count", 0)
         top_dist = final_state.get("top_distance")
         latency = round((time.perf_counter() - start_time) * 1000, 1)
+        outcome = determine_outcome(answer, cached=False)
+        rt = get_current_run_tree()
+        if rt:
+            rt.add_metadata({"outcome": outcome, "cached": False, "rewrites": rewrites, "top_distance": top_dist})
+            rt.add_tags([req_mode])
 
         if answer and (relevant_docs or req_mode == "turbo"):
             cit_dicts = [c.model_dump() for c in citations]
@@ -530,7 +613,7 @@ def ask_question(request: AskRequest) -> AskResponse:
                 mode=req_mode,
             )
 
-        return AskResponse(
+        resp = AskResponse(
             question=request.question,
             answer=answer,
             citations=citations,
@@ -540,8 +623,17 @@ def ask_question(request: AskRequest) -> AskResponse:
             top_distance=top_dist,
             latency_ms=latency,
         )
+        return resp, outcome
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Agent execution failed: {e}")
+
+
+@router.post("/ask", response_model=AskResponse)
+def ask_question(request: AskRequest) -> AskResponse:
+    """Submit a question and receive a complete answer with clickable timestamp citations."""
+    return _ask_traced(request)[0]
 
 
 @router.post("/ask/stream")
