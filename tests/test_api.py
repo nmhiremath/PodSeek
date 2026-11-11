@@ -33,8 +33,9 @@ def test_list_episodes_returns_list():
     assert isinstance(response.json(), list)
 
 
-def test_ingest_validation_rejects_empty_video_id():
-    """Verify /ingest rejects empty video ID."""
+def test_ingest_validation_rejects_empty_video_id(monkeypatch):
+    """Verify /ingest rejects empty video ID when ingestion is enabled."""
+    monkeypatch.setenv("PODSEEK_INGEST_ENABLED", "true")
     response = client.post("/ingest", json={"video_url_or_id": ""})
     assert response.status_code == 400
 

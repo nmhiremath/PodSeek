@@ -2,7 +2,6 @@
 
 import json
 import logging
-import os
 import re
 import time
 from collections.abc import Iterator
@@ -25,6 +24,7 @@ from app.ingestion import (
     chunk_segments,
     extract_video_id,
     fetch_raw_captions,
+    is_ingest_enabled,
 )
 from app.ingestion.youtube import fetch_video_metadata, is_huberman_channel
 from app.observability import anonymizer_client, trace_config, with_anonymized_client
@@ -360,15 +360,6 @@ def list_episodes() -> list[EpisodeSummary]:
             logger.warning("Skipping malformed episode cache file %s: %s", json_file, exc)
             continue
     return episodes
-
-
-def is_ingest_enabled() -> bool:
-    """Return True if episode ingestion is enabled via PODSEEK_INGEST_ENABLED (default: True).
-
-    Parses 'false', '0', 'no', 'off' case-insensitively as False.
-    """
-    raw = os.getenv("PODSEEK_INGEST_ENABLED", "true").strip().lower()
-    return raw not in {"false", "0", "no", "off"}
 
 
 @router.post("/ingest", response_model=IngestResponse)
