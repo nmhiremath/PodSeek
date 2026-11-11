@@ -40,6 +40,7 @@ If scaling PodSeek to a multi-podcast enterprise platform with millions of users
 - **Multi-Turn Conversational Checkpointing:** Introduce persistent LangGraph checkpointing backed by PostgreSQL or Redis to retain conversation history across turns.
 - **Multi-Agent Show Routing:** Deploy a supervisor agent that routes queries to specialized show-specific sub-agents (Huberman Lab, Joe Rogan, Lex Fridman).
 - **Automated LLM Gateway:** Route model calls through LiteLLM Proxy or Portkey with automated cross-provider failover during rate-limit spikes (HTTP 429).
+- Planned: native async agent execution (see openspec/changes/adopt-async-agent-execution).
 
 ### 3. Observability, Security & Caching
 - **Semantic Vector Cache:** Implement GPTCache or Redis Semantic Cache to serve semantic duplicates from cache in $< 20\text{ ms}$.
