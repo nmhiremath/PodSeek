@@ -6,35 +6,52 @@ Every pillar document follows an identical 8-part structure: definition, impleme
 
 ---
 
-## System Context (Architecture Beta)
+## System Context
 
 ```mermaid
-architecture-beta
-    group client(internet)[Client Layer]
-    service browser(internet)[Web Browser] in client
+flowchart LR
+    user(["👤 User<br/>browser"])
 
-    group backend(server)[PodSeek Service]
-    service ui(server)[Studio UI] in backend
-    service api(server)[FastAPI Router] in backend
-    service agent(server)[LangGraph CRAG] in backend
+    subgraph svc["PodSeek service · Render web service"]
+        direction TB
+        ui["Gradio Studio UI"]
+        api["FastAPI<br/>/ask · /ask/stream · /ingest"]
+        cache[("QA cache<br/>qa_cache.json")]
+        agent["LangGraph CRAG agent<br/>retrieve → grade → rewrite → generate"]
+        ui --> api
+        api -- "cache hit" --> cache
+        api -- "cache miss" --> agent
+    end
 
-    group storage(database)[Storage Layer]
-    service chroma(database)[ChromaDB] in storage
-    service raw(disk)[Transcript Store] in storage
+    subgraph data["Committed data"]
+        direction TB
+        chroma[("ChromaDB<br/>2,052 chunks")]
+        raw[("Transcript JSON<br/>data/raw")]
+    end
 
-    group external(cloud)[External Providers]
-    service llm(cloud)[Google GenAI] in external
-    service yt(cloud)[YouTube oEmbed] in external
-    service langsmith(cloud)[LangSmith] in external
+    subgraph ext["External services"]
+        direction TB
+        gemini["Google GenAI<br/>embeddings + LLM"]
+        yt["YouTube<br/>oEmbed + captions"]
+        ls["LangSmith<br/>optional tracing"]
+    end
 
-    browser:R -- L:ui
-    ui:B -- T:api
-    api:R -- L:agent
-    agent:B -- T:chroma
-    agent:R -- L:llm
-    api:B -- T:raw
-    api:R -- L:yt
-    agent:T -- B:langsmith
+    user -- "question, mode" --> ui
+    agent -- "top-k search" --> chroma
+    agent -- "grade, rewrite, answer" --> gemini
+    agent -. "traces" .-> ls
+    api -. "ingest only" .-> yt
+    api -. "ingest, episode list" .-> raw
+
+    classDef core fill:#1E293B,stroke:#6366F1,color:#F8FAFC
+    classDef store fill:#0F172A,stroke:#94A3B8,color:#F8FAFC
+    classDef extn fill:#111827,stroke:#64748B,color:#CBD5E1,stroke-dasharray:4 3
+    class ui,api,agent core
+    class cache,chroma,raw store
+    class gemini,yt,ls extn
+    style svc fill:transparent,stroke:#6366F1,stroke-width:1.5px
+    style data fill:transparent,stroke:#94A3B8
+    style ext fill:transparent,stroke:#64748B,stroke-dasharray:4 3
 ```
 
 ---
