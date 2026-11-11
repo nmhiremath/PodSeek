@@ -133,3 +133,36 @@ def test_generate_preserves_relevant_documents_for_turbo_citations(monkeypatch):
     result = generate(state)
     assert "generation" in result
     assert result.get("relevant_documents") == [doc]
+
+
+def test_outcome_mapping():
+    from app.agent.nodes import determine_outcome, is_refusal
+
+    # Answered
+    answered_text = "Viewing bright sunlight within 30 minutes triggers dopamine [00:20:45]."
+    assert is_refusal(answered_text) is False
+    assert determine_outcome(answered_text) == "answered"
+
+    # Refusals
+    refusal_1 = "I could not find any relevant information in the podcast transcripts to answer your question."
+    assert is_refusal(refusal_1) is True
+    assert determine_outcome(refusal_1) == "refused"
+
+    refusal_2 = "I cannot find any relevant information regarding that protocol."
+    assert is_refusal(refusal_2) is True
+    assert determine_outcome(refusal_2) == "refused"
+
+    refusal_3 = "There is no relevant information in the transcripts."
+    assert is_refusal(refusal_3) is True
+    assert determine_outcome(refusal_3) == "refused"
+
+    refusal_4 = "This was not mentioned in the podcast."
+    assert is_refusal(refusal_4) is True
+    assert determine_outcome(refusal_4) == "refused"
+
+    # Aborted
+    assert determine_outcome("", aborted=True) == "refused"
+
+    # Cached (takes precedence)
+    assert determine_outcome(answered_text, cached=True) == "cached"
+    assert determine_outcome(refusal_1, cached=True) == "cached"
