@@ -1,5 +1,7 @@
 """SSE parsing, client mode selection, and pure UI components. Does not import Gradio."""
 
+import re
+
 from app.ingestion.youtube import is_huberman_channel
 from ui.client import InProcessClient, RemoteClient, make_client, parse_sse_chunk
 from ui.components import (
@@ -245,7 +247,8 @@ def test_theme_css_contains_mobile_scaling_and_capsule_tokens():
     assert "%3EPS%3C/text%3E" in head_meta
     assert 'content="https://podseek.onrender.com/"' in head_meta
     assert 'content="Corrective RAG over Huberman Lab transcripts with timestamp citations."' in head_meta
-    assert "gradio" not in head_meta.lower()
+    meta_tags = "".join(re.findall(r"<meta\b[^>]*>", head_meta, re.IGNORECASE))
+    assert "gradio" not in meta_tags.lower()
 
 
 def test_goatcounter_page_analytics(monkeypatch):
@@ -264,3 +267,13 @@ def test_goatcounter_page_analytics(monkeypatch):
     for bad_code in ["podseek app", "podseek_app", "PODSEEK", "bad/code", "<script>alert(1)</script>"]:
         monkeypatch.setenv("GOATCOUNTER_CODE", bad_code)
         assert "data-goatcounter" not in render_head_meta_html()
+
+
+def test_system_theme_early_resolution_script():
+    """Verify that head meta includes early theme resolution script supporting system theme and localStorage."""
+    head_meta = render_head_meta_html()
+    assert "podSeekApplyTheme" in head_meta
+    assert "prefers-color-scheme: dark" in head_meta
+    assert "podseek_theme" in head_meta
+    assert "podSeekApplyTheme" in render_header_controls_html()
+    assert "localStorage.setItem('podseek_theme'" in render_header_controls_html()

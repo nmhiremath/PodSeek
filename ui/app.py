@@ -253,28 +253,25 @@ _INIT_UI_JS_TEMPLATE = """() => {
 
         window.podSeekSelectMode(nextMode);
     };
+
     const setupPodSeekUI = () => {
         let isDark = false;
         try {
-            isDark = localStorage.getItem('podseek_theme') === 'dark';
-        } catch (e) {}
-
-        if (isDark) {
-            document.documentElement.classList.add('ap-dark');
-            document.body.classList.add('ap-dark');
-            document.querySelector('.gradio-container')?.classList.add('ap-dark');
-            document.querySelector('gradio-app')?.classList.add('ap-dark');
-        } else {
-            document.documentElement.classList.remove('ap-dark', 'dark');
-            document.body.classList.remove('ap-dark', 'dark');
-            document.querySelector('.gradio-container')?.classList.remove('ap-dark', 'dark');
-            document.querySelector('gradio-app')?.classList.remove('ap-dark', 'dark');
+            const saved = localStorage.getItem('podseek_theme');
+            if (saved === 'dark') {
+                isDark = true;
+            } else if (saved === 'light') {
+                isDark = false;
+            } else {
+                isDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            }
+        } catch (e) {
+            isDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
         }
-        const bg = isDark ? '#111113' : '#F8F9FA';
-        document.documentElement.style.setProperty('background-color', bg, 'important');
-        document.body.style.setProperty('background-color', bg, 'important');
-        const gApp = document.querySelector('gradio-app');
-        if (gApp) gApp.style.setProperty('background-color', bg, 'important');
+
+        if (window.podSeekApplyTheme) {
+            window.podSeekApplyTheme(isDark);
+        }
 
         const epList = document.querySelector('.ap-episodes-list');
         if (epList) {
